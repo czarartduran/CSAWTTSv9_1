@@ -1,0 +1,13 @@
+<resources>
+    <string name="VendorID">6790</string>
+
+    <string name="app_name">CSB</string>
+    <string name="SMSActivity">Text Messages</string>
+    <string name="ReplyActivity">Reply Message</string>
+    <string name="ComposeActivity">Compose Message</string>
+
+    <string name="ComposeButton">Compose</string>
+    <string name="PreviousButton">Prev.</string>
+    <string name="NextButton">Next</string>
+    <string name="ReplyButton">Reply</string>
+</resources>

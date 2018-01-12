@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.patchie.csawttsv9.SMSActivity">
+
+
+    <ListView
+        android:id="@+id/messages"
+        android:layout_width="368dp"
+        android:layout_height="450dp"
+        android:layout_marginBottom="13dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/ComposeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/ComposeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:onClick="ComposeOnClickEvent"
+        android:text="@string/ComposeButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/UpButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/UpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/PreviousButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/DownButton"
+        app:layout_constraintStart_toEndOf="@+id/ComposeButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        android:onClick="PreviousButtonOnClickEvent"/>
+
+    <Button
+        android:id="@+id/DownButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/NextButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ReplyButton"
+        app:layout_constraintStart_toEndOf="@+id/UpButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        android:onClick="NextButtonOnClickEvent"/>
+
+    <Button
+        android:id="@+id/ReplyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ReplyButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/DownButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        android:onClick="ReplyButtonOnClickEvent"/>
+</android.support.constraint.ConstraintLayout>
