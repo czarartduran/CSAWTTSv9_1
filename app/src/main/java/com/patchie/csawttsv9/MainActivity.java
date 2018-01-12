@@ -136,7 +136,11 @@ public class MainActivity extends AppCompatActivity {
     private void StopScanner(){
         Log.e("Czar", "onClickStart");
         //setUiEnabled(false);
-        serialPort.close();
+
+        if (serialPort.open() == true)
+        {
+            serialPort.close();
+        }
         //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
 
@@ -169,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
         Log.e("Czar", "Arduino has been initialized");
 
-        StartScanner();
+        //StartScanner();
     }
 
     @Override
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         _speaker.destroy();
-        StopScanner();
+        //StopScanner();
     }
 
     private void Speak(String TextToRead) {

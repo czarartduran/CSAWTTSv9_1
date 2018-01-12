@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+
 
     <uses-feature android:name="android.hardware.usb.host" />
 
@@ -34,7 +37,7 @@
         <activity android:name=".SMSActivity" />
         <activity android:name=".CallActivity" />
         <activity android:name=".ReplyMessageActivity" />
-        <activity android:name=".ComposeMessageActivity"></activity>
+        <activity android:name=".ComposeMessageActivity"/>
     </application>
 
 </manifest>
