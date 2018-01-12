@@ -2,12 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.patchie.csawttsv9">
 
+    <!--<uses-permission android:name="android.permission.WRITE_SMS" />***
+    <uses-permission android:name="android.permission.READ_CONTACTS" />***
+    <uses-permission android:name="android.permission.READ_SMS" />***
+    <uses-permission android:name="android.permission.SEND_SMS" />***
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />***
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />***
+    <%Call Module Permission%>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />-->
+
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!--Call Module Permission-->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
