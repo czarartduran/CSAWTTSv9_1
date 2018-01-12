@@ -39,7 +39,9 @@
         <activity android:name=".ReplyMessageActivity" />
         <activity android:name=".ComposeMessageActivity" />
         <activity android:name=".Dial_activity" />
-        <activity android:name=".Contact_list"></activity>
+        <activity android:name=".Contact_list" />
+        <activity android:name=".View_contacts" />
+        <activity android:name=".Add_contact"></activity>
     </application>
 
 </manifest>
