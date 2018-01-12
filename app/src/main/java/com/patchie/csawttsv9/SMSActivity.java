@@ -233,9 +233,7 @@ public class SMSActivity extends AppCompatActivity {
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
-
         return Name;
-
     }
 
     public void ComposeOnClickEvent(View view) {
