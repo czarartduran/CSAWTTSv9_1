@@ -1,68 +1,66 @@
 package com.patchie.csawttsv9;
 
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.felhr.usbserial.UsbSerialDebugger;
-import com.felhr.usbserial.UsbSerialDevice;
-import com.felhr.usbserial.UsbSerialInterface;
 
 public class SMSActivity extends AppCompatActivity {
 
-
-
-
-    //Czar Art Duran
-    //Variable ***Global
-    private boolean _haveReadContactsPermission;
-    private boolean _haveReadSmsPermission;
-    private int selectedIndex = 0;
+    private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
+    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
+    public static boolean active = false;
+    private static SMSActivity inst;
     Speaker _speak;
-
-    //Button composeButton, previousButton, nextButton, replyButton;
-
-
     ArrayList<String> smsMessagesList = new ArrayList<>();
     ListView messages;
     ArrayAdapter arrayAdapter;
     EditText input;
     SmsManager smsManager = SmsManager.getDefault();
-    private static SMSActivity inst;
-    public static boolean active = false;
-
-    private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
-    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
+    //Czar Art Duran
+    //Variable ***Global
+    private boolean _haveReadContactsPermission;
+    private boolean _haveReadSmsPermission;
+    private int selectedIndex = 0;
 
     public static SMSActivity instance() {
         return inst;
+    }
+
+    public static String getContactName(Context context, String phoneNo) {
+        ContentResolver cr = context.getContentResolver();
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNo));
+        Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+        if (cursor == null) {
+            return phoneNo;
+        }
+        String Name = phoneNo;
+        if (cursor.moveToFirst()) {
+            Name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+
+        }
+
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        return Name;
     }
 
     @Override
@@ -71,19 +69,13 @@ public class SMSActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
 
-        //initializing the buttons
-        //composeButton = (Button)findViewById(R.id.ComposeButton);
-        //previousButton = (Button)findViewById(R.id.UpButton);
-        //nextButton = (Button)findViewById(R.id.DownButton);
-        //replyButton = (Button)findViewById(R.id.ReplyButton);
-
+        //Initializing Speaker
         _speak = new Speaker(getApplicationContext());
 
         this.startService(new Intent(this, QuickResponseService.class));
-        messages = (ListView) findViewById(R.id.messages);
+        messages = findViewById(R.id.messages);
         messages.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        //input = (EditText) findViewById(R.id.input);
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
         messages.setAdapter(arrayAdapter);
 
@@ -127,7 +119,6 @@ public class SMSActivity extends AppCompatActivity {
         super.onStart();
         active = true;
         inst = this;
-
     }
 
     public void updateInbox(final String smsMessage) {
@@ -156,7 +147,6 @@ public class SMSActivity extends AppCompatActivity {
                     READ_CONTACTS_PERMISSIONS_REQUEST);
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -212,28 +202,10 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        _speak.destroy();
         super.onStop();
+
         active = false;
-    }
-
-    public static String getContactName(Context context, String phoneNo) {
-        ContentResolver cr = context.getContentResolver();
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNo));
-        Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
-        if (cursor == null) {
-            return phoneNo;
-        }
-        String Name = phoneNo;
-        if (cursor.moveToFirst()) {
-            Name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
-
-        }
-
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
-        }
-        return Name;
+        _speak.destroy();
     }
 
     public void ComposeOnClickEvent(View view) {
