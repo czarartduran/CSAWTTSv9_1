@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.patchie.csawttsv9.CallActivity">
+    tools:context="com.patchie.csawttsv9.Contact_list">
 
     <Button
-        android:id="@+id/dialbtn"
+        android:id="@+id/viewC"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/scbtn"
-        android:layout_alignBottom="@+id/scbtn"
+        android:layout_alignBaseline="@+id/addC"
+        android:layout_alignBottom="@+id/addC"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="45dp"
         android:layout_marginStart="45dp"
-        android:text="1.Dial"
+        android:text="1.Select on Contacts"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="59dp"
         tools:layout_editor_absoluteY="172dp" />
 
     <Button
-        android:id="@+id/scbtn"
+        android:id="@+id/addC"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -31,7 +30,7 @@
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:layout_marginTop="136dp"
-        android:text="2.Select contacts"
+        android:text="2.Add contact"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="191dp"
         tools:layout_editor_absoluteY="172dp" />
@@ -40,8 +39,10 @@
         android:id="@+id/backbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/dialbtn"
-        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/viewC"
+        android:layout_below="@+id/viewC"
+        android:layout_marginTop="34dp"
         android:text="3. Back" />
+
 
 </RelativeLayout>

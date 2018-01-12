@@ -10,4 +10,8 @@
     <string name="PreviousButton">Prev.</string>
     <string name="NextButton">Next</string>
     <string name="ReplyButton">Reply</string>
+
+    <string name="hnt_et_name">Display Name</string>
+    <string name="hnt_et_mobile_phone">Mobile Phone</string>
+    <string name="str_btn_add">Add Contact</string>
 </resources>
