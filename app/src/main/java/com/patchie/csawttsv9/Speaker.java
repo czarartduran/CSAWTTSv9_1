@@ -3,7 +3,6 @@ package com.patchie.csawttsv9;
 import android.content.Context;
 import android.media.AudioManager;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -17,11 +16,13 @@ public class Speaker implements TextToSpeech.OnInitListener {
     private TextToSpeech _tts;
     private boolean _ready = false;
     private boolean _allowed = true;
-    private float _speachRate = 0;
+    private float _speachRate = 1;
 
     public Speaker(Context context){
         Log.e("Czar", "Speaker Context");
         _tts = new TextToSpeech(context, this);
+        _tts.setSpeechRate(_speachRate);
+        Log.e("Speaker speach rate: ", Float.toString(_speachRate));
     }
 
     public void setSpeedRate(float speechrate) {
@@ -53,7 +54,7 @@ public class Speaker implements TextToSpeech.OnInitListener {
 
     public void speak(String text){
         if(_ready && _allowed) {
-            if (isSpeaking() == true){
+            if (isSpeaking()) {
                 _tts.stop();
             }
             HashMap<String, String> hash = new HashMap<String,String>();

@@ -10,7 +10,6 @@ public class CallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
 
-        //sample edit test,
-        //sample czar test323
+
     }
 }
