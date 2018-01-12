@@ -19,6 +19,7 @@ public class CallActivity extends AppCompatActivity {
 
         Button buttdial = (Button) findViewById(R.id.dialbtn);
         Button buttsc = (Button) findViewById(R.id.scbtn);
+        Button backbtn = (Button)findViewById(R.id.backbtn);
         buttdial.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,6 +36,12 @@ public class CallActivity extends AppCompatActivity {
                 startActivity(myIntent);
 
 
+            }
+        });
+        backbtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

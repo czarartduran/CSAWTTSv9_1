@@ -17,6 +17,7 @@ public class Contact_list extends AppCompatActivity {
         setContentView(R.layout.activity_contact_list);
         Button buttviewC = (Button) findViewById(R.id.viewC);
         Button buttaddC = (Button) findViewById(R.id.addC);
+        Button backbtn = (Button)findViewById(R.id.backbtn);
         buttviewC.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -33,6 +34,12 @@ public class Contact_list extends AppCompatActivity {
                 startActivity(myIntent);
 
 
+            }
+        });
+        backbtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

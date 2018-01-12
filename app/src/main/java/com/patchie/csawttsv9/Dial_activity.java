@@ -27,7 +27,7 @@ public class Dial_activity extends AppCompatActivity implements View.OnClickList
                 R.id.btn3,R.id.btn4,R.id.btn5,
                 R.id.btn6,R.id.btn7,R.id.btn8,
                 R.id.btn9,R.id.btnast,R.id.btnhash,
-                R.id.btncall,R.id.btndel};
+                R.id.btncall,R.id.btndel,R.id.backbtn};
         for(int d: Listid){
             View v = (View)findViewById(d);
             v.setOnClickListener(this);
@@ -93,6 +93,10 @@ public class Dial_activity extends AppCompatActivity implements View.OnClickList
                     ET1.setText(newScreen);
                 }
                 break;
+            case R.id.backbtn:
+                finish();
+                break;
+
             default:
                 break;
         }
