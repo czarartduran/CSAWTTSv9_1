@@ -16,4 +16,35 @@
     <string name="hnt_et_mobile_phone">Mobile Phone</string>
     <string name="str_btn_add">Add Contact</string>
     <string name="cancel">ABORT</string>
+
+    <string name="dial">1.DIAL</string>
+    <string name="select_contact">2.SELECT CONTACTS</string>
+    <string name="back">3. BACK</string>
+
+    <string name="send_btn">SEND</string>
+    <string name="cancel_btn">CANCEL</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="message_here">Message Here</string>
+
+    <string name="d1">1</string>
+    <string name="d2">2</string>
+    <string name="d3">3</string>
+    <string name="d4">4</string>
+    <string name="d5">5</string>
+    <string name="d6">6</string>
+    <string name="d7">7</string>
+    <string name="d8">8</string>
+    <string name="d9">9</string>
+    <string name="d10">#</string>
+    <string name="d11">*</string>
+    <string name="d12">0</string>
+    <string name="call">1. CALL</string>
+    <string name="del">2. DELETE</string>
+
+    <string name="call_main">1. CALL</string>
+    <string name="sms">2. SMS</string>
+
+    <string name="from">From</string>
+    <string name="send">SEND</string>
+    <string name="back_1">BACK</string>
 </resources>
