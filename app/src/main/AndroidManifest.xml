@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
-
     <uses-feature android:name="android.hardware.usb.host" />
 
     <application
@@ -30,6 +29,7 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
@@ -37,7 +37,9 @@
         <activity android:name=".SMSActivity" />
         <activity android:name=".CallActivity" />
         <activity android:name=".ReplyMessageActivity" />
-        <activity android:name=".ComposeMessageActivity"/>
+        <activity android:name=".ComposeMessageActivity" />
+        <activity android:name=".Dial_activity" />
+        <activity android:name=".Contact_list"></activity>
     </application>
 
 </manifest>
