@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void CallActivity(){
-        startActivity(new Intent(MainActivity.this, CallActivity.class));
+        startActivity(new Intent(MainActivity.this, Contact_list.class));
     }
 
     protected void SmsActivity(){
