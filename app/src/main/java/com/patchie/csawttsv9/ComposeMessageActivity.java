@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 public class ComposeMessageActivity extends AppCompatActivity {
 
+    //ganda ko
     Button buttonSend;
     Button buttonCancel;
     EditText textPhoneNo;
