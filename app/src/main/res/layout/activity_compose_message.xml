@@ -24,9 +24,9 @@
         android:id="@+id/button3"
         android:layout_width="@android:dimen/app_icon_size"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/contactnumber"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="18dp"
+        android:layout_toEndOf="@+id/contactnumber"
         android:background="@android:drawable/ic_menu_search" />
 
     <EditText
@@ -51,15 +51,16 @@
         android:layout_below="@+id/compose"
         android:layout_marginTop="16dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/send_btn" />
+        android:text="@string/send_btn"
+        android:onClick="ComposeSMS_send_btn_OnClick_Event"/>
 
     <Button
         android:id="@+id/buttonCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@+id/buttonSend"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="CancelBtn_OnClick_Event"
         android:text="@string/cancel_btn"

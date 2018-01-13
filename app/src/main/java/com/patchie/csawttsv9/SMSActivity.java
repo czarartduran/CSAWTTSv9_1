@@ -45,18 +45,20 @@ public class SMSActivity extends AppCompatActivity {
     public static SMSActivity instance() {
         return inst;
     }
-
+    /**
+     * This return Contact name given its contact number
+     * */
     public static String getContactName(Context context, String phoneNo) {
         ContentResolver cr = context.getContentResolver();
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNo));
         Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+        //if there is no returned result
         if (cursor == null) {
             return phoneNo;
         }
         String Name = phoneNo;
         if (cursor.moveToFirst()) {
             Name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
-
         }
 
         if (cursor != null && !cursor.isClosed()) {
@@ -78,6 +80,7 @@ public class SMSActivity extends AppCompatActivity {
         messages = findViewById(R.id.messages);
         messages.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
+        //setting the adapter for sms
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
         messages.setAdapter(arrayAdapter);
 
@@ -119,13 +122,16 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     public void onStart() {
-        //Context context = this;
         super.onStart();
+
         active = true;
         inst = this;
+
+        _speak = new Speaker(this);
     }
 
     public void updateInbox(final String smsMessage) {
+        Log.e("Czar", " updateInbox had been called");
         arrayAdapter.insert(smsMessage, 0);
         arrayAdapter.notifyDataSetChanged();
     }
@@ -187,18 +193,28 @@ public class SMSActivity extends AppCompatActivity {
         //Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
         smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
+        int indexAddress = smsInboxCursor.getColumnIndex("address");
         int indexBody = smsInboxCursor.getColumnIndex("body");
 
-        int indexAddress = smsInboxCursor.getColumnIndex("address");
-        if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
-        arrayAdapter.clear();
-        do {
-            String str = "Message From: " + getContactName(this, smsInboxCursor.getString(indexAddress)) + "\n" + "Says " + smsInboxCursor.getString(indexBody) + "\n";
-            //Log.e("Czar", "Loading: " + str);
-            // if (smsInboxCursor.getString(indexAddress).equals("PHONE NUMBER HERE")) {
-            arrayAdapter.add(str);
-            //  }
-        } while (smsInboxCursor.moveToNext());
+        if (indexBody < 0 || !smsInboxCursor.moveToFirst()){
+            return;
+        }else{
+            arrayAdapter.clear();
+            String addressIntro = getString(R.string.AddressIntro) + " ";
+            String bodyIntro = getString(R.string.BodyIntro) + " ";
+            do {
+                /*String str = addressIntro + getContactName(this,
+                        smsInboxCursor.getString(indexAddress)) + "\n" +
+                        bodyIntro + smsInboxCursor.getString(indexBody) + "\n";*/
+                String str = addressIntro + getContactName(this,
+                        smsInboxCursor.getString(indexAddress)) + "\n" +
+                        bodyIntro + smsInboxCursor.getString(indexBody);
+                //Log.e("Czar", "Loading: " + str);
+                // if (smsInboxCursor.getString(indexAddress).equals("PHONE NUMBER HERE")) {
+                arrayAdapter.add(str);
+                //  }
+            } while (smsInboxCursor.moveToNext());
+        }
     }
 
     @Override

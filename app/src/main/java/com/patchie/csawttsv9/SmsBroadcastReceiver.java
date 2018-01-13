@@ -15,33 +15,42 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle intentExtras = intent.getExtras();
 
-            if (intentExtras != null) {
+        if (intentExtras != null) {
             Object[] sms = (Object[]) intentExtras.get(SMS_BUNDLE);
+
+            String address = "";
+            String smsBody = "";
+
+            String addressIntro = context.getString(R.string.AddressIntro) + " ";
+            String bodyIntro = context.getString(R.string.BodyIntro) + " ";
+
             String smsMessageStr = "";
             for (int i = 0; i < sms.length; ++i) {
                 String format = intentExtras.getString("format");
                 SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) sms[i], format);
 
-                String smsBody = smsMessage.getMessageBody().toString();
-                String address = smsMessage.getOriginatingAddress();
+                smsBody = smsMessage.getMessageBody().toString();
+                address = smsMessage.getOriginatingAddress();
 
+                /*smsMessageStr += addressIntro + address + "\n";
+                smsMessageStr += bodyIntro + smsBody + "\n";*/
 
-                    smsMessageStr += "SMS From: " + address + "\n";
-                    smsMessageStr += smsBody + "\n";
+                smsMessageStr += addressIntro + address + "\n";
+                smsMessageStr += bodyIntro + smsBody;
             }
 
 
-                Toast.makeText(context, "Message Received!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Message Received!", Toast.LENGTH_SHORT).show();
 
-                if (SMSActivity.active) {
-                    SMSActivity inst = SMSActivity.instance();
-                    inst.updateInbox(smsMessageStr);
-                } else {
-                    Intent i = new Intent(context, MainActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(i);
+            if (SMSActivity.active) {
+                SMSActivity inst = SMSActivity.instance();
+                inst.updateInbox(smsMessageStr);
+            } else {
+                Intent i = new Intent(context, MainActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
 
-                }
+            }
 
         }
     }

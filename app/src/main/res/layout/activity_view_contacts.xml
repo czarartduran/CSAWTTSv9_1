@@ -16,30 +16,42 @@
         android:id="@+id/backbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button5"
-        android:layout_alignBottom="@+id/button5"
+        android:layout_alignBaseline="@+id/nextBtn"
+        android:layout_alignBottom="@+id/nextBtn"
         android:layout_alignParentEnd="true"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/back_1"
-        android:onClick="ViewConBack_btn_OnClick_Event"/>
+        android:onClick="ViewConBack_btn_OnClick_Event"
+        android:text="@string/back_1" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/nextBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="14dp"
+        android:layout_alignBaseline="@+id/prevBtn"
+        android:layout_alignBottom="@+id/prevBtn"
+        android:layout_toEndOf="@+id/prevBtn"
         android:background="@android:color/holo_blue_light"
         android:text="@string/NextButton" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/prevBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button4"
-        android:layout_centerHorizontal="true"
+        android:layout_alignBaseline="@+id/addCbtn"
+        android:layout_alignBottom="@+id/addCbtn"
+        android:layout_marginStart="11dp"
+        android:layout_toEndOf="@+id/addCbtn"
         android:background="@android:color/holo_blue_light"
         android:text="@string/PreviousButton" />
+
+    <Button
+        android:id="@+id/addCbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp"
+        android:background="@android:color/holo_blue_light"
+        android:text="ADD CONTACT" />
 
 </RelativeLayout>

@@ -7,6 +7,9 @@
     <string name="ComposeActivity">Compose Message</string>
     <string name="CallActivity">Call</string>
     <string name="ContactsListing">Contacts</string>
+    
+    <string name="AddressIntro">Message From:</string>
+    <string name="BodyIntro">Say\'s:</string>
 
     <string name="ComposeButton">Compose</string>
     <string name="PreviousButton">Prev.</string>
@@ -45,7 +48,7 @@
     <string name="call_main">1. CALL</string>
     <string name="sms">2. SMS</string>
 
-    <string name="from">From</string>
+    <string name="to">To:</string>
     <string name="send">SEND</string>
     <string name="back_1">BACK</string>
 </resources>

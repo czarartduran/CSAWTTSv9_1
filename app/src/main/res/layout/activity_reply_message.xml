@@ -16,7 +16,7 @@
         android:layout_marginTop="34dp"
         android:background="@layout/rounded_border_edittext"
         android:padding="10sp"
-        android:text="@string/from"
+        android:text="@string/to"
         android:textColor="@android:color/black"
         android:textSize="25sp" />
 
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/receiver_tv"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="35dp"
         android:background="@layout/rounded_border_edittext"
         android:ems="10"
         android:gravity="top"
@@ -40,11 +40,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="84dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="73dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/back_1"
-        android:onClick="ReplySMS_Back_btn_OnClick_Event"/>
+        android:onClick="ReplySMS_Back_btn_OnClick_Event"
+        android:text="@string/back_1" />
 
     <Button
         android:id="@+id/button2"
@@ -52,8 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="21dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/send"
-        android:onClick="ReplySMS_SEND_btn_OnClick_Event"/>
+        android:onClick="ReplySMS_SEND_btn_OnClick_Event"
+        android:text="@string/send" />
 </RelativeLayout>

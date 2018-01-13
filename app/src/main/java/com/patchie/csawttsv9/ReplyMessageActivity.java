@@ -51,15 +51,19 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
     private void ReplySMS() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED)
-
-        {
+                != PackageManager.PERMISSION_GRANTED){
             getPermissionToReadSMS();
-        } else
+        } else{
+            try{
+                smsManager.sendTextMessage(_contactNumber, null, editText.getText().toString(), null, null);
+                Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e){
+                Toast.makeText(getApplicationContext(),
+                        "SMS failed, please try again later!",
+                        Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
 
-        {
-            smsManager.sendTextMessage(_contactNumber, null, editText.getText().toString(), null, null);
-            Toast.makeText(this, _contactNumber, Toast.LENGTH_SHORT).show();
         }
     }
 
