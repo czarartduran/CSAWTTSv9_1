@@ -15,6 +15,7 @@
         android:layout_marginBottom="36dp"
         android:background="@android:color/holo_blue_light"
         android:text="@string/dial"
+        android:onClick="Dial_btn_OnClick_Event"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="59dp"
         tools:layout_editor_absoluteY="172dp" />
@@ -27,6 +28,7 @@
         android:layout_centerVertical="true"
         android:background="@android:color/holo_blue_light"
         android:text="@string/select_contact"
+        android:onClick="SelectCon_btn_OnClick_Event"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="191dp"
         tools:layout_editor_absoluteY="172dp" />

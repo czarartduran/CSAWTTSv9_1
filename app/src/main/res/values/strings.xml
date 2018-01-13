@@ -6,6 +6,7 @@
     <string name="ReplyActivity">Reply Message</string>
     <string name="ComposeActivity">Compose Message</string>
     <string name="CallActivity">Call</string>
+    <string name="ContactsListing">Contacts</string>
 
     <string name="ComposeButton">Compose</string>
     <string name="PreviousButton">Prev.</string>

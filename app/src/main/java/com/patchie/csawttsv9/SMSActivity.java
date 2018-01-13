@@ -34,6 +34,7 @@ public class SMSActivity extends AppCompatActivity {
     ArrayAdapter arrayAdapter;
     EditText input;
     SmsManager smsManager = SmsManager.getDefault();
+
     //Czar Art Duran
     //Variable ***Global
     private boolean _haveReadContactsPermission;
@@ -154,38 +155,30 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (!_haveReadSmsPermission) return;
         if (requestCode == READ_SMS_PERMISSIONS_REQUEST) {
-            if (grantResults.length == 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Read SMS permission granted", Toast.LENGTH_SHORT).show();
                 refreshSmsInbox();
             } else {
                 Toast.makeText(this, "Read SMS permission denied", Toast.LENGTH_SHORT).show();
             }
-
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         if (!_haveReadContactsPermission) return;
         if (requestCode == READ_CONTACTS_PERMISSIONS_REQUEST) {
-            if (grantResults.length == 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Read SMS permission granted", Toast.LENGTH_SHORT).show();
                 refreshSmsInbox();
             } else {
                 Toast.makeText(this, "Read SMS permission denied", Toast.LENGTH_SHORT).show();
             }
-
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
     }
 
     public void refreshSmsInbox() {
@@ -200,7 +193,7 @@ public class SMSActivity extends AppCompatActivity {
         arrayAdapter.clear();
         do {
             String str = "Message From: " + getContactName(this, smsInboxCursor.getString(indexAddress)) + "\n" + "Says " + smsInboxCursor.getString(indexBody) + "\n";
-            Log.e("Czar", "Loading: " + str);
+            //Log.e("Czar", "Loading: " + str);
             // if (smsInboxCursor.getString(indexAddress).equals("PHONE NUMBER HERE")) {
             arrayAdapter.add(str);
             //  }

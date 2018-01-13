@@ -17,7 +17,8 @@
         android:layout_marginTop="100dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="call_btn_OnClick_Event"
-        android:text="@string/call_main" />
+        android:text="@string/call_main"
+        android:textSize="15sp"/>
 
     <Button
         android:id="@+id/sms_btn"
@@ -28,7 +29,8 @@
         android:layout_marginTop="23dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="sms_btn_OnClickEvent"
-        android:text="@string/sms" />
+        android:text="@string/sms"
+        android:textSize="15sp"/>
 
     <EditText
         android:id="@+id/editText2"

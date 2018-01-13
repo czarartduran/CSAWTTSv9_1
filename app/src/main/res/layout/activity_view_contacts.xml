@@ -5,7 +5,7 @@
     tools:context="com.patchie.csawttsv9.View_contacts" >
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
@@ -20,7 +20,8 @@
         android:layout_alignBottom="@+id/button5"
         android:layout_alignParentEnd="true"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/back_1" />
+        android:text="@string/back_1"
+        android:onClick="ViewConBack_btn_OnClick_Event"/>
 
     <Button
         android:id="@+id/button4"

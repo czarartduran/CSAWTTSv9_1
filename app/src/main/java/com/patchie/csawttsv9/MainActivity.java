@@ -158,6 +158,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Checking Permission
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkAndRequestPermissions()) {
+                //done permission
+            }
+        }
+
         //Maxing Volumes
         SetVolumes();
 
@@ -181,15 +188,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "Arduino has been initialized");
 
         //StartScanner();
-
-
-        //Checking Permission
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkAndRequestPermissions()) {
-
-            }
-        }
-
     }
 
     public static final int PERMISSIONS_REQUEST = 1;
@@ -243,6 +241,26 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     //You did not accept the request can not use the functionality.
                 }
+                if (grantResults.length > 0 && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
+                if (grantResults.length > 0 && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
+                if (grantResults.length > 0 && grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
+                if (grantResults.length > 0 && grantResults[5] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
                 break;
         }
     }
@@ -264,12 +282,19 @@ public class MainActivity extends AppCompatActivity {
         //StopScanner();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
+    }
+
     private void Speak(String TextToRead) {
         _speaker.speak(TextToRead);
     }
 
     private void CallActivity() {
-        startActivity(new Intent(MainActivity.this, Contact_list.class));
+        startActivity(new Intent(MainActivity.this, CallActivity.class));
     }
 
     protected void SmsActivity() {

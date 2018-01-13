@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 
 public class View_contacts extends ListActivity {
 
-
     @Override
     public long getSelectedItemId() {
         // TODO Auto-generated method stub
@@ -33,14 +32,8 @@ public class View_contacts extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_contacts);
+        setTitle(R.string.ContactsListing);
 
-        Button backButton = (Button)this.findViewById(R.id.backbtn);
-        backButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         startManagingCursor(cursor);
         String[] from = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER,
@@ -49,11 +42,11 @@ public class View_contacts extends ListActivity {
         SimpleCursorAdapter listadapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, from, to);
         setListAdapter(listadapter);
 
-
         listView = getListView();
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
 
-
-
+    public void ViewConBack_btn_OnClick_Event(View view) {
+        finish();
+    }
 }
