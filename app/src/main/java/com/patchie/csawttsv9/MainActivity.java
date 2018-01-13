@@ -1,14 +1,20 @@
 package com.patchie.csawttsv9;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +25,9 @@ import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -108,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         ;
     };
 
-    private void StartScanner(){
+    private void StartScanner() {
         Log.e("Czar", "onClickerStart");
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
@@ -133,12 +141,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void StopScanner(){
+    private void StopScanner() {
         Log.e("Czar", "onClickStart");
         //setUiEnabled(false);
 
-        if (serialPort.open() == true)
-        {
+        if (serialPort.open() == true) {
             serialPort.close();
         }
         //tvAppend(textView, "\nSerial Connection Closed! \n");
@@ -155,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
         SetVolumes();
 
         //initializing speaker
-        if (_speaker == null){
+        if (_speaker == null) {
             _speaker = new Speaker(getApplicationContext());
-            Log.e("Czar","_speaker has been initialized");
+            Log.e("Czar", "_speaker has been initialized");
         }
 
         //assigning editText2
@@ -174,11 +181,74 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "Arduino has been initialized");
 
         //StartScanner();
+
+
+        //Checking Permission
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkAndRequestPermissions()) {
+
+            }
+        }
+
+    }
+
+    public static final int PERMISSIONS_REQUEST = 1;
+
+    private boolean checkAndRequestPermissions() {
+        int permissionCallPhone = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+        int permissionReadContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        int permissionModifyContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS);
+        int permissionReadSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
+        int permisionSendSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
+        int permissionReceived = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+
+        List<String> listPermissionNeeded = new ArrayList<>();
+        if (permissionCallPhone != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.CALL_PHONE);
+        }
+        if (permissionReadContacts != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (permissionModifyContacts != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.WRITE_CONTACTS);
+        }
+        if (permissionReadSMS != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.READ_SMS);
+        }
+        if (permisionSendSMS != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.SEND_SMS);
+        }
+        if (permissionReceived != PackageManager.PERMISSION_GRANTED) {
+            listPermissionNeeded.add(Manifest.permission.RECEIVE_SMS);
+        }
+        if (!listPermissionNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionNeeded.toArray(new String[listPermissionNeeded.size()]), PERMISSIONS_REQUEST);
+            return false;
+        }
+        return true;
     }
 
     @Override
-    protected void onStart()
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST:
+                Log.e("Czar", "GrantResult: " + grantResults.length);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
+                if (grantResults.length > 0 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
 
@@ -198,20 +268,20 @@ public class MainActivity extends AppCompatActivity {
         _speaker.speak(TextToRead);
     }
 
-    private void CallActivity(){
-        startActivity(new Intent(MainActivity.this, CallActivity.class));
+    private void CallActivity() {
+        startActivity(new Intent(MainActivity.this, Contact_list.class));
     }
 
-    protected void SmsActivity(){
+    protected void SmsActivity() {
         startActivity(new Intent(MainActivity.this, SMSActivity.class));
     }
 
     //This is function to max volumes
-    private void SetVolumes(){
+    private void SetVolumes() {
         AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
         am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC , 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0);
         am.setStreamVolume(AudioManager.STREAM_ALARM, 100, 0);
         am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
         am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
