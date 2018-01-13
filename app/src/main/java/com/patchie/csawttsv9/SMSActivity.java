@@ -40,6 +40,7 @@ public class SMSActivity extends AppCompatActivity {
     private boolean _haveReadContactsPermission;
     private boolean _haveReadSmsPermission ;
     private int selectedIndex = 0;
+    private Cursor smsInboxCursor;
 
     public static SMSActivity instance() {
         return inst;
@@ -184,7 +185,7 @@ public class SMSActivity extends AppCompatActivity {
     public void refreshSmsInbox() {
         ContentResolver contentResolver = getContentResolver();
         //Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
-        Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
+        smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         int indexBody = smsInboxCursor.getColumnIndex("body");
 
@@ -265,6 +266,21 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     public void ReplyButtonOnClickEvent(View view) {
-        startActivity(new Intent(SMSActivity.this, ReplyMessageActivity.class));
+        replyButtonOnClickEvent();
+    }
+
+    private void replyButtonOnClickEvent(){
+        smsInboxCursor.moveToPosition(selectedIndex);
+        String Cname = getContactName(this, smsInboxCursor.getString(2));
+        String Cnumber = smsInboxCursor.getString(2);
+
+        Log.e("Czar","Reply: " + Cname);
+
+        Intent intent = new Intent(getApplicationContext(), ReplyMessageActivity.class);
+        intent.putExtra("contactName", Cname);
+        intent.putExtra("contactNumber", Cnumber);
+        startActivity(intent);
+
+        //startActivity(new Intent(SMSActivity.this, ReplyMessageActivity.class));
     }
 }
