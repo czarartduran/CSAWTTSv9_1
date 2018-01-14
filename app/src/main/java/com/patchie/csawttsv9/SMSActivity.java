@@ -46,7 +46,7 @@ public class SMSActivity extends AppCompatActivity {
         return inst;
     }
     /**
-     * This return Contact name given its contact number
+     * This return Contact name given its contact number.
      * */
     public static String getContactName(Context context, String phoneNo) {
         ContentResolver cr = context.getContentResolver();
