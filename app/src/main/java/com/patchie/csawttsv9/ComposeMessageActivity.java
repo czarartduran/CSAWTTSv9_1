@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,8 +42,15 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.e("Czar","Compose called its destroy");
+        super.onDestroy();
+        finish();
+    }
+
     private void cancelComposeButton(){
-        startActivity(new Intent(ComposeMessageActivity.this, SMSActivity.class));
+        finish();
     }
 
     public void CancelBtn_OnClick_Event(View view) {

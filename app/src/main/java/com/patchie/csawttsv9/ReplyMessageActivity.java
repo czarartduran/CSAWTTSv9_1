@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 public class ReplyMessageActivity extends AppCompatActivity {
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
-    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
     SmsManager smsManager = SmsManager.getDefault();
 
     private EditText editText;

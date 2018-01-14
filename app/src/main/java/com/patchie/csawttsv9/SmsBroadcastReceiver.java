@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
 import android.widget.Toast;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
@@ -25,6 +26,9 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             String bodyIntro = context.getString(R.string.BodyIntro) + " ";
 
             String smsMessageStr = "";
+
+            Log.e("Czar","sms.length:" + sms.length);
+
             for (int i = 0; i < sms.length; ++i) {
                 String format = intentExtras.getString("format");
                 SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) sms[i], format);
@@ -49,7 +53,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 Intent i = new Intent(context, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
-
             }
 
         }

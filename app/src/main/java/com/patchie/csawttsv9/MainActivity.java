@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
@@ -151,18 +152,29 @@ public class MainActivity extends AppCompatActivity {
         //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
 
+    //MainActivity
     Speaker _speaker;
+    ArrayList<String> _SMSlist;
+    CSB csb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.e("Czar", "MainActivity: OnCreate");
+
         //Checking Permission
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkAndRequestPermissions()) {
                 //done permission
             }
+        }
+
+        //CSB initialization
+        if (csb == null) {
+            csb = new CSB(this);
+            Log.e("Czar", "CSB initiated");
         }
 
         //Maxing Volumes
@@ -267,6 +279,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.e("Czar", "MainActivity: onStart");
+        //Testing
+        if (csb == null) {
+            csb = new CSB(this);
+            Log.e("Czar", "CSB initiated");
+        }
+
         // TODO Auto-generated method stub
         super.onStart();
 
@@ -275,6 +294,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        Log.e("Czar", "MainActivity: onStop");
+
         // TODO Auto-generated method stub
         super.onStop();
 
@@ -282,23 +303,29 @@ public class MainActivity extends AppCompatActivity {
         //StopScanner();
     }
 
-    @Override
+    /*@Override
     protected void onDestroy() {
         super.onDestroy();
-
-
-    }
+    }*/
 
     private void Speak(String TextToRead) {
         _speaker.speak(TextToRead);
     }
 
+    private ArrayList<String> messageList;
+
     private void CallActivity() {
         startActivity(new Intent(MainActivity.this, CallActivity.class));
     }
 
+    Intent SmsIntent;
     protected void SmsActivity() {
-        startActivity(new Intent(MainActivity.this, SMSActivity.class));
+        Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
+        if (SmsIntent == null) {
+            SmsIntent = new Intent(getApplicationContext(), SMSActivity.class);
+        }
+        SmsIntent.putStringArrayListExtra("SMSLIST", csb.SMSLIST());
+        startActivity(SmsIntent);
     }
 
     //This is function to max volumes

@@ -16,7 +16,7 @@
         android:layout_marginTop="20dp"
         android:background="@layout/rounded_border_edittext"
         android:ems="10"
-        android:inputType="number"
+        android:inputType="phone"
         android:padding="10dp"
         android:textSize="25sp" />
 
