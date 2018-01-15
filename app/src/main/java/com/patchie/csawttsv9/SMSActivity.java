@@ -105,10 +105,6 @@ public class SMSActivity extends AppCompatActivity {
         inst = this;
 
         _speak = new Speaker(this);
-
-        /*if (HaveReadContactsPermission() == true && HaveReadSmsPermission() == true) {
-            refreshSmsInbox();
-        }*/
     }
 
     @Override
