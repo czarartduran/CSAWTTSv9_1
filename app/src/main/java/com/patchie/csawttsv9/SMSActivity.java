@@ -42,7 +42,7 @@ public class SMSActivity extends AppCompatActivity {
     //Variable ***Global
     private boolean _haveReadContactsPermission;
     private boolean _haveReadSmsPermission;
-    private int selectedIndex = 0;
+    private int selectedIndex = -1;
     private Cursor smsInboxCursor;
 
     public static SMSActivity instance() {
@@ -55,10 +55,15 @@ public class SMSActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
 
-        //Getting Passed ArrayList
-        _smsMessagesList = this.getIntent().getStringArrayListExtra("SMSLIST");
-        //transfer to orig
-        smsMessagesList = _smsMessagesList;
+        Log.e("Czar", "onCreate");
+
+        if (smsMessagesList.isEmpty()) {
+            //Getting Passed ArrayList
+            _smsMessagesList = this.getIntent().getStringArrayListExtra("SMSLIST");
+            //transfer to orig
+            smsMessagesList = _smsMessagesList;
+        }
+
         //Loading query
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
@@ -111,29 +116,16 @@ public class SMSActivity extends AppCompatActivity {
         super.onRestart();
     }
 
+
+    private boolean ResetSelectedIndex = false;
     @Override
     protected void onResume() {
         Log.e("Czar", "onResume");
+        if (ResetSelectedIndex){
+            selectedIndex =-1;
+        }
         super.onResume();
     }
-
-    /*@Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-
-       *//* outState.putInt("someVarA", someVarA);
-        outState.putString("someVarB", someVarB);*//*
-        savedInstanceState.putStringArrayList("smsMessagesList", smsMessagesList);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        *//*someVarA = savedInstanceState.getInt("someVarA");
-        someVarB = savedInstanceState.getString("someVarB");*//*
-        smsMessagesList = savedInstanceState.getStringArrayList("smsMessagesList");
-    }*/
-
 
     @Override
     protected void onPause() {
@@ -148,10 +140,6 @@ public class SMSActivity extends AppCompatActivity {
         _speak.destroy();
     }
 
-    /*@Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }*/
 
     private boolean HaveReadContactsPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -244,7 +232,7 @@ public class SMSActivity extends AppCompatActivity {
             return;
         } else {
             CSB csb = new CSB(this);
-            Log.e("Czar","ArrayList Before clearing: " + smsMessagesList.size());
+            Log.e("Czar", "ArrayList Before clearing: " + smsMessagesList.size());
             arrayAdapter.clear();
             String addressIntro = getString(R.string.AddressIntro) + " ";
             String bodyIntro = getString(R.string.BodyIntro) + " ";
@@ -266,10 +254,10 @@ public class SMSActivity extends AppCompatActivity {
 
     public void ComposeOnClickEvent(View view) {
         CallComposeActivity();
-
     }
 
     private void CallComposeActivity() {
+        ResetSelectedIndex = true;
         startActivity(new Intent(SMSActivity.this, ComposeMessageActivity.class));
     }
 
@@ -280,19 +268,17 @@ public class SMSActivity extends AppCompatActivity {
 
     private void PreviousMessage() {
         _speak.stop();
-        Log.e("Czar", "Last selected Index: " + selectedIndex);
         int listviewcount = this.messages.getAdapter().getCount();
-        Log.e("Czar", "Total listviewcount: " + listviewcount);
-        if (selectedIndex >= 0 && selectedIndex <= listviewcount - 1) {
-            Log.e("Czar", "Selected Index: " + selectedIndex);
-            Log.e("Czar", "Selected Message: " + this.messages.getItemAtPosition(selectedIndex));
-            //Toast.makeText(getApplicationContext(), this.messages.getItemAtPosition(selectedIndex).toString(), Toast.LENGTH_SHORT).show();
-            Speak(this.messages.getItemAtPosition(selectedIndex).toString());
-            if (selectedIndex > 0) {
+
+        if (selectedIndex >= 0 && selectedIndex < listviewcount) {
+            if (selectedIndex >= 0 && selectedIndex -1 >= 0) {
                 selectedIndex--;
+                Speak(this.messages.getItemAtPosition(selectedIndex).toString());
             } else {
-                Log.e("Czar", "Begging of Message List");
-                Toast.makeText(getApplicationContext(), "Begging List", Toast.LENGTH_SHORT).show();
+                selectedIndex = 0;
+                Speak("you are at the beginning of the List");
+                Speak(this.messages.getItemAtPosition(0).toString());
+                Toast.makeText(getApplicationContext(), "Beginning List", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -302,20 +288,32 @@ public class SMSActivity extends AppCompatActivity {
         NextMessage();
     }
 
+    private boolean LoadMoreSms = false;
+
     private void NextMessage() {
-        Log.e("Czar", "Last selected Index: " + selectedIndex);
+        if (LoadMoreSms) {
+            Toast.makeText(getApplicationContext(), "Loading more SMS", Toast.LENGTH_SHORT).show();
+            Speak("Loading more SMS");
+            CSB csb = new CSB(this, 5 + smsMessagesList.size());
+            smsMessagesList = csb.SMSLIST();
+            arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
+            messages.setAdapter(arrayAdapter);
+            arrayAdapter.notifyDataSetChanged();
+            csb = null;
+            LoadMoreSms = false;
+            return;
+        }
+
         int listviewcount = this.messages.getAdapter().getCount();
-        Log.e("Czar", "Total listviewcount: " + listviewcount);
-        if (selectedIndex >= 0 && selectedIndex <= listviewcount - 1) {
-            Log.e("Czar", "Selected Index: " + selectedIndex);
-            Log.e("Czar", "Selected Message: " + this.messages.getItemAtPosition(selectedIndex));
-            //Toast.makeText(getApplicationContext(), this.messages.getItemAtPosition(selectedIndex).toString(), Toast.LENGTH_SHORT).show();
-            Speak(this.messages.getItemAtPosition(selectedIndex).toString());
-            if (selectedIndex < listviewcount - 1) {
+        if (selectedIndex >= -1 && selectedIndex < listviewcount) {
+            if (selectedIndex < listviewcount && selectedIndex +1 < listviewcount) {
                 selectedIndex++;
+                Speak(this.messages.getItemAtPosition(selectedIndex).toString());
             } else {
-                Log.e("Czar", "End of Message List");
+                Speak("you are at the end of the list");
+                Speak(this.messages.getItemAtPosition(selectedIndex).toString());
                 Toast.makeText(getApplicationContext(), "End List", Toast.LENGTH_SHORT).show();
+                LoadMoreSms = true;
             }
         }
     }
@@ -329,44 +327,26 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void replyButtonOnClickEvent() {
-        Log.e("Czar", "replyButtonOnClickEvent");
-        Log.e("Czar","AdapterSize: " + arrayAdapter.getCount());
-        Log.e("Czar", "SMSArraylistSize: " + smsMessagesList.size());
+        if (selectedIndex < 0){
+            Speak("Please select message to reply");
+            return;
+        }
+        ResetSelectedIndex = false;
+        CSB csb = new CSB();
 
         smsInboxCursor.moveToPosition(selectedIndex);
-        Log.e("Czar", "SelectedIndex: "+ selectedIndex);
-        String Cname = getContactName(this, smsInboxCursor.getString(2));
-        String Cnumber = smsInboxCursor.getString(2);
+        int address = smsInboxCursor.getColumnIndex("address");
+        String Cname = csb.getContactName(this, smsInboxCursor.getString(address));
+        String Cnumber = smsInboxCursor.getString(address);
 
         Log.e("Czar", "Reply: " + Cname);
 
+        csb = null;
         Intent intent = new Intent(getApplicationContext(), ReplyMessageActivity.class);
         intent.putExtra("contactName", Cname);
         intent.putExtra("contactNumber", Cnumber);
         startActivity(intent);
-
-        //startActivity(new Intent(SMSActivity.this, ReplyMessageActivity.class));
     }
 
-    /**
-     * This return Contact name given its contact number
-     */
-    public static String getContactName(Context context, String phoneNo) {
-        ContentResolver cr = context.getContentResolver();
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNo));
-        Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
-        //if there is no returned result
-        if (cursor == null) {
-            return phoneNo;
-        }
-        String Name = phoneNo;
-        if (cursor.moveToFirst()) {
-            Name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
-        }
 
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
-        }
-        return Name;
-    }
 }

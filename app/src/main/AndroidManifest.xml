@@ -54,19 +54,19 @@
                 <data android:scheme="mmsto" />
                 <!--///for making it as a service-->
             </intent-filter>
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter">
-            </meta-data>
+            </meta-data>-->
         </activity>
 
         <receiver android:name=".SmsBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="999" >
+            <intent-filter android:priority="9999999" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
                 <action android:name="android.provider.Telephony.SMS_DELIVER_ACTION" />
@@ -74,7 +74,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".MMSBroadcastReceiver"
+        <!--<receiver android:name=".MMSBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
             <intent-filter android:priority="999" >
@@ -83,7 +83,7 @@
                 <data android:mimeType="application/vnd.wap.mms-message" />
 
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <service
             android:name=".QuickResponseService"

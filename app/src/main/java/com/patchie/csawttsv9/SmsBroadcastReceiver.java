@@ -9,6 +9,10 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
     public static final String SMS_BUNDLE = "pdus";
@@ -21,6 +25,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
             String address = "";
             String smsBody = "";
+            long smsDate = 0;
 
             String addressIntro = context.getString(R.string.AddressIntro) + " ";
             String bodyIntro = context.getString(R.string.BodyIntro) + " ";
@@ -35,12 +40,17 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 smsBody = smsMessage.getMessageBody().toString();
                 address = smsMessage.getOriginatingAddress();
+                smsDate = smsMessage.getTimestampMillis();
+
+                Date SmsDate = new Date(smsDate);
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
                 /*smsMessageStr += addressIntro + address + "\n";
                 smsMessageStr += bodyIntro + smsBody + "\n";*/
 
                 smsMessageStr += addressIntro + address + "\n";
-                smsMessageStr += bodyIntro + smsBody;
+                smsMessageStr += bodyIntro + smsBody + "\n";
+                smsMessageStr += "Date Sent: " + df.format(SmsDate);
             }
 
 
