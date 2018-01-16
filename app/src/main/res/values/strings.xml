@@ -2,6 +2,7 @@
     <string name="VendorID">6790</string>
 
     <string name="app_name">CSB</string>
+    <string name="MainActivity">Communication Interface App for the Blind</string>
     <string name="SMSActivity">Text Messages</string>
     <string name="ReplyActivity">Reply Message</string>
     <string name="ComposeActivity">Compose Message</string>

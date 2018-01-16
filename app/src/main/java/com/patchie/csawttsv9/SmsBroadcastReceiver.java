@@ -48,9 +48,11 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 /*smsMessageStr += addressIntro + address + "\n";
                 smsMessageStr += bodyIntro + smsBody + "\n";*/
 
+                smsMessageStr += "\n";
                 smsMessageStr += addressIntro + address + "\n";
                 smsMessageStr += bodyIntro + smsBody + "\n";
                 smsMessageStr += "Date Sent: " + df.format(SmsDate);
+                smsMessageStr += "\n";
             }
 
 

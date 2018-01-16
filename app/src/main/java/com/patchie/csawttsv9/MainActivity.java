@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -161,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(getString(R.string.MainActivity));
 
         Log.e("Czar", "MainActivity: OnCreate");
 
@@ -315,16 +317,33 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> messageList;
 
     private void CallActivity() {
-        startActivity(new Intent(MainActivity.this, CallActivity.class));
+        //startActivity(new Intent(MainActivity.this, CallActivity.class));
+        callActivity();
+    }
+
+    Intent CallIntent;
+    private void callActivity(){
+        if (CallIntent == null){
+            //initialized
+            CallIntent = new Intent(getApplicationContext(), CallActivity.class);
+        }
+        /*put extras*/
+
+
+        startActivity(CallIntent);
     }
 
     Intent SmsIntent;
     protected void SmsActivity() {
-        Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
+        //Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
         if (SmsIntent == null) {
+            //initialized
             SmsIntent = new Intent(getApplicationContext(), SMSActivity.class);
         }
+        /*put extras*/
         SmsIntent.putStringArrayListExtra("SMSLIST", csb.SMSLIST());
+
+
         startActivity(SmsIntent);
     }
 
