@@ -43,38 +43,45 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <!--for making it as a service-->
+
+                <!-- for making it as a service -->
                 <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.SENDTO"/>
+                <action android:name="android.intent.action.SENDTO" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="sms" />
                 <data android:scheme="smsto" />
                 <data android:scheme="mms" />
                 <data android:scheme="mmsto" />
-                <!--///for making it as a service-->
+                <!-- ///for making it as a service -->
             </intent-filter>
-            <!--<intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter">
-            </meta-data>-->
+            </meta-data>
+            -->
         </activity>
 
-        <receiver android:name=".SmsBroadcastReceiver"
+        <receiver
+            android:name=".SmsBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="9999999" >
+            <intent-filter android:priority="9999999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
                 <action android:name="android.provider.Telephony.SMS_DELIVER_ACTION" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <!--<receiver android:name=".MMSBroadcastReceiver"
+        <!--
+        <receiver android:name=".MMSBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
             <intent-filter android:priority="999" >
@@ -83,7 +90,8 @@
                 <data android:mimeType="application/vnd.wap.mms-message" />
 
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        -->
 
         <service
             android:name=".QuickResponseService"
@@ -92,7 +100,9 @@
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
+
                 <data android:scheme="sms" />
                 <data android:scheme="smsto" />
                 <data android:scheme="mms" />
@@ -108,6 +118,7 @@
         <activity android:name=".Contact_list" />
         <activity android:name=".View_contacts" />
         <activity android:name=".Add_contact" />
+        <activity android:name=".View_contactsv2"></activity>
     </application>
 
 </manifest>

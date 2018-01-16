@@ -21,7 +21,7 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/holo_blue_light"
         android:onClick="ViewConBack_btn_OnClick_Event"
-        android:text="@string/back_1" />
+        android:text="Back" />
 
     <Button
         android:id="@+id/nextBtn"
@@ -29,8 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/prevBtn"
         android:layout_alignBottom="@+id/prevBtn"
-        android:layout_toEndOf="@+id/prevBtn"
+        android:layout_marginEnd="11dp"
+        android:layout_toStartOf="@+id/backbtn"
         android:background="@android:color/holo_blue_light"
+        android:onClick="NextContactbtn"
         android:text="@string/NextButton" />
 
     <Button
@@ -39,9 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/addCbtn"
         android:layout_alignBottom="@+id/addCbtn"
-        android:layout_marginStart="11dp"
         android:layout_toEndOf="@+id/addCbtn"
         android:background="@android:color/holo_blue_light"
+        android:onClick="PrevContactbtn"
         android:text="@string/PreviousButton" />
 
     <Button
@@ -52,6 +54,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="15dp"
         android:background="@android:color/holo_blue_light"
+        android:onClick="ADDCON"
         android:text="ADD CONTACT" />
 
 </RelativeLayout>

@@ -7,7 +7,7 @@
     <string name="ComposeActivity">Compose Message</string>
     <string name="CallActivity">Call</string>
     <string name="ContactsListing">Contacts</string>
-    
+
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>
 
