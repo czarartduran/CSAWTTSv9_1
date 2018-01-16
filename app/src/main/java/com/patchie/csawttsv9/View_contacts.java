@@ -45,6 +45,30 @@ public class View_contacts extends ListActivity {
         cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC");
         startManagingCursor(cursor);
 
+        /*cursor checker*/
+        Log.e("Czar", "Row Count: " + cursor.getCount());
+        Log.e("Czar","Column Count: " + cursor.getColumnCount());
+        //Uncomment this to see all column included in the sms query
+        String[] asx = cursor.getColumnNames();
+        String StrAsx = "";
+        for (int i=0; i < asx.length; i++){
+            //Log.e("Czar","SMS query Index " + i + ": " + asx[i]);
+            StrAsx += asx[i] + " | ";
+        }
+        Log.e("Czar",StrAsx);
+        //plotting
+        if (cursor.getCount() > 0 && cursor.moveToFirst()){
+            do{
+                String str = "";
+                for (int i=0; i < asx.length; i++){
+                    str += "Index " + i + " "+ cursor.getColumnName(i) + ": " + cursor.getString(i) + " | ";
+                    //Log.e("Czar","SMS query Index " + i + ": " + asx[i]);
+                }
+                Log.e("Czar", "Phonebook| " + str);
+            }while (cursor.moveToNext());
+        }
+
+
         //Contains the Name, number, and id of a specific contact
         String[] from = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone._ID};

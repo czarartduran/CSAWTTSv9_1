@@ -19,34 +19,7 @@ public class CallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_call);
         setTitle(getString(R.string.CallActivity));
 
-        //Button buttdial = findViewById(R.id.dialbtn);
-        Button buttsc = findViewById(R.id.scbtn);
-        Button backbtn = findViewById(R.id.backbtn);
-        /*buttdial.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent myIntent = new Intent (CallActivity.this,Dial_activity.class);
-                startActivity(myIntent);
 
-            }
-        });*/
-
-        /*buttsc.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent myIntent = new Intent (CallActivity.this,Contact_list.class);
-                startActivity(myIntent);
-
-
-            }
-        });*/
-
-        backbtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 
     public void Dial_btn_OnClick_Event(View view) {
@@ -54,14 +27,30 @@ public class CallActivity extends AppCompatActivity {
     }
 
     private void dial_btn_OnClick_Event(){
-        startActivity(new Intent(CallActivity.this, Dial_activity.class));
+        callDialActivity();
+    }
+
+    Intent dialActivityIntent;
+    private void callDialActivity(){
+        if (dialActivityIntent == null){
+            dialActivityIntent = new Intent(CallActivity.this, Dial_activity.class);
+        }
+        startActivity(dialActivityIntent);
     }
 
     public void SelectCon_btn_OnClick_Event(View view) {
         selectCon_btn_OnClick_Event();
     }
 
+    Intent contactListIntent;
     private void selectCon_btn_OnClick_Event(){
-        startActivity(new Intent(CallActivity.this, View_contacts.class));
+        if (contactListIntent == null){
+            contactListIntent = new Intent(CallActivity.this, View_contacts.class);
+        }
+        startActivity(contactListIntent);
+    }
+
+    public void Back_btn_OnClickEvent(View view) {
+        finish();
     }
 }

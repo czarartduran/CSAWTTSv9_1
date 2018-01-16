@@ -41,6 +41,7 @@
         android:layout_below="@+id/scbtn"
         android:layout_marginTop="33dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/back" />
+        android:text="@string/back"
+        android:onClick="Back_btn_OnClickEvent"/>
 
 </RelativeLayout>
