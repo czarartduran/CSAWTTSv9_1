@@ -21,13 +21,14 @@
         android:textSize="25sp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/searchRecipient_btn"
         android:layout_width="@android:dimen/app_icon_size"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/contactnumber"
         android:layout_marginStart="18dp"
         android:layout_toEndOf="@+id/contactnumber"
-        android:background="@android:drawable/ic_menu_search" />
+        android:background="@android:drawable/ic_menu_search"
+        android:onClick="searchRecipient_btn_OnClickEvent"/>
 
     <EditText
         android:id="@+id/compose"

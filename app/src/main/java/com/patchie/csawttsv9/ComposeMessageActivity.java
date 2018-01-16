@@ -76,4 +76,16 @@ public class ComposeMessageActivity extends AppCompatActivity {
     public void ComposeSMS_send_btn_OnClick_Event(View view) {
         SendMessage();
     }
+
+    public void searchRecipient_btn_OnClickEvent(View view) {
+        SearchRecipient_btn_OnClickEvent();
+    }
+
+    Intent RecipientIntent;
+    private void SearchRecipient_btn_OnClickEvent(){
+        if (RecipientIntent == null){
+            RecipientIntent = new Intent(ComposeMessageActivity.this, SmsRecipientActivity.class);
+        }
+        startActivity(RecipientIntent);
+    }
 }

@@ -1,11 +1,16 @@
 package com.patchie.csawttsv9;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.app.ListActivity;
 import android.database.Cursor;
+import android.provider.Telephony;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -42,7 +47,8 @@ public class View_contacts extends ListActivity {
         _speak = new Speaker(getApplicationContext());
 
 
-        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC");
+        //cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
         startManagingCursor(cursor);
 
         /*cursor checker*/
@@ -62,12 +68,14 @@ public class View_contacts extends ListActivity {
                 String str = "";
                 for (int i=0; i < asx.length; i++){
                     str += "Index " + i + " "+ cursor.getColumnName(i) + ": " + cursor.getString(i) + " | ";
-                    //Log.e("Czar","SMS query Index " + i + ": " + asx[i]);
+                    Log.e("Czar","query Index " + i + ": " + asx[i] + " = " + cursor.getString(i));
                 }
                 Log.e("Czar", "Phonebook| " + str);
             }while (cursor.moveToNext());
+            //return;
         }
 
+        /*cursor checker*/
 
         //Contains the Name, number, and id of a specific contact
         String[] from = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER,
