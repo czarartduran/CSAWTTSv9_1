@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,51 +9,73 @@
 
     <ListView
         android:id="@+id/messages"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_above="@+id/ComposeButton"
         android:layout_alignParentStart="true"
-        android:saveEnabled="true"/>
+        android:saveEnabled="true"
+        app:layout_constraintBottom_toTopOf="@+id/ComposeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/ComposeButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="15dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="ComposeOnClickEvent"
-        android:text="@string/ComposeButton" />
+        android:text="@string/ComposeButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/UpButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messages" />
 
     <Button
         android:id="@+id/UpButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@+id/messages"
-        android:layout_marginStart="16dp"
         android:layout_toEndOf="@+id/ComposeButton"
         android:background="@android:color/holo_blue_light"
         android:onClick="PreviousButtonOnClickEvent"
-        android:text="@string/PreviousButton" />
+        android:text="@string/PreviousButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/DownButton"
+        app:layout_constraintStart_toEndOf="@+id/ComposeButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/DownButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@+id/messages"
         android:layout_toEndOf="@+id/UpButton"
         android:background="@android:color/holo_blue_light"
         android:onClick="NextButtonOnClickEvent"
-        android:text="@string/NextButton" />
+        android:text="@string/NextButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ReplyButton"
+        app:layout_constraintStart_toEndOf="@+id/UpButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/ReplyButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/messages"
         android:background="@android:color/holo_blue_light"
         android:onClick="ReplyButtonOnClickEvent"
-        android:text="@string/ReplyButton" />
-</RelativeLayout>
+        android:text="@string/ReplyButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/DownButton"
+        app:layout_constraintTop_toBottomOf="@+id/messages"
+        app:layout_constraintVertical_bias="0.0" />
+</android.support.constraint.ConstraintLayout>
