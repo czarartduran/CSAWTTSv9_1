@@ -13,11 +13,15 @@ import android.widget.Toast;
 
 public class ComposeMessageActivity extends AppCompatActivity {
     SmsManager smsManager = SmsManager.getDefault();
+    private final static int CREATE_REQUEST_CODE = 0130;
 
     Button buttonSend;
     Button buttonCancel;
     EditText textPhoneNo;
     EditText textSMS;
+
+    String conname = "";
+    String connum = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +62,24 @@ public class ComposeMessageActivity extends AppCompatActivity {
     }
 
     private void SendMessage(){
+        String finalrec = "";
         String phoneNo = textPhoneNo.getText().toString();
         String sms = textSMS.getText().toString();
 
+        if (textPhoneNo.isEnabled() == true){
+            finalrec = textPhoneNo.getText().toString();
+        }else {
+            finalrec = connum;
+        }
+
+        /*if (connum == null){
+            finalrec = phoneNo;
+        }else {
+            finalrec = connum;
+        }*/
+
         try {
-            smsManager.sendTextMessage(phoneNo, null,  sms, null, null);
+            smsManager.sendTextMessage(finalrec, null,  sms, null, null);
             Toast.makeText(getApplicationContext(), "SMS Sent!",
                     Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -86,6 +103,19 @@ public class ComposeMessageActivity extends AppCompatActivity {
         if (RecipientIntent == null){
             RecipientIntent = new Intent(ComposeMessageActivity.this, SmsRecipientActivity.class);
         }
-        startActivity(RecipientIntent);
+        startActivityForResult(RecipientIntent, CREATE_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CREATE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                //Use Data to get string
+                conname = data.getStringExtra("CONTACT_NAME");
+                connum = data.getStringExtra("CONTACT_NUMBER");
+                textPhoneNo.setEnabled(false);
+                textPhoneNo.setText(conname);
+            }
+        }
     }
 }

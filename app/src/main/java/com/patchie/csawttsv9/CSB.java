@@ -123,15 +123,13 @@ public class CSB{
     }
 
     private ArrayList<String> _contactList = new ArrayList<>();
+    private ArrayList<String[]> filtercontactlist = new ArrayList<>();
     private ArrayList<String> Load_contactlist(Context context){
-        Log.e("Czar", "CSB LoadContact");
         ContentResolver contentResolver = context.getContentResolver();
-        Log.e("Czar", "content resolver assigned");
-        Cursor contactCursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null,null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-        Log.e("Czar", "Cursor initialized");
+        Cursor contactCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
         /*Testing*/
-        String[] strTest = contactCursor.getColumnNames();
+        /*String[] strTest = contactCursor.getColumnNames();
         String res = "";
         for (int i = 0; i < strTest.length; i++){
             res += i + ": " + strTest[i] + " |" + "\n";
@@ -139,34 +137,49 @@ public class CSB{
         Log.e("Czar", "Res= \n" + res);
         contactCursor.moveToFirst();
         do {
-
-        }while (contactCursor.moveToNext());
+            res ="";
+            for (int i = 0; i < strTest.length; i++){
+                res += i +" : " + strTest[i] + ": " + contactCursor.getString(i) + "\n";
+            }
+            Log.e("Czar", "\n" + res);
+        }while (contactCursor.moveToNext());*/
 
         int nameINDEX = contactCursor.getColumnIndex("display_name"); //6
-        Log.e("Czar", "pulled display name index: " + nameINDEX);
-        int numberINDEX = contactCursor.getColumnIndex("data4"); //data4, data1
-        Log.e("Czar", "pulled number index " + numberINDEX);
-        /*if (contactCursor.getCount() > 0 && contactCursor.moveToFirst()){
+        int numberINDEX = contactCursor.getColumnIndex("data1"); //data4, data1
+        if (contactCursor.getCount() > 0 && contactCursor.moveToFirst()){
             _contactList = new ArrayList<>();
             String ContactName = "";
-            String Contactnumber = "Contact Number: ";
-
+            String Contactnumber = "";
+            String filtercon[] = new String[2]; //0:name | 1:number
             do {
+                filtercon= new String[2]; //0:name | 1:number
                 String str = "";
-                ContactName += contactCursor.getString(nameINDEX);
-                Contactnumber += contactCursor.getColumnName(numberINDEX);
-                str += "\n" + ContactName + "\n" + Contactnumber + "\n";
-
+                ContactName = contactCursor.getString(nameINDEX);
+                filtercon[0] = contactCursor.getString(nameINDEX);
+                Contactnumber = "Contact Number: " + contactCursor.getString(numberINDEX);
+                filtercon[1] = contactCursor.getString(numberINDEX);
+                str += ContactName + "\n" + Contactnumber;
                 _contactList.add(str);
+                filtercontactlist.add(filtercon);
 
             }while (contactCursor.moveToNext());
-
-        }*/
+        }
         return _contactList;
     }
 
     public ArrayList<String> CONTACTLIST(){
         return Load_contactlist(LocalContext);
-        //return _contactList;
+    }
+
+    public String RecipientName(int selectedINDEX){
+        Load_contactlist(LocalContext);
+        String str[] =  (String[]) filtercontactlist.get(selectedINDEX);
+        return str[0];
+    }
+
+    public String RecipientNumber(int selectedINDEX){
+        Load_contactlist(LocalContext);
+        String str[] =  (String[]) filtercontactlist.get(selectedINDEX);
+        return str[1];
     }
 }
