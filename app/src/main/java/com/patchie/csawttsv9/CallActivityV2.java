@@ -1,6 +1,10 @@
 package com.patchie.csawttsv9;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +33,7 @@ public class CallActivityV2 extends AppCompatActivity {
         _speak = new Speaker(getApplicationContext());
 
         contact_lv = findViewById(R.id.call_contact_lv);
-        if (contactlist == null){
+        if (contactlist == null) {
             Log.e("Czar", "Initialized contact list");
             csb = new CSB(this);
             arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, csb.CONTACTLIST());
@@ -45,7 +49,7 @@ public class CallActivityV2 extends AppCompatActivity {
         Speak("Please select contact");
     }
 
-    private void Speak(String string){
+    private void Speak(String string) {
         _speak.speak(string);
     }
 
@@ -53,13 +57,13 @@ public class CallActivityV2 extends AppCompatActivity {
         sra_prev_btn();
     }
 
-    private void sra_prev_btn(){
+    private void sra_prev_btn() {
         int lv_count = this.contact_lv.getCount();
-        if (selectedIndex >= 0 && selectedIndex < lv_count){
-            if (selectedIndex >=0 && selectedIndex -1 >= 0){
+        if (selectedIndex >= 0 && selectedIndex < lv_count) {
+            if (selectedIndex >= 0 && selectedIndex - 1 >= 0) {
                 selectedIndex--;
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
-            }else {
+            } else {
                 selectedIndex = 0;
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }
@@ -70,7 +74,7 @@ public class CallActivityV2 extends AppCompatActivity {
         sra_sel_btn();
     }
 
-    private void sra_sel_btn(){
+    private void sra_sel_btn() {
         //Log.e("Czar", "RecipientName: " + csb.RecipientName(selectedIndex));
         /*SELECTED_NAME = csb.RecipientName(selectedIndex);
         SELECTED_NUMBER = csb.RecipientNumber(selectedIndex);
@@ -78,7 +82,22 @@ public class CallActivityV2 extends AppCompatActivity {
         intent.putExtra("CONTACT_NAME", SELECTED_NAME);
         intent.putExtra("CONTACT_NUMBER", SELECTED_NUMBER);
         setResult(RESULT_OK, intent);*/
-        finish();
+        //finish();
+
+        SELECTED_NUMBER = csb.RecipientNumber(selectedIndex);
+        Intent callIntent;
+        callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + SELECTED_NUMBER));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        startActivity(callIntent);
     }
 
     public void sra_next_btn_OnClickEvent(View view) {
