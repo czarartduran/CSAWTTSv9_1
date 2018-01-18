@@ -14,7 +14,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     CSB csb;
     Speaker _speak;
-    private int selectedIndex = 0;
+    private int selectedIndex = -1;
     private String SELECTED_NAME, SELECTED_NUMBER;
 
     ListView contact_lv;

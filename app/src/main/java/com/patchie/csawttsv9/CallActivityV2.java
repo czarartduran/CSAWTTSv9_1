@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class CallActivityV2 extends AppCompatActivity {
     CSB csb;
     Speaker _speak;
-    private int selectedIndex = 0;
+    private int selectedIndex = -1;
     private String SELECTED_NAME, SELECTED_NUMBER;
 
     ListView contact_lv;
