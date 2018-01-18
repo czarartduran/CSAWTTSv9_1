@@ -78,6 +78,7 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
         android:text="@string/CallDialer"
+        android:onClick="call_dial_btn_OnClickEvent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/call_can_btn"

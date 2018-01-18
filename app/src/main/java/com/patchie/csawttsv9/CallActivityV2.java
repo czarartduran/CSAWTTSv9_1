@@ -123,4 +123,17 @@ public class CallActivityV2 extends AppCompatActivity {
     private void sra_can_btn(){
         finish();
     }
+
+    public void call_dial_btn_OnClickEvent(View view) {
+        Call_Dial_btn();
+    }
+
+    Intent DialIntent;
+    public void Call_Dial_btn(){
+        if (DialIntent == null){
+            //DialIntent = new Intent(CallActivityV2.this, Dial_activity.class);
+            DialIntent = new Intent(CallActivityV2.this, DialerActivity.class);
+        }
+        startActivity(DialIntent);
+    }
 }

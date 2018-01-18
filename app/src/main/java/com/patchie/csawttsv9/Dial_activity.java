@@ -34,9 +34,11 @@ public class Dial_activity extends AppCompatActivity implements View.OnClickList
 
         }
     }
+
     public void display(String val){
         ET1.append(val);
     }
+
     private boolean checkCallPermission(){
         String permission = "android.permission.CALL_PHONE";
         int res = getApplicationContext() .checkCallingOrSelfPermission(permission);
