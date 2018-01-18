@@ -122,7 +122,8 @@
         <activity android:name=".View_contacts" />
         <activity android:name=".Add_contact" />
         <activity android:name=".View_contactsv2" />
-        <activity android:name=".SmsRecipientActivity"></activity>
+        <activity android:name=".SmsRecipientActivity" />
+        <activity android:name=".CallActivityV2"></activity>
     </application>
 
 </manifest>

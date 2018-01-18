@@ -325,7 +325,8 @@ public class MainActivity extends AppCompatActivity {
     private void callActivity(){
         if (CallIntent == null){
             //initialized
-            CallIntent = new Intent(getApplicationContext(), CallActivity.class);
+            //CallIntent = new Intent(getApplicationContext(), CallActivity.class);
+            CallIntent = new Intent(getApplicationContext(), CallActivityV2.class);
         }
         /*put extras*/
 

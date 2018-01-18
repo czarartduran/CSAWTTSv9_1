@@ -10,8 +10,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class SmsRecipientActivity extends AppCompatActivity {
-
+public class CallActivityV2 extends AppCompatActivity {
     CSB csb;
     Speaker _speak;
     private int selectedIndex = 0;
@@ -24,8 +23,8 @@ public class SmsRecipientActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sms_recipient);
-        setTitle(getString(R.string.SmsRecipientActivity));
+        setContentView(R.layout.activity_call_v2);
+        setTitle(getString(R.string.CallerActivity));
 
         _speak = new Speaker(getApplicationContext());
 
@@ -44,7 +43,6 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
         _speak = new Speaker(getApplicationContext());
         Speak("Please select contact");
-
     }
 
     private void Speak(String string){
@@ -74,12 +72,12 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     private void sra_sel_btn(){
         //Log.e("Czar", "RecipientName: " + csb.RecipientName(selectedIndex));
-        SELECTED_NAME = csb.RecipientName(selectedIndex);
+        /*SELECTED_NAME = csb.RecipientName(selectedIndex);
         SELECTED_NUMBER = csb.RecipientNumber(selectedIndex);
         Intent intent = new Intent();
         intent.putExtra("CONTACT_NAME", SELECTED_NAME);
         intent.putExtra("CONTACT_NUMBER", SELECTED_NUMBER);
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, intent);*/
         finish();
     }
 

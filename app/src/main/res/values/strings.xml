@@ -9,6 +9,7 @@
     <string name="CallActivity">Call</string>
     <string name="ContactsListing">Contacts</string>
     <string name="SmsRecipientActivity">Select Recipient</string>
+    <string name="CallerActivity">Caller</string>
 
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>
@@ -17,6 +18,7 @@
     <string name="PreviousButton">Prev</string>
     <string name="NextButton">Next</string>
     <string name="ReplyButton">Reply</string>
+    <string name="CallDialer">Dialer</string>
 
     <string name="hnt_et_name">Display Name</string>
     <string name="hnt_et_mobile_phone">Mobile Phone</string>
