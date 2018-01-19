@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
         }else {
             _speaker = new Speaker(this);
             _speaker.speak(TextToRead);
-            _speaker.
+
         }
 
     }
