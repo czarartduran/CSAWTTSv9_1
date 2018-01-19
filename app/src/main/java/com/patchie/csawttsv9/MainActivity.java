@@ -1,6 +1,7 @@
 package com.patchie.csawttsv9;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Build;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -165,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
         setTitle(getString(R.string.MainActivity));
 
         Log.e("Czar", "MainActivity: OnCreate");
+
+        //Do not disturb
+        //isDoNotDisturbDisabled();
 
         //Checking Permission
         if (Build.VERSION.SDK_INT >= 23) {
@@ -350,14 +355,23 @@ public class MainActivity extends AppCompatActivity {
 
     //This is function to max volumes
     private void SetVolumes() {
-        AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
-        am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_ALARM, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
-        am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
+
+
+        if (isDoNotDisturbDisabled()){
+            AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
+            am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0);
+            am.setStreamVolume(AudioManager.STREAM_ALARM, 100, 0);
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
+            am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
+            am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
+        }else {
+            //vibrate if codes fail to enable sound function of the device
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(5000);
+        }
+
     }
 
     public void sms_btn_OnClickEvent(View view) {
@@ -366,5 +380,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void call_btn_OnClick_Event(View view) {
         CallActivity();
+    }
+
+    private boolean isDoNotDisturbDisabled(){
+        boolean ans = false;
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        // Check if the notification policy access has been granted for the app.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                //Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                //startActivity(intent);
+                mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                ans = true;
+            }
+        }else {
+            Toast.makeText(this, "Unable to Disable DO NOT DISTURB", Toast.LENGTH_LONG);
+        }
+        return ans;
     }
 }

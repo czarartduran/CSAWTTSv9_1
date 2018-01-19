@@ -24,6 +24,11 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--Notification permission-->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <!--Permission to vibrate-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <!-- Call Module Permission -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
