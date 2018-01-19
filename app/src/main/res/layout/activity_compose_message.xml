@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,24 +11,29 @@
         android:id="@+id/contactnumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView2"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:background="@layout/rounded_border_edittext"
         android:ems="10"
         android:inputType="phone"
         android:padding="10dp"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toStartOf="@+id/searchRecipient_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <Button
         android:id="@+id/searchRecipient_btn"
-        android:layout_width="@android:dimen/app_icon_size"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/contactnumber"
-        android:layout_marginStart="18dp"
-        android:layout_toEndOf="@+id/contactnumber"
+        android:layout_width="51dp"
+        android:layout_height="53dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="20dp"
         android:background="@android:drawable/ic_menu_search"
-        android:onClick="searchRecipient_btn_OnClickEvent"/>
+        android:onClick="searchRecipient_btn_OnClickEvent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
         android:id="@+id/compose"
@@ -36,56 +41,74 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView3"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@layout/rounded_border_edittext"
         android:ems="10"
         android:gravity="top"
         android:inputType="textMultiLine"
         android:lines="5"
         android:padding="10dp"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
         android:id="@+id/buttonSend"
-        android:layout_width="match_parent"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/compose"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
         android:background="@android:color/holo_blue_light"
+        android:onClick="ComposeSMS_send_btn_OnClick_Event"
         android:text="@string/send_btn"
-        android:onClick="ComposeSMS_send_btn_OnClick_Event"/>
+        app:layout_constraintEnd_toStartOf="@+id/buttonCancel"
+        app:layout_constraintHorizontal_bias="0.262"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/compose" />
 
     <Button
         android:id="@+id/buttonCancel"
-        android:layout_width="match_parent"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonSend"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="28dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="CancelBtn_OnClick_Event"
         android:text="@string/cancel_btn"
-        android:textColor="@android:color/background_dark" />
+        android:textColor="@android:color/background_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/compose" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
         android:text="@string/phone_number"
         android:textColor="@android:color/black"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/contactnumber"
-        android:layout_marginTop="22dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/message_here"
         android:textColor="@android:color/black"
-        android:textSize="25sp" />
-</RelativeLayout>
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contactnumber" />
+</android.support.constraint.ConstraintLayout>
