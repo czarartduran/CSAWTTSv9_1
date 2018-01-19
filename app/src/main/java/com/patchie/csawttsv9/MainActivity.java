@@ -14,6 +14,7 @@ import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -35,6 +36,103 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    //MainActivity
+    private Speaker _speaker;
+    private ArrayList<String> _SMSlist;
+    private CSB csb;
+    private boolean IS_DONOTDISTURBDISABLE = false;
+    private NotificationManager mNotificationManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        setTitle(getString(R.string.MainActivity));
+
+        Log.e("Czar", "MainActivity: OnCreate");
+
+        //Checking Permission
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!checkAndRequestPermissions()) {
+                return;
+            }
+        }
+
+        //CSB initialization
+        if (csb == null) {
+            csb = new CSB(this);
+            Log.e("Czar", "CSB initiated");
+        }
+
+        //Maxing Volumes
+        //SetVolumes();
+
+        //initializing speaker
+        if (_speaker == null) {
+            _speaker = new Speaker(getApplicationContext());
+            Log.e("Czar", "_speaker has been initialized");
+        }
+
+        //assigning editText2
+        editText = (EditText) findViewById(R.id.editText2);
+        Log.e("Czar", "editText has been initialized");
+
+        //initializing arduino scanner
+        usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(broadcastReceiver, filter);
+        Log.e("Czar", "Arduino has been initialized");
+
+        //StartScanner();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.e("Czar", "MainActivity: onStart");
+        //Testing
+       /* if (csb == null) {
+            csb = new CSB(this);
+            Log.e("Czar", "CSB initiated");
+        }*/
+
+       turnOffDoNotDisturbMode();
+       SetVolumes();
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Czar", "MainActivity: onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e("Czar", "MainActivity: onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("Czar", "MainActivity: onStop");
+        _speaker.destroy();
+        //StopScanner();
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("Czar", "MainActivity: onDestroy");
+
+        super.onDestroy();
+    }
+
+    //main codes
     public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
     UsbManager usbManager;
     UsbDevice device;
@@ -89,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
                     connection = usbManager.openDevice(device);
                     serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
                     if (serialPort != null) {
-                        if (serialPort.open()) { //Set Serial Connection Parameters.
+                        if (serialPort.open()) {
+                            //Set Serial Connection Parameters.
                             //setUiEnabled(true);
                             serialPort.setBaudRate(9600);
                             serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
@@ -155,59 +254,7 @@ public class MainActivity extends AppCompatActivity {
         //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
 
-    //MainActivity
-    Speaker _speaker;
-    ArrayList<String> _SMSlist;
-    CSB csb;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setTitle(getString(R.string.MainActivity));
-
-        Log.e("Czar", "MainActivity: OnCreate");
-
-        //Do not disturb
-        //isDoNotDisturbDisabled();
-
-        //Checking Permission
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkAndRequestPermissions()) {
-                //done permission
-            }
-        }
-
-        //CSB initialization
-        if (csb == null) {
-            csb = new CSB(this);
-            Log.e("Czar", "CSB initiated");
-        }
-
-        //Maxing Volumes
-        SetVolumes();
-
-        //initializing speaker
-        if (_speaker == null) {
-            _speaker = new Speaker(getApplicationContext());
-            Log.e("Czar", "_speaker has been initialized");
-        }
-
-        //assigning editText2
-        editText = (EditText) findViewById(R.id.editText2);
-        Log.e("Czar", "editText has been initialized");
-
-        //initializing arduino scanner
-        usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(broadcastReceiver, filter);
-        Log.e("Czar", "Arduino has been initialized");
-
-        //StartScanner();
-    }
 
     public static final int PERMISSIONS_REQUEST = 1;
 
@@ -218,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
         int permissionReadSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
         int permisionSendSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
         int permissionReceived = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+        int permissionNotification = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY);
 
         List<String> listPermissionNeeded = new ArrayList<>();
         if (permissionCallPhone != PackageManager.PERMISSION_GRANTED) {
@@ -237,6 +285,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (permissionReceived != PackageManager.PERMISSION_GRANTED) {
             listPermissionNeeded.add(Manifest.permission.RECEIVE_SMS);
+        }
+        if (permissionNotification != PackageManager.PERMISSION_GRANTED){
+            listPermissionNeeded.add(Manifest.permission.ACCESS_NOTIFICATION_POLICY);
         }
         if (!listPermissionNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionNeeded.toArray(new String[listPermissionNeeded.size()]), PERMISSIONS_REQUEST);
@@ -280,43 +331,28 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     //You did not accept the request can not use the functionality.
                 }
+                if (grantResults.length > 0 && grantResults[6] == PackageManager.PERMISSION_GRANTED){
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                }
                 break;
         }
     }
 
-    @Override
-    protected void onStart() {
-        Log.e("Czar", "MainActivity: onStart");
-        //Testing
-        if (csb == null) {
-            csb = new CSB(this);
-            Log.e("Czar", "CSB initiated");
-        }
 
-        // TODO Auto-generated method stub
-        super.onStart();
 
-        //Speak("Pasok mga suki, presyong divisoria, MAY SAMPU SAMPU");
-    }
 
-    @Override
-    protected void onStop() {
-        Log.e("Czar", "MainActivity: onStop");
-
-        // TODO Auto-generated method stub
-        super.onStop();
-
-        _speaker.destroy();
-        //StopScanner();
-    }
-
-    /*@Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }*/
 
     private void Speak(String TextToRead) {
-        _speaker.speak(TextToRead);
+        if (_speaker !=null){
+            _speaker.speak(TextToRead);
+        }else {
+            _speaker = new Speaker(this);
+            _speaker.speak(TextToRead);
+            _speaker.
+        }
+
     }
 
     private ArrayList<String> messageList;
@@ -353,11 +389,30 @@ public class MainActivity extends AppCompatActivity {
         startActivity(SmsIntent);
     }
 
+    // Custom method to turn off do not disturb mode programmatically
+    protected void turnOffDoNotDisturbMode(){
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (mNotificationManager.isNotificationPolicyAccessGranted()){
+                //removing dnd
+                mNotificationManager.setInterruptionFilter(mNotificationManager.INTERRUPTION_FILTER_NONE);
+                IS_DONOTDISTURBDISABLE = true;
+                // Show a toast
+                Toast.makeText(this,"Turn OFF Do Not Disturb Mode",Toast.LENGTH_SHORT).show();
+                Speak("Do Not Disturb has been turned OFF");
+            }else {
+                Toast.makeText(this,"Going to get grant access",Toast.LENGTH_SHORT).show();
+                // If notification policy access not granted for this package
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                startActivity(intent);
+            }
+        }
+    }
+
     //This is function to max volumes
     private void SetVolumes() {
-
-
-        if (isDoNotDisturbDisabled()){
+        Log.e("Czar", "IS_DONOTDISTURBDISABLE: " + String.valueOf(IS_DONOTDISTURBDISABLE));
+        if (IS_DONOTDISTURBDISABLE == true){
             AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
@@ -371,7 +426,6 @@ public class MainActivity extends AppCompatActivity {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(5000);
         }
-
     }
 
     public void sms_btn_OnClickEvent(View view) {
@@ -380,22 +434,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void call_btn_OnClick_Event(View view) {
         CallActivity();
-    }
-
-    private boolean isDoNotDisturbDisabled(){
-        boolean ans = false;
-        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        // Check if the notification policy access has been granted for the app.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
-                //Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                //startActivity(intent);
-                mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
-                ans = true;
-            }
-        }else {
-            Toast.makeText(this, "Unable to Disable DO NOT DISTURB", Toast.LENGTH_LONG);
-        }
-        return ans;
     }
 }
