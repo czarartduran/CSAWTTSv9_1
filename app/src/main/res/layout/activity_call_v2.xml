@@ -8,25 +8,28 @@
 
     <Button
         android:id="@+id/call_prev_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="1dp"
-        android:text="Prev."
+        android:background="@android:color/holo_blue_light"
         android:onClick="sra_prev_btn_OnClickEvent"
+        android:text="Prev."
         app:layout_constraintBottom_toTopOf="@+id/call_can_btn"
         app:layout_constraintEnd_toStartOf="@+id/call_sel_btn"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/call_contact_lv" />
 
     <Button
         android:id="@+id/call_sel_btn"
-        android:layout_width="209dp"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="1dp"
-        android:text="Select"
+        android:background="@android:color/holo_blue_light"
         android:onClick="sra_sel_btn_OnClickEvent"
+        android:text="Select"
         app:layout_constraintBottom_toTopOf="@+id/call_can_btn"
         app:layout_constraintEnd_toStartOf="@+id/call_next_btn"
         app:layout_constraintStart_toEndOf="@+id/call_prev_btn"
@@ -34,29 +37,31 @@
 
     <Button
         android:id="@+id/call_next_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="1dp"
-        android:text="Next"
+        android:background="@android:color/holo_blue_light"
         android:onClick="sra_next_btn_OnClickEvent"
+        android:text="Next"
         app:layout_constraintBottom_toTopOf="@+id/call_can_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/call_sel_btn"
-        app:layout_constraintTop_toBottomOf="@+id/call_contact_lv" />
+        app:layout_constraintTop_toBottomOf="@+id/call_contact_lv"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/call_can_btn"
-        android:layout_width="200dp"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:background="@android:color/holo_blue_light"
         android:onClick="sra_can_btn_OnClickEvent"
         android:text="Cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/call_dial_btn"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button3"
         app:layout_constraintTop_toTopOf="@+id/call_sel_btn"
         app:layout_constraintVertical_bias="1.0" />
 
@@ -73,14 +78,32 @@
 
     <Button
         android:id="@+id/call_dial_btn"
-        android:layout_width="205dp"
+        android:layout_width="106dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/CallDialer"
+        android:background="@android:color/holo_blue_light"
         android:onClick="call_dial_btn_OnClickEvent"
+        android:text="@string/CallDialer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/call_can_btn"
-        app:layout_constraintTop_toBottomOf="@+id/call_sel_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/call_next_btn"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="106dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_blue_light"
+        android:onClick="add_contacts_btn_OnclickEvent"
+        android:text="@string/str_btn_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/call_prev_btn"
+        app:layout_constraintHorizontal_bias="0.941"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/call_prev_btn"
+        app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,54 +8,60 @@
 
     <EditText
         android:id="@+id/et_name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="15dp"
-        android:padding="10dp"
+        android:layout_marginTop="68dp"
         android:background="@layout/rounded_border_edittext"
         android:hint="@string/hnt_et_name"
         android:inputType="text"
-        android:textSize="25sp" />
+        android:padding="10dp"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/et_mobile_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/et_name"
-        android:layout_alignStart="@+id/et_name"
-        android:layout_below="@+id/et_name"
-        android:layout_marginTop="26dp"
-        android:padding="10dp"
+        android:layout_width="0dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="24dp"
         android:background="@layout/rounded_border_edittext"
         android:hint="@string/hnt_et_mobile_phone"
         android:inputType="phone"
-        android:textSize="25sp" />
+        android:padding="10dp"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_name" />
 
 
     <Button
         android:id="@+id/backbtn"
-        android:layout_width="match_parent"
+        android:layout_width="156dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_mobile_phone"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="131dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="48dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/cancel" />
+        android:text="@string/cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_mobile_phone" />
 
     <Button
         android:id="@+id/btn_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/et_mobile_phone"
-        android:layout_marginTop="44dp"
+        android:layout_width="156dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="48dp"
         android:background="@android:color/holo_blue_light"
-        android:text="@string/str_btn_add" />
+        android:text="@string/str_btn_add"
+        app:layout_constraintEnd_toStartOf="@+id/backbtn"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_mobile_phone" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
 
 
