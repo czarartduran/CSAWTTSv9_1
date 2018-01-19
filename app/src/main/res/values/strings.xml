@@ -23,7 +23,7 @@
     <string name="hnt_et_name">Display Name</string>
     <string name="hnt_et_mobile_phone">Mobile Phone</string>
     <string name="str_btn_add">Add Contact</string>
-    <string name="cancel">ABORT</string>
+    <string name="cancel">Cancel</string>
 
     <string name="dial">1.DIAL</string>
     <string name="select_contact">2.SELECT CONTACTS</string>
@@ -46,11 +46,11 @@
     <string name="d10">#</string>
     <string name="d11">*</string>
     <string name="d12">0</string>
-    <string name="call">1. CALL</string>
-    <string name="del">2. DELETE</string>
+    <string name="call">CALL</string>
+    <string name="del">DELETE</string>
 
-    <string name="call_main">1. CALL</string>
-    <string name="sms">2. SMS</string>
+    <string name="call_main">CALL</string>
+    <string name="sms">SMS</string>
 
     <string name="to">To:</string>
     <string name="send">SEND</string>

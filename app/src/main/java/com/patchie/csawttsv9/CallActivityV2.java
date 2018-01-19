@@ -136,4 +136,18 @@ public class CallActivityV2 extends AppCompatActivity {
         }
         startActivity(DialIntent);
     }
+
+    public void add_contacts_btn_OnclickEvent (View view) {
+        add_contacts_btn();
+    }
+
+    Intent AddContactIntent;
+    public void add_contacts_btn(){
+        if (AddContactIntent == null){
+            //AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
+            AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
+        }
+        startActivity(AddContactIntent);
+    }
+
 }

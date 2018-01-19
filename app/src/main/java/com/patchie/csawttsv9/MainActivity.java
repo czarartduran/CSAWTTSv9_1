@@ -350,7 +350,6 @@ public class MainActivity extends AppCompatActivity {
         }else {
             _speaker = new Speaker(this);
             _speaker.speak(TextToRead);
-
         }
 
     }
@@ -421,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
             am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
             am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
             am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
+
         }else {
             //vibrate if codes fail to enable sound function of the device
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
