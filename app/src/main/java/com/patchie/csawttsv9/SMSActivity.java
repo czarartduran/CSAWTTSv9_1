@@ -55,7 +55,7 @@ public class SMSActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
 
-        Log.e("Czar", "onCreate");
+        Log.e("Czar", "SmsActivity: onCreate");
 
         if (smsMessagesList.isEmpty()) {
             //Getting Passed ArrayList
@@ -99,27 +99,30 @@ public class SMSActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        Log.e("Czar", "onStart");
+        Log.e("Czar", "SmsActivity: onStart");
 
         active = true;
         inst = this;
 
-        _speak = new Speaker(this);
+
+        //_speak = new Speaker(this);
     }
 
     @Override
     protected void onRestart() {
+        Log.e("Czar", "SmsActivity: onRestart");
         super.onRestart();
     }
-
 
     private boolean ResetSelectedIndex = false;
     @Override
     protected void onResume() {
-        Log.e("Czar", "onResume");
+        Log.e("Czar", "SmsActivity: onResume");
         if (ResetSelectedIndex){
             selectedIndex =-1;
         }
+
+        _speak.speakAdd("Press 1 to compose");
         super.onResume();
     }
 
@@ -130,10 +133,10 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        super.onStop();
-
         active = false;
         _speak.destroy();
+
+        super.onStop();
     }
 
 

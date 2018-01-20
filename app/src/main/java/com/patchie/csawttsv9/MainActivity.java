@@ -15,6 +15,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,15 +30,21 @@ import android.widget.Toast;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import org.w3c.dom.Text;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     //MainActivity
-    private Speaker _speaker;
+    private TextToSpeech tts;
+    private Speaker speaker;
+    //private SpeakerV2 _speackerV2;
+
     private ArrayList<String> _SMSlist;
     private CSB csb;
     private boolean IS_DONOTDISTURBDISABLE = false;
@@ -58,20 +65,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //CSB initialization
-        if (csb == null) {
-            csb = new CSB(this);
-            Log.e("Czar", "CSB initiated");
-        }
+        turnOffDoNotDisturbMode();
+        SetVolumes();
 
-        //Maxing Volumes
-        //SetVolumes();
-
-        //initializing speaker
-        if (_speaker == null) {
-            _speaker = new Speaker(getApplicationContext());
-            Log.e("Czar", "_speaker has been initialized");
-        }
+        //Initializing CSB class
+        csb = new CSB(this);
 
         //assigning editText2
         editText = (EditText) findViewById(R.id.editText2);
@@ -86,40 +84,59 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
         Log.e("Czar", "Arduino has been initialized");
 
-        //StartScanner();
+        //initializing speaker
+        InitializeTTS();
+
+        //_speaker.speak("Mahal", TextToSpeech.QUEUE_ADD, null, null);
+        //Log.e("Czar", "_speaker has been initialized");
+
+        StartScanner();
     }
 
-    @Override
+    /*@Override
     protected void onStart() {
         Log.e("Czar", "MainActivity: onStart");
-        //Testing
-       /* if (csb == null) {
-            csb = new CSB(this);
-            Log.e("Czar", "CSB initiated");
-        }*/
-
-       turnOffDoNotDisturbMode();
-       SetVolumes();
-
         super.onStart();
-    }
+    }*/
 
     @Override
     protected void onResume() {
-        Log.e("Czar", "MainActivity: onResume");
         super.onResume();
+        Log.e("Czar", "MainActivity: onResume");
+
+        if (tts == null) {
+            InitializeTTS();
+        }
+    }
+
+    private void InitializeTTS() {
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.US);
+                    //_ready = true;
+                    Log.e("Czar", "Speaker.java onInit value: true");
+                    tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
+                } else {
+                    //_ready = false;
+                    Log.e("Czar", "Speaker.java onInit value: false");
+                }
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         Log.e("Czar", "MainActivity: onPause");
+        tts.shutdown();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
         Log.e("Czar", "MainActivity: onStop");
-        _speaker.destroy();
+        tts.shutdown();
         //StopScanner();
 
         super.onStop();
@@ -153,7 +170,16 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //checker
                         editText.setText(input);
+                        switch (input) {
+                            case "97":
+                                callActivity();
+                                break;
+                            case "91":
+                                SmsActivity();
+                                break;
+                        }
                     }
                 });
 
@@ -228,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 device = entry.getValue();
                 int deviceVID = device.getVendorId();
                 //if (deviceVID == 0x2341)//Arduino Vendor ID
-                if (deviceVID == 0x067B)//Arduino Vendor ID
+                if (deviceVID == Integer.valueOf(getString(R.string.VendorID)))//Arduino Vendor ID
                 {
                     PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(device, pi);
@@ -253,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
-
 
 
     public static final int PERMISSIONS_REQUEST = 1;
@@ -286,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         if (permissionReceived != PackageManager.PERMISSION_GRANTED) {
             listPermissionNeeded.add(Manifest.permission.RECEIVE_SMS);
         }
-        if (permissionNotification != PackageManager.PERMISSION_GRANTED){
+        if (permissionNotification != PackageManager.PERMISSION_GRANTED) {
             listPermissionNeeded.add(Manifest.permission.ACCESS_NOTIFICATION_POLICY);
         }
         if (!listPermissionNeeded.isEmpty()) {
@@ -331,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     //You did not accept the request can not use the functionality.
                 }
-                if (grantResults.length > 0 && grantResults[6] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[6] == PackageManager.PERMISSION_GRANTED) {
                     //Permission Granted Successfully. Write working code here.
                 } else {
                     //You did not accept the request can not use the functionality.
@@ -340,18 +365,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
     private void Speak(String TextToRead) {
-        if (_speaker !=null){
-            _speaker.speak(TextToRead);
-        }else {
-            _speaker = new Speaker(this);
-            _speaker.speak(TextToRead);
-        }
-
+        //_speaker.speak(TextToRead);
     }
 
     private ArrayList<String> messageList;
@@ -362,8 +377,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Intent CallIntent;
-    private void callActivity(){
-        if (CallIntent == null){
+
+    private void callActivity() {
+        if (CallIntent == null) {
             //initialized
             //CallIntent = new Intent(getApplicationContext(), CallActivity.class);
             CallIntent = new Intent(getApplicationContext(), CallActivityV2.class);
@@ -375,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Intent SmsIntent;
+
     protected void SmsActivity() {
         //Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
         if (SmsIntent == null) {
@@ -389,18 +406,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Custom method to turn off do not disturb mode programmatically
-    protected void turnOffDoNotDisturbMode(){
+    protected void turnOffDoNotDisturbMode() {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (mNotificationManager.isNotificationPolicyAccessGranted()){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mNotificationManager.isNotificationPolicyAccessGranted()) {
                 //removing dnd
                 mNotificationManager.setInterruptionFilter(mNotificationManager.INTERRUPTION_FILTER_NONE);
                 IS_DONOTDISTURBDISABLE = true;
                 // Show a toast
-                Toast.makeText(this,"Turn OFF Do Not Disturb Mode",Toast.LENGTH_SHORT).show();
-                Speak("Do Not Disturb has been turned OFF");
-            }else {
-                Toast.makeText(this,"Going to get grant access",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Turn OFF Do Not Disturb Mode", Toast.LENGTH_SHORT).show();
+                /*if (_speaker != null){
+                    Speak("Do Not Disturb has been turned OFF");
+                }else {
+                    _speaker = new Speaker(this);
+                }*/
+            } else {
+                Toast.makeText(this, "Going to get grant access", Toast.LENGTH_SHORT).show();
                 // If notification policy access not granted for this package
                 Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                 startActivity(intent);
@@ -411,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
     //This is function to max volumes
     private void SetVolumes() {
         Log.e("Czar", "IS_DONOTDISTURBDISABLE: " + String.valueOf(IS_DONOTDISTURBDISABLE));
-        if (IS_DONOTDISTURBDISABLE == true){
+        if (IS_DONOTDISTURBDISABLE == true) {
             AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
@@ -421,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
             am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
             am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
 
-        }else {
+        } else {
             //vibrate if codes fail to enable sound function of the device
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(5000);
