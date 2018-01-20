@@ -64,7 +64,7 @@ public class CSB{
     private void Load_smslist(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
         Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
-        Log.e("Czar", "CursorSize: " + smsInboxCursor.getCount());
+        //Log.e("Czar", "CursorSize: " + smsInboxCursor.getCount());
 
         int indexAddress = smsInboxCursor.getColumnIndex("address");
         int indexBody = smsInboxCursor.getColumnIndex("body");

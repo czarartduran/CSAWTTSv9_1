@@ -55,17 +55,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(getString(R.string.MainActivity));
-
         Log.e("Czar", "MainActivity: OnCreate");
 
         //Checking Permission
         if (Build.VERSION.SDK_INT >= 23) {
             if (!checkAndRequestPermissions()) {
                 return;
+            } else {
+                Log.e("Czar", "MainActivity: Permission granted!");
             }
         }
 
+        //Turning OFF DoNotDisturbMode
         turnOffDoNotDisturbMode();
+        //Maxing out all volume module component
         SetVolumes();
 
         //Initializing CSB class
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitializeTTS() {
+        Log.e("Czar", "MainrActivity: InitializeTTS");
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     tts.setLanguage(Locale.US);
                     //_ready = true;
                     Log.e("Czar", "Speaker.java onInit value: true");
-                    tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
+                    //tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
                 } else {
                     //_ready = false;
                     Log.e("Czar", "Speaker.java onInit value: false");
@@ -182,20 +186,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-                /*switch (data) {
-                    case "1":
-
-                        *//**tvAppend(textView, "A");**//*
-                        *//**clearButton = (Button) findViewById(R.id.buttonClear);**//*
-                        tvAppend(editText, "A");
-                        break;
-                    case "2":
-                        tvAppend(textView, "B");
-                        break;
-                }*/
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 editText.setText(e.toString());
@@ -231,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("Czar SERIAL", "PORT IS NULL");
                     }
                 } else {
-                    Log.e("Czar SERIAL", "PERM NOT GRANTED");
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
                 }
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 //onClickStart(startButton);
@@ -264,8 +254,10 @@ public class MainActivity extends AppCompatActivity {
                     device = null;
                 }
 
-                if (!keep)
+                if (!keep){
                     break;
+                }
+
             }
         }
     }
@@ -407,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Custom method to turn off do not disturb mode programmatically
     protected void turnOffDoNotDisturbMode() {
+        Log.e("Czar", "MainActivity: turnOffDoNotDisturbMode");
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (mNotificationManager.isNotificationPolicyAccessGranted()) {
@@ -415,12 +408,14 @@ public class MainActivity extends AppCompatActivity {
                 IS_DONOTDISTURBDISABLE = true;
                 // Show a toast
                 Toast.makeText(this, "Turn OFF Do Not Disturb Mode", Toast.LENGTH_SHORT).show();
+                Log.e("Czar", "MainActivity: Successfully turnOffDoNotDisturbMode");
                 /*if (_speaker != null){
                     Speak("Do Not Disturb has been turned OFF");
                 }else {
                     _speaker = new Speaker(this);
                 }*/
             } else {
+                Log.e("Czar", "MainActivity: turnOffDoNotDisturbMode NEED PERMISSION");
                 Toast.makeText(this, "Going to get grant access", Toast.LENGTH_SHORT).show();
                 // If notification policy access not granted for this package
                 Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
@@ -441,9 +436,9 @@ public class MainActivity extends AppCompatActivity {
             am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
             am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
             am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
-
         } else {
             //vibrate if codes fail to enable sound function of the device
+            Log.e("Czar", "MainActivity: SOMETHING WENT WRONG SetVolumes");
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(5000);
         }
