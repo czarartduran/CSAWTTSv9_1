@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -13,6 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,9 +25,21 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.felhr.usbserial.UsbSerialDevice;
+import com.felhr.usbserial.UsbSerialInterface;
+
 import java.util.ArrayList;
 
 public class SMSActivity extends AppCompatActivity {
+    /*
+    * ARDUINO GLOBAL VARIABLE
+    * */
+    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
+    UsbManager usbManager;
+    UsbDevice device;
+    UsbSerialDevice serialPort;
+    UsbDeviceConnection connection;
+    EditText editText;
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
@@ -45,15 +62,49 @@ public class SMSActivity extends AppCompatActivity {
     private int selectedIndex = -1;
     private Cursor smsInboxCursor;
 
+    //Arduino
+    Arduino arduino;
+    EditText UsbOut;
+
     public static SMSActivity instance() {
         return inst;
     }
 
-    @Override
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        @Override
+        public void onReceivedData(byte[] bytes) {
+
+        }
+    };
+
+    void onchange(){
+
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
+
+        //arduino
+        UsbOut = new EditText(this);
+        arduino = new Arduino(getApplicationContext(), UsbOut);
+        UsbOut.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Toast.makeText(getApplicationContext(), UsbOut.getText().toString(), Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         Log.e("Czar", "SmsActivity: onCreate");
 
@@ -68,7 +119,7 @@ public class SMSActivity extends AppCompatActivity {
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         //Initializing Speaker
-        _speak = new Speaker(getApplicationContext());
+        _speak = new Speaker(getApplicationContext(), "Welcome to SMS Module");
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -115,11 +166,12 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private boolean ResetSelectedIndex = false;
+
     @Override
     protected void onResume() {
         Log.e("Czar", "SmsActivity: onResume");
-        if (ResetSelectedIndex){
-            selectedIndex =-1;
+        if (ResetSelectedIndex) {
+            selectedIndex = -1;
         }
 
         _speak.speakAdd("Press 1 to compose");
@@ -135,6 +187,7 @@ public class SMSActivity extends AppCompatActivity {
     public void onStop() {
         active = false;
         _speak.destroy();
+
 
         super.onStop();
     }
@@ -270,7 +323,7 @@ public class SMSActivity extends AppCompatActivity {
         int listviewcount = this.messages.getAdapter().getCount();
 
         if (selectedIndex >= 0 && selectedIndex < listviewcount) {
-            if (selectedIndex >= 0 && selectedIndex -1 >= 0) {
+            if (selectedIndex >= 0 && selectedIndex - 1 >= 0) {
                 selectedIndex--;
                 Speak(this.messages.getItemAtPosition(selectedIndex).toString());
             } else {
@@ -305,7 +358,7 @@ public class SMSActivity extends AppCompatActivity {
 
         int listviewcount = this.messages.getAdapter().getCount();
         if (selectedIndex >= -1 && selectedIndex < listviewcount) {
-            if (selectedIndex < listviewcount && selectedIndex +1 < listviewcount) {
+            if (selectedIndex < listviewcount && selectedIndex + 1 < listviewcount) {
                 selectedIndex++;
                 Speak(this.messages.getItemAtPosition(selectedIndex).toString());
             } else {
@@ -326,7 +379,7 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void replyButtonOnClickEvent() {
-        if (selectedIndex < 0){
+        if (selectedIndex < 0) {
             Speak("Please select message to reply");
             return;
         }

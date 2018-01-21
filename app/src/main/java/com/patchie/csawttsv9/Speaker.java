@@ -39,6 +39,39 @@ public class Speaker {
         });
     }
 
+    public Speaker(Context context, final String WelcomeMessage) {
+        Log.e("Czar", "Initializing Speaker");
+        _tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+
+            @Override
+            public void onInit(int status) {
+                Log.e("Czar", "Speaker.java had been initialized");
+
+                if (status == TextToSpeech.SUCCESS) {
+                    _tts.setLanguage(Locale.US);
+                    _ready = true;
+                    SpeakWelcomeMessage(WelcomeMessage);
+                    Log.e("Czar", "Speaker.java onInit value: true");
+                } else {
+                    _ready = false;
+                    Log.e("Czar", "Speaker.java onInit value: false");
+                }
+            }
+        });
+    }
+
+    private void SpeakWelcomeMessage(String WelcomeMessage){
+        Log.e("Czar", "MessageLength: " + WelcomeMessage.length());
+        if (WelcomeMessage.length() > 0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                _tts.speak(WelcomeMessage, TextToSpeech.QUEUE_FLUSH, null, null);
+            }else {
+                _tts.speak(WelcomeMessage, TextToSpeech.QUEUE_FLUSH, null);
+            }
+
+        }
+    }
+
     public void setSpeedRate(float speechrate) {
         _tts.setSpeechRate(speechrate);
     }

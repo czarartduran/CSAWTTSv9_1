@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
         StartScanner();
     }
 
-    /*@Override
+    @Override
     protected void onStart() {
         Log.e("Czar", "MainActivity: onStart");
         super.onStart();
-    }*/
+    }
 
     @Override
     protected void onResume() {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitializeTTS() {
-        Log.e("Czar", "MainrActivity: InitializeTTS");
+        Log.e("Czar", "MainActivity: InitializeTTS");
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -121,7 +121,11 @@ public class MainActivity extends AppCompatActivity {
                     tts.setLanguage(Locale.US);
                     //_ready = true;
                     Log.e("Czar", "Speaker.java onInit value: true");
-                    //tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
+                    }else {
+                        tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null);
+                    }
                 } else {
                     //_ready = false;
                     Log.e("Czar", "Speaker.java onInit value: false");
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         Log.e("Czar", "MainActivity: onStop");
         tts.shutdown();
-        //StopScanner();
+        StopScanner();
 
         super.onStop();
     }
