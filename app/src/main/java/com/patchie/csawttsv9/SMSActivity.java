@@ -1,9 +1,12 @@
 package com.patchie.csawttsv9;
 
 import android.Manifest;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.hardware.usb.UsbDevice;
@@ -28,7 +31,10 @@ import android.widget.Toast;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SMSActivity extends AppCompatActivity {
     /*
@@ -39,7 +45,6 @@ public class SMSActivity extends AppCompatActivity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
-    EditText editText;
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
@@ -62,9 +67,6 @@ public class SMSActivity extends AppCompatActivity {
     private int selectedIndex = -1;
     private Cursor smsInboxCursor;
 
-    //Arduino
-    Arduino arduino;
-
 
     public static SMSActivity instance() {
         return inst;
@@ -74,10 +76,6 @@ public class SMSActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
-
-        //arduino
-
-
         Log.e("Czar", "SmsActivity: onCreate");
 
         if (smsMessagesList.isEmpty()) {
@@ -91,7 +89,7 @@ public class SMSActivity extends AppCompatActivity {
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         //Initializing Speaker
-        _speak = new Speaker(getApplicationContext(), "Welcome to SMS Module");
+        _speak = new Speaker(getApplicationContext(), getString(R.string.SMSWelcomeMessage));
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -121,7 +119,6 @@ public class SMSActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         Log.e("Czar", "SmsActivity: onStart");
 
         active = true;
@@ -129,6 +126,25 @@ public class SMSActivity extends AppCompatActivity {
 
 
         //_speak = new Speaker(this);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Czar", "SmsActivity: onResume");
+
+        if (ResetSelectedIndex) {
+            selectedIndex = -1;
+        }
+
+        if (_speak != null){
+            _speak = new Speaker(getApplicationContext());
+            _speak.speakAdd("Press 1 to compose and Press 2 to reply");
+        }
+
+        RegisterIntent();
+        StartScanner();
+
+        super.onResume();
     }
 
     @Override
@@ -140,30 +156,24 @@ public class SMSActivity extends AppCompatActivity {
     private boolean ResetSelectedIndex = false;
 
     @Override
-    protected void onResume() {
-        Log.e("Czar", "SmsActivity: onResume");
-        if (ResetSelectedIndex) {
-            selectedIndex = -1;
-        }
-
-        _speak.speakAdd("Press 1 to compose");
-        super.onResume();
-    }
-
-    @Override
     protected void onPause() {
+        Log.e("Czar", "SmsActivity: onPause");
+
+        _speak.destroy();
+
+        StopScanner();
+        unregisterReceiver(broadcastReceiver);
+
         super.onPause();
     }
 
     @Override
     public void onStop() {
+        Log.e("Czar", "SmsActivity: onStop");
         active = false;
-        _speak.destroy();
-
 
         super.onStop();
     }
-
 
     private boolean HaveReadContactsPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -386,7 +396,122 @@ public class SMSActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void ArduinoBridge(String input){
-        Toast.makeText(this, input, Toast.LENGTH_SHORT);
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        //Defining a Callback which triggers whenever data is read.
+
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            Log.e("Czar", "Called: onReceivedData");
+            String data = null;
+            try {
+                data = new String(arg0, "UTF-8");
+                final String input = data;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //checker
+                        Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+                        switch (input) {
+                            case "97":
+                                PreviousMessage();
+                                break;
+                            case "91":
+                                NextMessage();
+                                break;
+                            case "108":
+                                CallComposeActivity();
+                                break;
+                            case "32":
+                                replyButtonOnClickEvent();
+                                break;
+                        }
+                    }
+                });
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+                Log.e("Czar", e.getLocalizedMessage());
+            }
+        }
+    };
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("Czar", "Called: BroadcastReceiver");
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    connection = usbManager.openDevice(device);
+                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+                    if (serialPort != null) {
+                        if (serialPort.open()) {
+                            //Set Serial Connection Parameters.
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            serialPort.read(mCallback);
+                            Log.e("Czar", "SerialPort Opened!");
+
+                        } else {
+                            Log.e("Czar SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        Log.e("Czar SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
+                }
+            }
+        }
+    };
+
+    private void StartScanner() {
+        Log.e("Czar", "onClickerStart");
+        HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
+        if (!usbDevices.isEmpty()) {
+            boolean keep = true;
+            for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
+                device = entry.getValue();
+                int deviceVID = device.getVendorId();
+                //if (deviceVID == 0x2341)//Arduino Vendor ID
+                if (deviceVID == Integer.valueOf(getString(R.string.VendorID)))//Arduino Vendor ID
+                {
+                    PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                    usbManager.requestPermission(device, pi);
+                    keep = false;
+                } else {
+                    connection = null;
+                    device = null;
+                }
+
+                if (!keep){
+                    break;
+                }
+            }
+        }else {
+            Log.e("Czar", "No Usb Devices!");
+        }
+    }
+
+    private void StopScanner() {
+        try{
+            if (serialPort.open() == true) {
+                serialPort.close();
+                Log.e("Czar", "SerialPort is Closed!");
+            }
+        }catch(Exception e){
+            Log.e("Czar", "No serial port to close");
+        }
+    }
+
+    private void RegisterIntent(){
+        usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(broadcastReceiver, filter);
     }
 }

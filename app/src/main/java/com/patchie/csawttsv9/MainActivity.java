@@ -41,9 +41,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     //MainActivity
-    private TextToSpeech tts;
     private Speaker speaker;
-    //private SpeakerV2 _speackerV2;
 
     private ArrayList<String> _SMSlist;
     private CSB csb;
@@ -78,23 +76,10 @@ public class MainActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.editText2);
         Log.e("Czar", "editText has been initialized");
 
-        //initializing arduino scanner
-        usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(broadcastReceiver, filter);
-        Log.e("Czar", "Arduino has been initialized");
-
         //initializing speaker
-        InitializeTTS();
-
-        //_speaker.speak("Mahal", TextToSpeech.QUEUE_ADD, null, null);
-        //Log.e("Czar", "_speaker has been initialized");
-
-        StartScanner();
+        speaker= new Speaker(getApplicationContext(), getString(R.string.WelcomeMessage));
     }
+
 
     @Override
     protected void onStart() {
@@ -107,45 +92,25 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.e("Czar", "MainActivity: onResume");
 
-        if (tts == null) {
-            InitializeTTS();
-        }
-    }
-
-    private void InitializeTTS() {
-        Log.e("Czar", "MainActivity: InitializeTTS");
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    tts.setLanguage(Locale.US);
-                    //_ready = true;
-                    Log.e("Czar", "Speaker.java onInit value: true");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null, null);
-                    }else {
-                        tts.speak(getString(R.string.WelcomeMessage), TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                } else {
-                    //_ready = false;
-                    Log.e("Czar", "Speaker.java onInit value: false");
-                }
-            }
-        });
+        speaker = new Speaker(getApplicationContext());
+        RegisterIntent();
+        StartScanner();
     }
 
     @Override
     protected void onPause() {
         Log.e("Czar", "MainActivity: onPause");
-        tts.shutdown();
+
+        speaker.destroy();
+        this.unregisterReceiver(broadcastReceiver);
+        StopScanner();
+
         super.onPause();
     }
 
     @Override
     protected void onStop() {
         Log.e("Czar", "MainActivity: onStop");
-        tts.shutdown();
-        StopScanner();
 
         super.onStop();
     }
@@ -155,6 +120,15 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "MainActivity: onDestroy");
 
         super.onDestroy();
+    }
+
+    private void RegisterIntent(){
+        usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_USB_PERMISSION);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(broadcastReceiver, filter);
     }
 
     //main codes
@@ -209,14 +183,13 @@ public class MainActivity extends AppCompatActivity {
                     if (serialPort != null) {
                         if (serialPort.open()) {
                             //Set Serial Connection Parameters.
-                            //setUiEnabled(true);
                             serialPort.setBaudRate(9600);
                             serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
                             serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(mCallback);
-                            //tvAppend(textView, "Serial Connection Opened!\n");
+                            Log.e("Czar", "SerialPort Opened!");
 
                         } else {
                             Log.e("Czar SERIAL", "PORT NOT OPEN");
@@ -227,16 +200,15 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
                 }
-            } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+            }
+            /*else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 //onClickStart(startButton);
                 StartScanner();
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
                 //onClickStop(stopButton);
                 StopScanner();
-            }
+            }*/
         }
-
-        ;
     };
 
     private void StartScanner() {
@@ -268,20 +240,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void StopScanner() {
-        Log.e("Czar", "onClickStart");
-        //setUiEnabled(false);
-
         try{
             if (serialPort.open() == true) {
                 serialPort.close();
+                Log.e("Czar", "SerialPort is Closed!");
             }
         }catch(Exception e){
             Log.e("Czar", "No serial port to close");
         }
-
-        //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
-
 
     public static final int PERMISSIONS_REQUEST = 1;
 
@@ -367,10 +334,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void Speak(String TextToRead) {
-        //_speaker.speak(TextToRead);
-    }
-
     private ArrayList<String> messageList;
 
     private void CallActivity() {
@@ -413,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (mNotificationManager.isNotificationPolicyAccessGranted()) {
                 //removing dnd
-                mNotificationManager.setInterruptionFilter(mNotificationManager.INTERRUPTION_FILTER_NONE);
+                mNotificationManager.setInterruptionFilter(mNotificationManager.INTERRUPTION_FILTER_ALL);
                 IS_DONOTDISTURBDISABLE = true;
                 // Show a toast
                 Toast.makeText(this, "Turn OFF Do Not Disturb Mode", Toast.LENGTH_SHORT).show();
