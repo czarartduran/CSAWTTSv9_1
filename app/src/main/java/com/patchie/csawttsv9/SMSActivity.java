@@ -406,25 +406,29 @@ public class SMSActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
+                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+
+                switch (input) {
+                    case "97":
+                        PreviousMessage();
+                        break;
+                    case "91":
+                        NextMessage();
+                        break;
+                    case "108":
+                        CallComposeActivity();
+                        break;
+                    case "32":
+                        replyButtonOnClickEvent();
+                        break;
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //checker
-                        Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
-                        switch (input) {
-                            case "97":
-                                PreviousMessage();
-                                break;
-                            case "91":
-                                NextMessage();
-                                break;
-                            case "108":
-                                CallComposeActivity();
-                                break;
-                            case "32":
-                                replyButtonOnClickEvent();
-                                break;
-                        }
+
+
                     }
                 });
             } catch (UnsupportedEncodingException e) {

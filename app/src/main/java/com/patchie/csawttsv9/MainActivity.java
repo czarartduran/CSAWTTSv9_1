@@ -149,19 +149,22 @@ public class MainActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
+
+
+                switch (input) {
+                    case "97":
+                        callActivity();
+                        break;
+                    case "91":
+                        SmsActivity();
+                        break;
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //checker
                         editText.setText(input);
-                        switch (input) {
-                            case "97":
-                                callActivity();
-                                break;
-                            case "91":
-                                SmsActivity();
-                                break;
-                        }
                     }
                 });
             } catch (UnsupportedEncodingException e) {
