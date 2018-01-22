@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -20,6 +21,7 @@ import android.content.Context;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Created by Czar Art Z. Duran on 21/01/2018.
@@ -32,24 +34,17 @@ public class Arduino {
     UsbDevice device;
     UsbDeviceConnection connection;
     UsbSerialDevice serialPort;
-    EditText castText;
 
     //Initialization
-    public Arduino(Context context, EditText usbOut) {
+    public Arduino(Context context) {
         this.Lcontext = context;
-        usbManager = (UsbManager) context.getSystemService(context.USB_SERVICE);
+        usbManager = (UsbManager) Lcontext.getSystemService(context.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         Lcontext.registerReceiver(broadcastReceiver, filter);
-        castText = usbOut;
     }
-
-    /*@Override
-    public void onReceivedData(byte[] bytes) {
-
-    }*/
 
     public UsbSerialInterface.UsbReadCallback lCallback = new UsbSerialInterface.UsbReadCallback() {
         @Override
@@ -57,10 +52,12 @@ public class Arduino {
             String data = null;
             try{
                 data = new String(bytes, "UTF-8");
-                castText.setText(data);
-
+                if (SMSActivity.active){
+                    SMSActivity inst = SMSActivity.instance();
+                    inst.ArduinoBridge(data);
+                }
             }catch (UnsupportedEncodingException e){
-
+                Log.e("Arduino", "error getting data");
             }
         }
     };
@@ -88,10 +85,15 @@ public class Arduino {
     }
 
     public void Stop() {
-        if (serialPort.open() == true) {
-            serialPort.close();
-        } else {
-            Log.e("Android", "Unable to stop serial!");
+        try{
+            if (serialPort.open() == true) {
+                serialPort.close();
+            } else {
+                Log.e("Android", "Unable to stop serial!");
+            }
+        }catch (Exception e){
+            Log.e("Czar", "No serial port to stop!");
+            Toast.makeText(Lcontext, "No Serial port to close!", Toast.LENGTH_SHORT);
         }
     }
 
@@ -101,6 +103,7 @@ public class Arduino {
             if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
                 boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                 if (granted) {
+                    Log.e("Arduino", "Permission granted to access port");
                     connection = usbManager.openDevice(device);
                     serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
                     if (serialPort != null) {
@@ -113,16 +116,19 @@ public class Arduino {
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(lCallback);
+                            Toast.makeText(Lcontext, "Serial port active!", Toast.LENGTH_SHORT);
                             //tvAppend(textView, "Serial Connection Opened!\n");
-
                         } else {
                             Log.e("Czar SERIAL", "PORT NOT OPEN");
+                            Toast.makeText(Lcontext, "Serial port inactive", Toast.LENGTH_SHORT);
                         }
                     } else {
                         Log.e("Czar SERIAL", "PORT IS NULL");
+                        Toast.makeText(Lcontext, "Invalid serial port", Toast.LENGTH_SHORT);
                     }
                 } else {
                     Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
+                    Toast.makeText(Lcontext, "Permission not granted", Toast.LENGTH_SHORT);
                 }
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 //onClickStart(startButton);

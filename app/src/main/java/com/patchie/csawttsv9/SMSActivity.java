@@ -64,21 +64,10 @@ public class SMSActivity extends AppCompatActivity {
 
     //Arduino
     Arduino arduino;
-    EditText UsbOut;
+
 
     public static SMSActivity instance() {
         return inst;
-    }
-
-    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
-        @Override
-        public void onReceivedData(byte[] bytes) {
-
-        }
-    };
-
-    void onchange(){
-
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,24 +76,7 @@ public class SMSActivity extends AppCompatActivity {
         setTitle(getString(R.string.SMSActivity));
 
         //arduino
-        UsbOut = new EditText(this);
-        arduino = new Arduino(getApplicationContext(), UsbOut);
-        UsbOut.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Toast.makeText(getApplicationContext(), UsbOut.getText().toString(), Toast.LENGTH_SHORT);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         Log.e("Czar", "SmsActivity: onCreate");
 
@@ -217,6 +189,7 @@ public class SMSActivity extends AppCompatActivity {
         Log.e("Czar", " updateInbox had been called");
         arrayAdapter.insert(smsMessage, 0);
         arrayAdapter.notifyDataSetChanged();
+        RefreshSms();
     }
 
     public void getPermissionToReadSMS() {
@@ -370,6 +343,19 @@ public class SMSActivity extends AppCompatActivity {
         }
     }
 
+    private void RefreshSms(){
+        Toast.makeText(getApplicationContext(), "Updating Inbox", Toast.LENGTH_SHORT).show();
+        Speak("Loading more SMS");
+        CSB csb = new CSB(this, smsMessagesList.size());
+        smsMessagesList = csb.SMSLIST();
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
+        messages.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
+        csb = null;
+        LoadMoreSms = false;
+        return;
+    }
+
     private void Speak(String TextToRead) {
         _speak.speak(TextToRead);
     }
@@ -400,5 +386,7 @@ public class SMSActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    public void ArduinoBridge(String input){
+        Toast.makeText(this, input, Toast.LENGTH_SHORT);
+    }
 }

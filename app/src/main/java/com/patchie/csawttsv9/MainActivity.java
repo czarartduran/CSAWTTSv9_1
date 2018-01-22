@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //Turning OFF DoNotDisturbMode
         turnOffDoNotDisturbMode();
         //Maxing out all volume module component
-        SetVolumes();
+        //SetVolumes();
 
         //Initializing CSB class
         csb = new CSB(this);
@@ -261,8 +261,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!keep){
                     break;
                 }
-
             }
+        }else {
+            Log.e("Czar", "No Usb Devices!");
         }
     }
 
@@ -270,9 +271,14 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "onClickStart");
         //setUiEnabled(false);
 
-        if (serialPort.open() == true) {
-            serialPort.close();
+        try{
+            if (serialPort.open() == true) {
+                serialPort.close();
+            }
+        }catch(Exception e){
+            Log.e("Czar", "No serial port to close");
         }
+
         //tvAppend(textView, "\nSerial Connection Closed! \n");
     }
 
@@ -387,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Intent SmsIntent;
-
     protected void SmsActivity() {
         //Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
         if (SmsIntent == null) {
