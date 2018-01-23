@@ -21,6 +21,9 @@ public class ArduinoInputConverter {
     private static int MAX_NUMBERS = 57;
 
     public String getChar(String input) {
+        if (input.length() == 0){
+            return "";
+        }
         String ans = "";
         int x = Integer.parseInt(input);
         Log.e("ArduinoInputConverter", "Input Conversion: " + x);
@@ -35,7 +38,7 @@ public class ArduinoInputConverter {
             ans = String.valueOf(c);
         }else {
             //must have another function before returning null;
-            ans = null;
+            ans = "";
         }
 
         return ans;
