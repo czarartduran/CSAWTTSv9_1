@@ -55,6 +55,10 @@ public class DialerActivity extends AppCompatActivity {
     }
 
     public void backspace_OnClickEvent(View view) {
+        BackSpace();
+    }
+
+    private void BackSpace(){
         String old = editNum.getText().toString();
         String newStr ="";
         //tb
@@ -63,6 +67,8 @@ public class DialerActivity extends AppCompatActivity {
             newStr = old.substring(0, old.length() -1);
             PhoneNumber = newStr;
             editNum.append(newStr);
+        }else {
+            editNum.setText("");
         }
     }
 
