@@ -15,6 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -37,8 +39,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
-    //Arduino Input Adapter
-    ArduinoInputConverter aic = new ArduinoInputConverter();
+
 
 
 
@@ -64,7 +65,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         setTitle(getString(R.string.ReplyActivity));
 
         //initializing speaker
-        speaker = new Speaker(getApplicationContext(), "Press all left keys to abort and press all right keys to send reply, lower buttons to backspace");
+        speaker = new Speaker(getApplicationContext(), "Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace");
 
         Intent intent = getIntent();
         _contactName = intent.getStringExtra("contactName");
@@ -75,6 +76,22 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
         ReplySmsBody = (EditText) findViewById(R.id.editText);
         ReplySmsBody.setShowSoftInputOnFocus(true);
+        ReplySmsBody.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                speaker.speak(ReplySmsBody.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
         deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), 0);
@@ -94,6 +111,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case Activity.RESULT_OK:
                         Log.e("ReplySmsActivity", "Sms Sent successfully");
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
+                        speaker.speak("SMS sent successfully!");
+                        finish();
                         break;
 
                     //Something went wrong and there's no way to tell what, why or how.
@@ -240,10 +259,20 @@ public class ReplyMessageActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
+                Log.e("Received", input);
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+                ArduinoInputConverter aic = new ArduinoInputConverter();
 
-                if(aic.isAcceptableInput(input)){
-                    AppendBody(input);
+                if(aic.IsForMessaging(input)){
+                    speaker.speak(input);
+                    AppendBody(aic.getChar(input));
+                }else if (aic.IsSame(input, 64)){
+                    Log.e("ReplyMessageActivity", "Calling BackSpace");
+                    BackSpaceBody();
+                } else if (aic.IsSame(input, 71)){
+                    finish();
+                }else if (aic.IsSame(input, 184)){
+                    ReplySMS();
                 }
 
                 runOnUiThread(new Runnable() {
@@ -262,20 +291,33 @@ public class ReplyMessageActivity extends AppCompatActivity {
     };
 
     private void AppendBody(String text){
-        ReplySmsBody.append(text);
+        final String input = text;
+        speaker.speak(text);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ReplySmsBody.append(input);
+            }
+        });
+
     }
 
     private void BackSpaceBody(){
-        String old = ReplySmsBody.getText().toString();
-        String newStr ="";
-        //tb
-        ReplySmsBody.setText("");
-        if (old.length() > 0){
-            newStr = old.substring(0, old.length() -1);
-            ReplySmsBody.append(newStr);
-        }else {
-            ReplySmsBody.setText("");
-        }
+        runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+                String old = ReplySmsBody.getText().toString();
+                String newStr ="";
+                //tb
+                ReplySmsBody.setText("");
+                if (old.length() > 0){
+                    newStr = old.substring(0, old.length() -1);
+                    ReplySmsBody.append(newStr);
+                }else {
+                    ReplySmsBody.setText("");
+                }
+            }
+        });
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.

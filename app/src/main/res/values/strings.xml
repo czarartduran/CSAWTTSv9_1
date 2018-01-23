@@ -10,8 +10,8 @@
     <string name="ContactsListing">Contacts</string>
     <string name="SmsRecipientActivity">Select Recipient</string>
     <string name="CallerActivity">Caller</string>
-    <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press 1 make call or 2 to make text</string>
-    <string name="SMSWelcomeMessage">Welcome to SMS Module</string>
+    <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
+    <string name="SMSWelcomeMessage">Welcome to SMS Module pleaase press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
     <string name="callWelcomeMessage">Welcome to Call Module</string>
 
     <string name="AddressIntro">Message From:</string>

@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "MainActivity: onPause");
 
         speaker.destroy();
-        this.unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(broadcastReceiver);
         StopScanner();
 
         super.onPause();
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
     UsbDeviceConnection connection;
     EditText editText;
 
+
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
         //Defining a Callback which triggers whenever data is read.
 
@@ -154,24 +155,24 @@ public class MainActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
+                ArduinoInputConverter aic = new ArduinoInputConverter();
 
-
-                switch (input) {
-                    case "97":
+                switch (aic.getChar(input)) {
+                    case "A":
                         callActivity();
                         break;
-                    case "91":
+                    case "B":
                         SmsActivity();
                         break;
                 }
 
-                runOnUiThread(new Runnable() {
+                /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //checker
                         editText.setText(input);
                     }
-                });
+                });*/
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 editText.setText(e.toString());
