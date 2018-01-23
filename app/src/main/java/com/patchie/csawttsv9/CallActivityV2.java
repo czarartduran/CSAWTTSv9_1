@@ -16,7 +16,8 @@ import java.util.ArrayList;
 
 public class CallActivityV2 extends AppCompatActivity {
     CSB csb;
-    Speaker _speak;
+    //Speaker _speak;
+    Speaker speaker;
     private int selectedIndex = -1;
     private String SELECTED_NAME, SELECTED_NUMBER;
 
@@ -30,7 +31,8 @@ public class CallActivityV2 extends AppCompatActivity {
         setContentView(R.layout.activity_call_v2);
         setTitle(getString(R.string.CallerActivity));
 
-        _speak = new Speaker(getApplicationContext());
+        //_speak = new Speaker(getApplicationContext());
+        speaker = new Speaker(getApplicationContext(), "Welcome to Call Module");
 
         contact_lv = findViewById(R.id.call_contact_lv);
         if (contactlist == null) {
@@ -45,13 +47,37 @@ public class CallActivityV2 extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        _speak = new Speaker(getApplicationContext());
-        Speak("Please select contact");
     }
 
-    private void Speak(String string) {
-        _speak.speak(string);
+    @Override
+    protected void onPause() {
+        Log.e("CallActivityV2","onPause");
+        super.onPause();
+
+        speaker.destroy();
     }
+
+    @Override
+    protected void onResume() {
+        Log.e("CallActivityV2", "onResume");
+        super.onResume();
+
+        speaker = new Speaker(getApplicationContext());
+        speaker.speakAdd("Please select contact");
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("CallActivityV2", "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy(){
+        Log.e("CallActivityV2", "onDestroy");
+        super.onDestroy();
+    }
+
 
     public void sra_prev_btn_OnClickEvent(View view) {
         sra_prev_btn();
@@ -62,10 +88,12 @@ public class CallActivityV2 extends AppCompatActivity {
         if (selectedIndex >= 0 && selectedIndex < lv_count) {
             if (selectedIndex >= 0 && selectedIndex - 1 >= 0) {
                 selectedIndex--;
-                Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                //Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                speaker.speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             } else {
                 selectedIndex = 0;
-                Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                //Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                speaker.speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }
         }
     }
@@ -109,9 +137,11 @@ public class CallActivityV2 extends AppCompatActivity {
         if (selectedIndex >= -1 && selectedIndex < lv_count){
             if (selectedIndex < lv_count && selectedIndex +1 < lv_count){
                 selectedIndex++;
-                Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                //Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                speaker.speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }else {
-                Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                //Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
+                speaker.speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }
         }
     }

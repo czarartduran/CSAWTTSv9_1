@@ -19,6 +19,8 @@ public class ComposeMessageActivity extends AppCompatActivity {
     SmsManager smsManager = SmsManager.getDefault();
     private final static int CREATE_REQUEST_CODE = 0130;
 
+    Speaker speaker;
+
     Button buttonSend;
     Button buttonCancel;
     EditText textPhoneNo;
@@ -34,10 +36,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("ComposeMessageActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose_message);
         setTitle(getString(R.string.ComposeActivity));
 
+        speaker = new Speaker(getApplicationContext(), "Welcome");
 
         //To disable clickable
         /*EditText compose = (EditText)findViewById(R.id.compose);
@@ -58,15 +62,37 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-
+        Log.e("ComposeMessageActivity", "onStart");
         super.onStart();
 
         RegisterIntents();
     }
 
     @Override
+    protected void onPause() {
+        Log.e("ComposeMessageActivity", "onPause");
+        super.onPause();
+
+        speaker.destroy();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("ComposeMessageActivity", "onResume");
+        super.onResume();
+
+        speaker = new Speaker(getApplicationContext());
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("ComposeMessageActivity", "onStop");
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
-        Log.e("Czar","Compose called its destroy");
+        Log.e("ComposeMessageActivity", "onDestroy");
         super.onDestroy();
 
         UnRegisterIntents();
