@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.speech.tts.TextToSpeech;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class CallActivityV2 extends AppCompatActivity {
         setTitle(getString(R.string.CallerActivity));
 
         //_speak = new Speaker(getApplicationContext());
-        speaker = new Speaker(getApplicationContext(), "Welcome to Call Module");
+        speaker = new Speaker(getApplicationContext(), "Welcome to Call Module, On this module you can browse your list of contacts. Press N to go to the next contact, Press P to go to the previous contact, Press S to select your desire contact, Press D to Dial an unknown number, Press A to add a new contact and Press C to cancel and go to the previous module");
 
         contact_lv = findViewById(R.id.call_contact_lv);
         if (contactlist == null) {
@@ -151,10 +152,12 @@ public class CallActivityV2 extends AppCompatActivity {
     }
 
     private void sra_can_btn(){
+        speaker.speak("Canceled");
         finish();
     }
 
     public void call_dial_btn_OnClickEvent(View view) {
+        speaker.speak("Dialer module has been clicked");
         Call_Dial_btn();
     }
 
@@ -168,6 +171,7 @@ public class CallActivityV2 extends AppCompatActivity {
     }
 
     public void add_contacts_btn_OnclickEvent (View view) {
+        speaker.speak("Add contact module has been clicked");
         add_contacts_btn();
     }
 

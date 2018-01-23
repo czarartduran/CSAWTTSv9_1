@@ -10,15 +10,30 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.speech.tts.TextToSpeech;
+
+import java.util.Locale;
 
 public class DialerActivity extends AppCompatActivity {
     private String PhoneNumber = "";
     EditText editNum;
+    Speaker speaker;
+    TextToSpeech t1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
+        speaker = new Speaker(getApplicationContext(), "Welcome to Dial Module, you can now input your desire number to call. Press C " +
+                "to call inputted number, press X to delete last inputted number and press B to back to previous module");
+t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+    @Override
+    public void onInit(int status) {
+        if(status != TextToSpeech.ERROR){
+            t1.setLanguage(Locale.ENGLISH);
+        }
 
+    }
+});
         //assigning number_tb
         editNum = (EditText)findViewById(R.id.number_tb);
 
@@ -31,19 +46,44 @@ public class DialerActivity extends AppCompatActivity {
 
     protected void NumPad(View v){
         switch (v.getId()){
-            case R.id.btn1: AppendNumber("1"); break;
-            case R.id.btn2: AppendNumber("2"); break;
-            case R.id.btn3: AppendNumber("3"); break;
-            case R.id.btn4: AppendNumber("4"); break;
-            case R.id.btn5: AppendNumber("5"); break;
-            case R.id.btn6: AppendNumber("6"); break;
-            case R.id.btn7: AppendNumber("7"); break;
-            case R.id.btn8: AppendNumber("8"); break;
-            case R.id.btn9: AppendNumber("9"); break;
-            case R.id.btn10: AppendNumber("0"); break;
-            case R.id.btn11: AppendNumber("*"); break;
-            case R.id.btn12: AppendNumber("#"); break;
-            default: break;
+            case R.id.btn1:
+                AppendNumber("1");t1.speak("1",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn2:
+                AppendNumber("2");t1.speak("2",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn3:
+                AppendNumber("3");t1.speak("3",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn4:
+                AppendNumber("4");t1.speak("4",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn5:
+                AppendNumber("5");t1.speak("5",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn6:
+                AppendNumber("6");t1.speak("6",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn7:
+                AppendNumber("7");t1.speak("7",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn8:
+                AppendNumber("8");t1.speak("8",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn9:
+                AppendNumber("9");t1.speak("9",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn10:
+                AppendNumber("0");t1.speak("0",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn11:
+                AppendNumber("*");t1.speak("*",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            case R.id.btn12:
+                AppendNumber("#");t1.speak("#",TextToSpeech.QUEUE_FLUSH, null);
+            break;
+            default:
+                break;
         }
     }
 
@@ -55,6 +95,7 @@ public class DialerActivity extends AppCompatActivity {
     }
 
     public void backspace_OnClickEvent(View view) {
+        t1.speak("Delete",TextToSpeech.QUEUE_FLUSH, null);
         BackSpace();
     }
 
@@ -85,6 +126,7 @@ public class DialerActivity extends AppCompatActivity {
     }
 
     private void Call(){
+        t1.speak("Call",TextToSpeech.QUEUE_FLUSH, null);
         Intent callIntent;
         callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + PhoneNumber));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -98,5 +140,18 @@ public class DialerActivity extends AppCompatActivity {
             return;
         }
         startActivity(callIntent);
+        String toSpeak = editNum.getText().toString();
+        t1.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+
     }
+    public void repeatbtn_OnClickEvent(View v){
+        repeat();
+    }
+    private void repeat(){
+
+        String toSpeak = PhoneNumber;
+        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+
 }
