@@ -406,19 +406,19 @@ public class SMSActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
-                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+                ArduinoInputConverter aic = new ArduinoInputConverter();
 
-                switch (input) {
-                    case "97":
+                switch (aic.getChar(input)) {
+                    case "W":
                         PreviousMessage();
                         break;
-                    case "91":
+                    case "R":
                         NextMessage();
                         break;
-                    case "108":
+                    case "C":
                         CallComposeActivity();
                         break;
-                    case "32":
+                    case "S":
                         replyButtonOnClickEvent();
                         break;
                 }
