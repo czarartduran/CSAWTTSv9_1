@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private CSB csb;
     private boolean IS_DONOTDISTURBDISABLE = false;
     private NotificationManager mNotificationManager;
+    public static boolean active = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(getString(R.string.MainActivity));
         Log.e("Czar", "MainActivity: OnCreate");
+
+        //setting it on active
+        active = true;
 
         //Checking Permission
         if (Build.VERSION.SDK_INT >= 23) {
@@ -111,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.e("Czar", "MainActivity: onStop");
-
         super.onStop();
+
+        active = false;
     }
 
     @Override
@@ -215,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void StartScanner() {
-        Log.e("Czar", "onClickerStart");
+        Log.e("MainActivity", "Starting SerialPort");
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
             boolean keep = true;
@@ -228,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                     PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(device, pi);
                     keep = false;
+                    Log.e("MainActivity","Successfully set device serial port");
                 } else {
                     connection = null;
                     device = null;
@@ -238,18 +244,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }else {
-            Log.e("Czar", "No Usb Devices!");
+            Log.e("MainActivity", "No Usb Devices!");
         }
     }
 
     private void StopScanner() {
+        Log.e("MainActivity","Stopping SerialPort");
         try{
             if (serialPort.open() == true) {
                 serialPort.close();
-                Log.e("Czar", "SerialPort is Closed!");
+                Log.e("MainActivity", "SerialPort is Closed!");
             }
         }catch(Exception e){
-            Log.e("Czar", "No serial port to close");
+            Log.e("MainActivity", "No serial port to close");
         }
     }
 
@@ -349,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
     private void callActivity() {
         if (CallIntent == null) {
             //initialized
-            //CallIntent = new Intent(getApplicationContext(), CallActivity.class);
             CallIntent = new Intent(getApplicationContext(), CallActivityV2.class);
         }
         /*put extras*/

@@ -22,6 +22,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     SmsManager smsManager = SmsManager.getDefault();
 
+    Speaker speaker;
+
     private EditText editText;
     private TextView receiver_tv;
     private String _contactName;
@@ -37,6 +39,9 @@ public class ReplyMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply_message);
         setTitle(getString(R.string.ReplyActivity));
+
+        //initializing speaker
+        speaker = new Speaker(getApplicationContext(), "Press all left keys to abort and press all right keys to send reply, lower buttons to backspace");
 
         Intent intent = getIntent();
         _contactName = intent.getStringExtra("contactName");
@@ -55,7 +60,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-
+        Log.e("ReplySmsActivity", "onStart");
         super.onStart();
 
         smsSentReceiver = new BroadcastReceiver() {
@@ -64,11 +69,13 @@ public class ReplyMessageActivity extends AppCompatActivity {
                 switch (getResultCode()) {
                     //Everything is fine
                     case Activity.RESULT_OK:
+                        Log.e("ReplySmsActivity", "Sms Sent successfully");
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
                         break;
 
                     //Something went wrong and there's no way to tell what, why or how.
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        Log.e("ReplySmsActivity", "Generic failure");
                         Toast.makeText(context, "Generic failure!", Toast.LENGTH_SHORT).show();
                         break;
 
@@ -76,18 +83,21 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     //nowhere, somewhere inside, underground, or up in space.
                     //Certainly away from any cell phone tower.
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        Log.e("ReplySmsActivity", "No Service");
                         Toast.makeText(context, "No service!", Toast.LENGTH_SHORT).show();
                         break;
 
                     //Something went wrong in the SMS stack, while doing something with a protocol
                     //description unit (PDU) (most likely putting it together for transmission).
                     case SmsManager.RESULT_ERROR_NULL_PDU:
+                        Log.e("ReplySmsActivity", "Null PDU");
                         Toast.makeText(context, "Null PDU!", Toast.LENGTH_SHORT).show();
                         break;
 
                     //You switched your device into airplane mode, which tells your device exactly
                     //"turn all radios off" (cell, wifi, Bluetooth, NFC, ...).
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        Log.e("ReplySmsActivity", "Radio OFF");
                         Toast.makeText(context, "Radio off!", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -100,9 +110,11 @@ public class ReplyMessageActivity extends AppCompatActivity {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS delivered!", Toast.LENGTH_SHORT).show();
+                        Log.e("ReplySmsActivity", "Sms Delivered");
                         break;
 
                     case Activity.RESULT_CANCELED:
+                        Log.e("ReplySmsActivity", "Sms Not Delivered");
                         Toast.makeText(context, "SMS not delivered!", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -113,6 +125,39 @@ public class ReplyMessageActivity extends AppCompatActivity {
         //if they "hear" that broadcast, it will activate their onReceive() method
         registerReceiver(smsSentReceiver, new IntentFilter(SENT));
         registerReceiver(smsDeliveredReceiver, new IntentFilter(DELIVERED));
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e("Czar", "onPause");
+        super.onPause();
+
+        speaker.destroy();
+
+        unregisterReceiver(smsSentReceiver);
+        unregisterReceiver(smsDeliveredReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("ReplySmsActivity", "onResume");
+        super.onResume();
+
+        speaker = new Speaker(getApplicationContext());
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("ReplySmsActivity", "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("ReplySmsActivity", "onDestroy");
+        super.onDestroy();
+
+        smsManager = null;
     }
 
     public void ReplySMS_Back_btn_OnClick_Event(View view) {
@@ -154,12 +199,5 @@ public class ReplyMessageActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        Log.e("Czar", "onPause");
-        super.onPause();
 
-        unregisterReceiver(smsSentReceiver);
-        unregisterReceiver(smsDeliveredReceiver);
-    }
 }

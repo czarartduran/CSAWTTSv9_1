@@ -61,7 +61,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             if (SMSActivity.active) {
                 SMSActivity inst = SMSActivity.instance();
                 inst.updateInbox(smsMessageStr);
-            } else {
+            } else if (!MainActivity.active){
                 Intent i = new Intent(context, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);

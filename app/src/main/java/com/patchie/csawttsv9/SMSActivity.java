@@ -511,11 +511,17 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void RegisterIntent(){
+        Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);
+    }
+
+    private void UnRegisterIntent(){
+        Log.e("SmsActivity", "UnRegistering Intent");
+        unregisterReceiver(broadcastReceiver);
     }
 }
