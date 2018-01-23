@@ -138,7 +138,6 @@ public class SMSActivity extends AppCompatActivity {
 
         if (_speak != null){
             _speak = new Speaker(getApplicationContext());
-            _speak.speakAdd("Press 1 to compose and Press 2 to reply");
         }
 
         RegisterIntent();
@@ -367,6 +366,7 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void Speak(String TextToRead) {
+        _speak.stop();
         _speak.speak(TextToRead);
     }
 
