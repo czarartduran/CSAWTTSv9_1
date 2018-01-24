@@ -34,9 +34,9 @@ public class ComposeMessageActivity extends AppCompatActivity {
     Button buttonSend;
     Button buttonCancel;
     EditText textPhoneNo;
-    boolean textPhoneOnFocus = true;
+    private boolean textPhoneOnFocus = true;
     EditText textSMS;
-    boolean textSMSOnFocus = false;
+    private boolean textSMSOnFocus = false;
 
     String conname = "";
     String connum = null;
@@ -53,7 +53,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_compose_message);
         setTitle(getString(R.string.ComposeActivity));
 
-        speaker = new Speaker(getApplicationContext(), getString(R.string.ComposedWelcome));
+        speaker = new Speaker(this, getString(R.string.ComposedWelcome));
 
         //To disable clickable
         /*EditText compose = (EditText)findViewById(R.id.compose);
@@ -74,10 +74,19 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.e("ComposeMessageActivity", "onStart");
+
         super.onStart();
 
-
+        //Must instruct base on the current onFoccus object
+        //speaker = new Speaker(getApplicationContext());
+        if (textPhoneOnFocus == true) {
+            Log.e("Czar", "PhoneOnFocus");
+            speaker.speakAdd(getString(R.string.SelectedPhoneInstruction));
+        } else {
+            Log.e("Czar", "TextOnFocus");
+            speaker.speakAdd(getString(R.string.CreatingTextInstruction));
+        }
+        Log.e("ComposeMessageActivity", "onStart");
     }
 
     @Override
@@ -85,7 +94,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onPause");
         super.onPause();
 
-        speaker.destroy();
+        speaker.stop();
         UnRegisterIntents();
 
         //Arduino
@@ -98,7 +107,10 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onResume");
         super.onResume();
 
-        speaker = new Speaker(getApplicationContext());
+        if (speaker == null) {
+            speaker = new Speaker(this);
+        }
+
         RegisterIntents();
 
         //Arduino
@@ -195,7 +207,16 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 textPhoneOnFocus = false;
                 textSMSOnFocus = true;
                 textPhoneNo.setText(conname);
+
+                textPhoneOnFocus = false;
+                textSMSOnFocus = true;
+            } else {
+                textPhoneOnFocus = true;
+                textSMSOnFocus = false;
             }
+        } else {
+            textPhoneOnFocus = true;
+            textSMSOnFocus = false;
         }
     }
 
@@ -217,7 +238,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    textPhoneNo.append(text);
+                    textSMS.append(text);
                 }
             });
         }
@@ -240,7 +261,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     }
                 }
             });
-        }else {
+        } else {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -345,6 +366,34 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
                 ArduinoInputConverter aic = new ArduinoInputConverter();
 
+                if (textPhoneOnFocus) {
+                    if (aic.IsSame(input, 192)) {
+                        speaker.speak("Opening contact list");
+                        SearchRecipient_btn_OnClickEvent();
+                    } else if (aic.IsNumber(input)) {
+                        AppendStrings(String.valueOf(aic.GetNumber(input)));
+                    } else if (aic.IsSame(input, 64)) {
+                        BackSpace();
+                    } else if (aic.IsSame(input, 128)) {
+                        textPhoneOnFocus = false;
+                        textSMSOnFocus = true;
+                    }
+                } else {
+                    if (aic.IsForMessaging(input)) {
+                        AppendStrings(aic.getChar(input));
+                    } else if (aic.IsSame(input, 64)) {
+                        BackSpace();
+                    } else if (aic.IsSame(input, 128)) {
+                        textPhoneOnFocus = false;
+                        textSMSOnFocus = true;
+                    }else if(aic.IsSame(input, 63)){
+                        SendMessage();
+                    }else if(aic.IsSame(input, 184)){
+                        cancelComposeButton();
+                    }
+                }
+
+
                 /*if(aic.IsForMessaging(input)){
                     speaker.speak(input);
                     AppendBody(aic.getChar(input));
@@ -406,7 +455,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
     };
 
     private void StartScanner() {
-        Log.e("Czar", "onClickerStart");
+        Log.e("Czar", "StartScanner");
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
             boolean keep = true;

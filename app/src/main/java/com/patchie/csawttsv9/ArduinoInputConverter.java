@@ -45,13 +45,13 @@ public class ArduinoInputConverter {
         return ans;
     }
 
-    public boolean IsSame(String input, int ref){
+    public boolean IsSame(String input, int ref) {
         if (input.length() == 0) {
             return false;
         }
         boolean ans = false;
         int x = Integer.parseInt(input);
-        if (x == ref){
+        if (x == ref) {
             ans = true;
         }
         return ans;
@@ -102,6 +102,36 @@ public class ArduinoInputConverter {
             ans = false;
         }
 
+        return ans;
+    }
+
+    public boolean IsNumber(String input) {
+        boolean ans = false;
+        int x = Integer.parseInt(input);
+        if (x >= MIN_CAPS && x <= MIN_CAPS + 9) {
+            ans = true;
+        }
+        return ans;
+    }
+
+    public int GetNumber(String input) {
+        int ans = -1;
+        int x = Integer.parseInt(input);
+
+        if (IsNumber(input)){
+            switch (x){
+                case 65: ans = 1; break;
+                case 66: ans = 2; break;
+                case 67: ans = 3; break;
+                case 68: ans = 4; break;
+                case 69: ans = 5; break;
+                case 70: ans = 6; break;
+                case 71: ans = 7; break;
+                case 72: ans = 8; break;
+                case 73: ans = 9; break;
+                case 74: ans = 0; break;
+            }
+        }
         return ans;
     }
 }

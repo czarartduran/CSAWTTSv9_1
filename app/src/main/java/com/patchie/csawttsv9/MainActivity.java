@@ -69,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Turning OFF DoNotDisturbMode
-        turnOffDoNotDisturbMode();
+        //turnOffDoNotDisturbMode();
         //Maxing out all volume module component
-        //SetVolumes();
+        SetVolumes();
 
         //Initializing CSB class
         csb = new CSB(this);
@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         active = false;
+        speaker.destroy();
     }
 
     @Override

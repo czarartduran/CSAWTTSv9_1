@@ -26,6 +26,8 @@
 
     <!--Compose-->
     <string name="ComposedWelcome">Welcome to Compose Message</string>
+    <string name="SelectedPhoneInstruction">Please enter mobile phone number you want send message, or press ALT + SHIFT buttons to select contacts from the List</string>
+    <string name="CreatingTextInstruction">You may now create your message, press all right buttons to send the composed message, press all left buttons to cancel and go back to Inbox</string>
 
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>

@@ -89,7 +89,7 @@ public class SMSActivity extends AppCompatActivity {
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         //Initializing Speaker
-        _speak = new Speaker(getApplicationContext(), getString(R.string.SMSWelcomeMessage));
+        _speak = new Speaker(this, getString(R.string.SMSWelcomeMessage));
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -137,7 +137,7 @@ public class SMSActivity extends AppCompatActivity {
         }
 
         if (_speak != null){
-            _speak = new Speaker(getApplicationContext());
+            _speak = new Speaker(this);
         }
 
         RegisterIntent();
@@ -172,6 +172,12 @@ public class SMSActivity extends AppCompatActivity {
         active = false;
 
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e("SmsActivity", "onDestroy");
+        super.onDestroy();
     }
 
     private boolean HaveReadContactsPermission() {
