@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         csb = new CSB(this);
 
         //assigning editText2
-        editText = (EditText) findViewById(R.id.editText2);
+        //editText = (EditText) findViewById(R.id.editText2);
         Log.e("Czar", "editText has been initialized");
 
         //initializing speaker
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
-    EditText editText;
+    //EditText editText;
 
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 });*/
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
-                editText.setText(e.toString());
+                //editText.setText(e.toString());
             }
         }
     };

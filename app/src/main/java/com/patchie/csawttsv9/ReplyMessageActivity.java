@@ -65,7 +65,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         setTitle(getString(R.string.ReplyActivity));
 
         //initializing speaker
-        speaker = new Speaker(getApplicationContext(), "Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace");
+        speaker = new Speaker(getApplicationContext(), getString(R.string.ReplyWelcomeMessage));
 
         Intent intent = getIntent();
         _contactName = intent.getStringExtra("contactName");
@@ -111,7 +111,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case Activity.RESULT_OK:
                         Log.e("ReplySmsActivity", "Sms Sent successfully");
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
-                        speaker.speak("SMS sent successfully!");
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_OK));
                         finish();
                         break;
 
@@ -119,6 +119,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         Log.e("ReplySmsActivity", "Generic failure");
                         Toast.makeText(context, "Generic failure!", Toast.LENGTH_SHORT).show();
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_GENERICFAILURE));
+                        finish();
                         break;
 
                     //Your device simply has no cell reception. You're probably in the middle of
@@ -127,6 +129,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         Log.e("ReplySmsActivity", "No Service");
                         Toast.makeText(context, "No service!", Toast.LENGTH_SHORT).show();
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_NO_SERVICE));
+                        finish();
                         break;
 
                     //Something went wrong in the SMS stack, while doing something with a protocol
@@ -134,6 +138,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         Log.e("ReplySmsActivity", "Null PDU");
                         Toast.makeText(context, "Null PDU!", Toast.LENGTH_SHORT).show();
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_NULL_PDU));
+                        finish();
                         break;
 
                     //You switched your device into airplane mode, which tells your device exactly
@@ -141,6 +147,8 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         Log.e("ReplySmsActivity", "Radio OFF");
                         Toast.makeText(context, "Radio off!", Toast.LENGTH_SHORT).show();
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_RADIO_OFF));
+                        finish();
                         break;
                 }
             }
@@ -153,11 +161,15 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS delivered!", Toast.LENGTH_SHORT).show();
                         Log.e("ReplySmsActivity", "Sms Delivered");
+                        speaker.speak(getString(R.string.DeliverOnReceived_ResultOK));
+                        finish();
                         break;
 
                     case Activity.RESULT_CANCELED:
                         Log.e("ReplySmsActivity", "Sms Not Delivered");
                         Toast.makeText(context, "SMS not delivered!", Toast.LENGTH_SHORT).show();
+                        speaker.speak(getString(R.string.DeliverOnReceived_ResultCancel));
+                        finish();
                         break;
                 }
             }

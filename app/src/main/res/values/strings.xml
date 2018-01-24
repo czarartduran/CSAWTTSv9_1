@@ -14,6 +14,19 @@
     <string name="SMSWelcomeMessage">Welcome to SMS Module pleaase press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
     <string name="callWelcomeMessage">Welcome to Call Module</string>
 
+    <!--Reply-->
+    <string name="ReplyWelcomeMessage">Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace</string>
+    <string name="SentOnReceived_RESULT_OK">Sms successfully sent!</string>
+    <string name="SentOnReceived_RESULT_ERROR_GENERICFAILURE">Sms not sent! Sms Generic Failure</string>
+    <string name="SentOnReceived_RESULT_ERROR_NO_SERVICE">Sms not sent! No Service</string>
+    <string name="SentOnReceived_RESULT_NULL_PDU">Sms not sent! Null PDU</string>
+    <string name="SentOnReceived_RESULT_RADIO_OFF">Sms could not be sent! Radio is OFF</string>
+    <string name="DeliverOnReceived_ResultOK">Sms Delivered</string>
+    <string name="DeliverOnReceived_ResultCancel">Sms not Delivered</string>
+
+    <!--Compose-->
+    <string name="ComposedWelcome">Welcome to Compose Message</string>
+
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>
 
