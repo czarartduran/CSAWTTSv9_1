@@ -12,6 +12,8 @@ import android.hardware.usb.UsbManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +45,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     private final String SENT = "SMS_SENT";
     private final String DELIVERED = "SMS_DELIVERED";
+
+
+    private static final int DEFAULT_SEND_VAL = 63;
+    private static final int DEFAULT_CANCEL_VAL = 184;
+
+    //private int DEFAULT_CANCEL_VAL = 184;
+
     PendingIntent sentPI, deliveredPI;
     BroadcastReceiver smsSentReceiver, smsDeliveredReceiver;
 
@@ -64,8 +73,42 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
 
         textPhoneNo = (EditText) findViewById(R.id.contactnumber);
+        textPhoneNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.e("ComposeMessage", "ReceiverEditText beforeTextChanged");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("ComposeMessage", "ReceiverEditText onTextChanged");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.e("ComposeMessage", "ReceiverEditText afterTextChanged");
+                speaker.speak(textPhoneNo.getText().toString());
+            }
+        });
+
         textSMS = (EditText) findViewById(R.id.compose);
-        /*buttonCancel = (Button) findViewById(R.id.buttonCancel);*/
+        textSMS.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.e("ComposeMessage", "BodyEditText beforeTextChanged");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("ComposeMessage", "BodyEditText onTextChanged");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.e("ComposeMessage", "BodyEditText afterChanged");
+                speaker.speak(textSMS.getText().toString());
+            }
+        });
 
         sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
         deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), 0);
@@ -250,10 +293,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    String textToDelete = "";
                     String old = textPhoneNo.getText().toString();
                     String newStr = "";
                     textPhoneNo.setText("");
                     if (old.length() > 0) {
+                        textToDelete = old.substring(old.length() - 1);
+                        speaker.speak(textToDelete);
                         newStr = old.substring(0, old.length() - 1);
                         textPhoneNo.append(newStr);
                     } else {
@@ -265,10 +311,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    String textToDelete = "";
                     String old = textSMS.getText().toString();
                     String newStr = "";
                     textSMS.setText("");
                     if (old.length() > 0) {
+                        textToDelete = old.substring(old.length() - 1);
+                        speaker.speak(textToDelete);
                         newStr = old.substring(0, old.length() - 1);
                         textSMS.append(newStr);
                     } else {
@@ -370,56 +419,71 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     if (aic.IsSame(input, 192)) {
                         speaker.speak("Opening contact list");
                         SearchRecipient_btn_OnClickEvent();
-                    } else if (aic.IsNumber(input)) {
-                        AppendStrings(String.valueOf(aic.GetNumber(input)));
-                    } else if (aic.IsSame(input, 64)) {
-                        BackSpace();
-                    } else if (aic.IsSame(input, 128)) {
-                        textPhoneOnFocus = false;
-                        textSMSOnFocus = true;
                     }
+                    if (aic.IsNumber(input)) {
+                        AppendStrings(String.valueOf(aic.GetNumber(input)));
+                    }
+                    if (aic.IsSame(input, 64)) {
+                        BackSpace();
+                    }
+                    if (aic.IsSame(input, 128)) {
+                        ChangeFocus();
+                    }
+                    /*<Send Cancel>*/
+                    if (aic.getDecimal(input) == DEFAULT_SEND_VAL || aic.getDecimal(input) == DEFAULT_CANCEL_VAL) {
+                        DetermineControl(aic.getDecimal(input));
+                    }
+                    /*</Send Cancel>*/
                 } else {
                     if (aic.IsForMessaging(input)) {
                         AppendStrings(aic.getChar(input));
-                    } else if (aic.IsSame(input, 64)) {
+                    }
+                    if (aic.IsSame(input, 64)) {
                         BackSpace();
-                    } else if (aic.IsSame(input, 128)) {
-                        textPhoneOnFocus = false;
-                        textSMSOnFocus = true;
-                    }else if(aic.IsSame(input, 63)){
-                        SendMessage();
-                    }else if(aic.IsSame(input, 184)){
-                        cancelComposeButton();
                     }
+                    if (aic.IsSame(input, 128)) {
+                        ChangeFocus();
+                    }
+                    /*<Send Cancel>*/
+                    if (aic.getDecimal(input) == DEFAULT_SEND_VAL || aic.getDecimal(input) == DEFAULT_CANCEL_VAL) {
+                        DetermineControl(aic.getDecimal(input));
+                    }
+                    /*</Send Cancel>*/
                 }
-
-
-                /*if(aic.IsForMessaging(input)){
-                    speaker.speak(input);
-                    AppendBody(aic.getChar(input));
-                }else if (aic.IsSame(input, 64)){
-                    Log.e("ReplyMessageActivity", "Calling BackSpace");
-                    BackSpaceBody();
-                } else if (aic.IsSame(input, 71)){
-                    finish();
-                }else if (aic.IsSame(input, 184)){
-                    ReplySMS();
-                }*/
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //checker
-
-
-                    }
-                });
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 Log.e("Czar", e.getLocalizedMessage());
             }
         }
     };
+
+    /*This will change focus if the certain combination is received*/
+    private void ChangeFocus() {
+        if (textPhoneOnFocus == true) {
+            textPhoneOnFocus = false;
+            textSMSOnFocus = true;
+            speaker.speak("Sms body selected");
+        } else if (textSMSOnFocus == true) {
+            textPhoneOnFocus = true;
+            textSMSOnFocus = false;
+            speaker.speak("Sms receiver selected");
+        }
+    }
+
+    /*
+    * SendComposed = 63
+    * CancelComposed = 184
+    **/
+    private void DetermineControl(int input) {
+        switch (input) {
+            case DEFAULT_SEND_VAL:
+                SendMessage();
+                break;
+            case DEFAULT_CANCEL_VAL:
+                cancelComposeButton();
+                break;
+        }
+    }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
         @Override

@@ -146,6 +146,10 @@ public class Speaker {
     }
 
     public void destroy() {
-        _tts.shutdown();
+        if (_tts != null){
+            _tts.stop();
+            _tts.shutdown();
+        }
+
     }
 }
