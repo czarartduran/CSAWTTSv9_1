@@ -137,12 +137,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onPause");
         super.onPause();
 
-        speaker.stop();
+        speaker.destroy();
         UnRegisterIntents();
 
         //Arduino
-        UnRegisterIntent();
         StopScanner();
+        UnRegisterIntent();
+
     }
 
     @Override
@@ -436,7 +437,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     /*</Send Cancel>*/
                 } else {
                     if (aic.IsForMessaging(input)) {
-                        AppendStrings(aic.getChar(input));
+                        AppendStrings(aic.getChar(input).toLowerCase());
                     }
                     if (aic.IsSame(input, 64)) {
                         BackSpace();
@@ -470,10 +471,6 @@ public class ComposeMessageActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    * SendComposed = 63
-    * CancelComposed = 184
-    **/
     private void DetermineControl(int input) {
         switch (input) {
             case DEFAULT_SEND_VAL:

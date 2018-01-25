@@ -29,6 +29,18 @@
     <string name="SelectedPhoneInstruction">Please enter mobile phone number you want send message, or press ALT + SHIFT buttons to select contacts from the List</string>
     <string name="CreatingTextInstruction">You may now create your message, press all right buttons to send the composed message, press all left buttons to cancel and go back to Inbox</string>
 
+    <!--KeyMAP Control-->
+    <string name="CONTROL_CANCEL"></string>
+    <string name="CONTROL_OK"></string>
+    <string name="CONTROL_PREVIOUS"></string>
+    <string name="CONTROL_NEXT"></string>
+    <string name="CONTROL_COMPOSE"></string>
+    <string name="CONTROL_REPLY"></string>
+    <string name="CONTROL_SEARCH"></string>
+    <string name="CONTROL_SPACE"></string>
+    <string name="CONTROL_BACKSPACE">64</string>
+    <string name="CONTROL_FOCUS_CHANGER"></string>
+
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>
 
