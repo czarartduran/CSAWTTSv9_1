@@ -414,7 +414,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 final String input = data;
                 Log.e("Received", input);
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
-                ArduinoInputConverter aic = new ArduinoInputConverter();
+                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
                 if (textPhoneOnFocus) {
                     if (aic.IsSame(input, 192)) {
