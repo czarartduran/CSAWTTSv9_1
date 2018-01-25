@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         SmsActivity();
                         break;
                 }
-
+                aic = null;
                 /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

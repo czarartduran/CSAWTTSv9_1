@@ -1,5 +1,6 @@
 package com.patchie.csawttsv9;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -7,6 +8,15 @@ import android.util.Log;
  */
 
 public class ArduinoInputConverter {
+
+    public ArduinoInputConverter(){
+
+    }
+
+    public ArduinoInputConverter(Context context){
+        this.context = context;
+    }
+
     /*
     * standard 0-9a-zA-Z
     * */
@@ -167,9 +177,9 @@ public class ArduinoInputConverter {
 
     /*Returning the decimal value of a given input*/
     public int getDecimal(String input) {
-        if (IsNotEmpty(input)){
+        if (IsNotEmpty(input)) {
             return Integer.parseInt(input);
-        }else {
+        } else {
             return -1;
         }
     }
@@ -187,6 +197,15 @@ public class ArduinoInputConverter {
     <string name="CONTROL_FOCUS_CHANGER"></string>
     */
 
-    //public final int CONTROL_CANCEL = Integer.parseInt(this.ge.toString(R.string.CONTROL_CANCEL));
-
+    private Context context;
+    public final int CONTROL_CANCEL = Integer.parseInt(context.getString(R.string.CONTROL_CANCEL));
+    public final int CONTROL_OK = Integer.parseInt(context.getString(R.string.CONTROL_OK));
+    public final int CONTROL_PREVIOUS = Integer.parseInt(context.getString(R.string.CONTROL_PREVIOUS));
+    public final int CONTROL_NEXT = Integer.parseInt(context.getString(R.string.CONTROL_NEXT));
+    public final int CONTROL_COMPOSE = Integer.parseInt(context.getString(R.string.CONTROL_COMPOSE));
+    public final int CONTROL_REPLY = Integer.parseInt(context.getString(R.string.CONTROL_REPLY));
+    public final int CONTROL_SEARCH = Integer.parseInt(context.getString(R.string.CONTROL_SEARCH));
+    public final int CONTROL_SPACE = Integer.parseInt(context.getString(R.string.CONTROL_SPACE));
+    public final int CONTROL_BACKSPACE = Integer.parseInt(context.getString(R.string.CONTROL_BACKSPACE));
+    public final int CONTROL_FOCUS_CHANGER = Integer.parseInt(context.getString(R.string.CONTROL_FOCUS_CHANGER));
 }
