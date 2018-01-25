@@ -41,6 +41,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     //MainActivity
+    ArduinoInputConverter aic;
     private Speaker speaker;
 
     private ArrayList<String> _SMSlist;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(getString(R.string.MainActivity));
         Log.e("Czar", "MainActivity: OnCreate");
+
+        aic = new ArduinoInputConverter(this);
 
         //setting it on active
         active = true;
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //Turning OFF DoNotDisturbMode
         //turnOffDoNotDisturbMode();
         //Maxing out all volume module component
-        SetVolumes();
+        //SetVolumes();
 
         //Initializing CSB class
         csb = new CSB(this);
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "editText has been initialized");
 
         //initializing speaker
-        speaker= new Speaker(getApplicationContext(), getString(R.string.WelcomeMessage));
+        speaker = new Speaker(getApplicationContext(), getString(R.string.WelcomeMessage));
     }
 
 
@@ -105,9 +108,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         Log.e("Czar", "MainActivity: onPause");
 
-        speaker.destroy();
-        unregisterReceiver(broadcastReceiver);
+        aic = null;
+        speaker.stop();
         StopScanner();
+        unregisterReceiver(broadcastReceiver);
 
         super.onPause();
     }
@@ -128,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void RegisterIntent(){
+    private void RegisterIntent() {
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
@@ -156,17 +160,15 @@ public class MainActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
-                ArduinoInputConverter aic = new ArduinoInputConverter();
 
-                switch (aic.getChar(input)) {
-                    case "A":
-                        callActivity();
-                        break;
-                    case "B":
-                        SmsActivity();
-                        break;
+                if (aic.getDecimal(input) == aic.CONTROL_CALL_ACTIVITY()) {
+                    CallActivity();
                 }
-                aic = null;
+                if (aic.getDecimal(input) == aic.CONTROL_SMS_ACTIVITY()) {
+                    SmsActivity();
+                }
+
+
                 /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -235,29 +237,29 @@ public class MainActivity extends AppCompatActivity {
                     PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(device, pi);
                     keep = false;
-                    Log.e("MainActivity","Successfully set device serial port");
+                    Log.e("MainActivity", "Successfully set device serial port");
                 } else {
                     connection = null;
                     device = null;
                 }
 
-                if (!keep){
+                if (!keep) {
                     break;
                 }
             }
-        }else {
+        } else {
             Log.e("MainActivity", "No Usb Devices!");
         }
     }
 
     private void StopScanner() {
-        Log.e("MainActivity","Stopping SerialPort");
-        try{
+        Log.e("MainActivity", "Stopping SerialPort");
+        try {
             if (serialPort.open() == true) {
                 serialPort.close();
                 Log.e("MainActivity", "SerialPort is Closed!");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e("MainActivity", "No serial port to close");
         }
     }
@@ -367,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Intent SmsIntent;
+
     protected void SmsActivity() {
         //Toast.makeText(this, "Please wait", Toast.LENGTH_LONG);
         if (SmsIntent == null) {

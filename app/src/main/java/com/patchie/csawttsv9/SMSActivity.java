@@ -136,7 +136,7 @@ public class SMSActivity extends AppCompatActivity {
             selectedIndex = -1;
         }
 
-        if (_speak != null){
+        if (_speak != null) {
             _speak = new Speaker(this);
         }
 
@@ -358,7 +358,7 @@ public class SMSActivity extends AppCompatActivity {
         }
     }
 
-    private void RefreshSms(){
+    private void RefreshSms() {
         Toast.makeText(getApplicationContext(), "Updating Inbox", Toast.LENGTH_SHORT).show();
         Speak("Loading more SMS");
         CSB csb = new CSB(this, smsMessagesList.size());
@@ -412,31 +412,21 @@ public class SMSActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
-                ArduinoInputConverter aic = new ArduinoInputConverter();
+                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
-                switch (aic.getChar(input)) {
-                    case "W":
-                        PreviousMessage();
-                        break;
-                    case "R":
-                        NextMessage();
-                        break;
-                    case "C":
-                        CallComposeActivity();
-                        break;
-                    case "S":
-                        replyButtonOnClickEvent();
-                        break;
+                int x = aic.getDecimal(input);
+                if (x == aic.CONTROL_PREVIOUS()){
+                    PreviousMessage();
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //checker
-
-
-                    }
-                });
+                if (x == aic.CONTROL_NEXT()){
+                    NextMessage();
+                }
+                if (x == aic.CONTROL_COMPOSE()){
+                    CallComposeActivity();
+                }
+                if (x == aic.CONTROL_REPLY()){
+                    replyButtonOnClickEvent();
+                }
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 Log.e("Czar", e.getLocalizedMessage());
@@ -496,27 +486,27 @@ public class SMSActivity extends AppCompatActivity {
                     device = null;
                 }
 
-                if (!keep){
+                if (!keep) {
                     break;
                 }
             }
-        }else {
+        } else {
             Log.e("Czar", "No Usb Devices!");
         }
     }
 
     private void StopScanner() {
-        try{
+        try {
             if (serialPort.open() == true) {
                 serialPort.close();
                 Log.e("Czar", "SerialPort is Closed!");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e("Czar", "No serial port to close");
         }
     }
 
-    private void RegisterIntent(){
+    private void RegisterIntent() {
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -526,7 +516,7 @@ public class SMSActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    private void UnRegisterIntent(){
+    private void UnRegisterIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
     }

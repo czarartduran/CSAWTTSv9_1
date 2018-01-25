@@ -9,12 +9,16 @@ import android.util.Log;
 
 public class ArduinoInputConverter {
 
-    public ArduinoInputConverter(){
+
+    private Context context;
+
+    public ArduinoInputConverter() {
 
     }
 
-    public ArduinoInputConverter(Context context){
+    public ArduinoInputConverter(Context context) {
         this.context = context;
+        FillVariable();
     }
 
     /*
@@ -197,15 +201,80 @@ public class ArduinoInputConverter {
     <string name="CONTROL_FOCUS_CHANGER"></string>
     */
 
-    private Context context;
-    public final int CONTROL_CANCEL = Integer.parseInt(context.getString(R.string.CONTROL_CANCEL));
-    public final int CONTROL_OK = Integer.parseInt(context.getString(R.string.CONTROL_OK));
-    public final int CONTROL_PREVIOUS = Integer.parseInt(context.getString(R.string.CONTROL_PREVIOUS));
-    public final int CONTROL_NEXT = Integer.parseInt(context.getString(R.string.CONTROL_NEXT));
-    public final int CONTROL_COMPOSE = Integer.parseInt(context.getString(R.string.CONTROL_COMPOSE));
-    public final int CONTROL_REPLY = Integer.parseInt(context.getString(R.string.CONTROL_REPLY));
-    public final int CONTROL_SEARCH = Integer.parseInt(context.getString(R.string.CONTROL_SEARCH));
-    public final int CONTROL_SPACE = Integer.parseInt(context.getString(R.string.CONTROL_SPACE));
-    public final int CONTROL_BACKSPACE = Integer.parseInt(context.getString(R.string.CONTROL_BACKSPACE));
-    public final int CONTROL_FOCUS_CHANGER = Integer.parseInt(context.getString(R.string.CONTROL_FOCUS_CHANGER));
+    private int _CONTROL_CANCEL;
+    private int _CONTROL_OK;
+    private int _CONTROL_PREVIOUS;
+    private int _CONTROL_NEXT;
+    private int _CONTROL_COMPOSE;
+    private int _CONTROL_REPLY;
+    private int _CONTROL_SEARCH;
+    private int _CONTROL_SPACE;
+    private int _CONTROL_BACKSPACE;
+    private int _CONTROL_FOCUS_CHANGER;
+    private int _CONTROL_CALL_ACTIVITY;
+    private int _CONTROL_SMS_ACTIVITY;
+
+    private void FillVariable() {
+        _CONTROL_CANCEL = Integer.parseInt(context.getString(R.string.CONTROL_CANCEL));
+        _CONTROL_OK = Integer.parseInt(context.getString(R.string.CONTROL_OK));
+        _CONTROL_PREVIOUS = Integer.parseInt(context.getString(R.string.CONTROL_PREVIOUS));
+        _CONTROL_NEXT = Integer.parseInt(context.getString(R.string.CONTROL_NEXT));
+        _CONTROL_COMPOSE = Integer.parseInt(context.getString(R.string.CONTROL_COMPOSE));
+        _CONTROL_REPLY = Integer.parseInt(context.getString(R.string.CONTROL_REPLY));
+        _CONTROL_SEARCH = Integer.parseInt(context.getString(R.string.CONTROL_SEARCH));
+        _CONTROL_SPACE = Integer.parseInt(context.getString(R.string.CONTROL_SPACE));
+        _CONTROL_BACKSPACE = Integer.parseInt(context.getString(R.string.CONTROL_BACKSPACE));
+        _CONTROL_FOCUS_CHANGER = Integer.parseInt(context.getString(R.string.CONTROL_FOCUS_CHANGER));
+        _CONTROL_CALL_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_CALL_ACTIVITY));
+        _CONTROL_SMS_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_SMS_ACTIVITY));
+    }
+
+    public int CONTROL_CANCEL() {
+        return _CONTROL_CANCEL;
+    }
+
+    public int CONTROL_OK() {
+        return _CONTROL_OK;
+    }
+
+    public int CONTROL_PREVIOUS() {
+        return _CONTROL_PREVIOUS;
+    }
+
+    public int CONTROL_NEXT() {
+        return _CONTROL_NEXT;
+    }
+
+    public int CONTROL_COMPOSE() {
+        return _CONTROL_COMPOSE;
+    }
+
+    public int CONTROL_REPLY() {
+        return _CONTROL_REPLY;
+    }
+
+    public int CONTROL_SEARCH() {
+        return _CONTROL_SEARCH;
+    }
+
+    public int CONTROL_SPACE() {
+        return _CONTROL_SPACE;
+    }
+
+    public int CONTROL_BACKSPACE() {
+        return _CONTROL_BACKSPACE;
+    }
+
+    public int CONTROL_FOCUS_CHANGER(){
+        return _CONTROL_FOCUS_CHANGER;
+    }
+
+    public int CONTROL_CALL_ACTIVITY() {
+        return _CONTROL_CALL_ACTIVITY;
+    }
+
+    public int CONTROL_SMS_ACTIVITY() {
+        return _CONTROL_SMS_ACTIVITY;
+    }
+
 }

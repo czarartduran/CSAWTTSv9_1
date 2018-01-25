@@ -31,6 +31,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
     SmsManager smsManager = SmsManager.getDefault();
     private final static int CREATE_REQUEST_CODE = 0130;
 
+    ArduinoInputConverter aic;
     Speaker speaker;
 
     Button buttonSend;
@@ -61,6 +62,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose_message);
         setTitle(getString(R.string.ComposeActivity));
+
 
         speaker = new Speaker(this, getString(R.string.ComposedWelcome));
 
@@ -137,6 +139,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onPause");
         super.onPause();
 
+
         speaker.destroy();
         UnRegisterIntents();
 
@@ -151,6 +154,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onResume");
         super.onResume();
 
+        aic = new ArduinoInputConverter(getApplicationContext());
         if (speaker == null) {
             speaker = new Speaker(this);
         }
@@ -175,6 +179,8 @@ public class ComposeMessageActivity extends AppCompatActivity {
     protected void onStop() {
         Log.e("ComposeMessageActivity", "onStop");
         super.onStop();
+
+
     }
 
     @Override
@@ -182,6 +188,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         Log.e("ComposeMessageActivity", "onDestroy");
         super.onDestroy();
 
+        aic = null;
         //UnRegisterIntents();
         //finish();
     }
@@ -414,24 +421,25 @@ public class ComposeMessageActivity extends AppCompatActivity {
                 final String input = data;
                 Log.e("Received", input);
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
-                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
+                int x = aic.getDecimal(input);
+
 
                 if (textPhoneOnFocus) {
-                    if (aic.IsSame(input, 192)) {
+                    if (x == aic.CONTROL_SEARCH()) {
                         speaker.speak("Opening contact list");
                         SearchRecipient_btn_OnClickEvent();
                     }
                     if (aic.IsNumber(input)) {
                         AppendStrings(String.valueOf(aic.GetNumber(input)));
                     }
-                    if (aic.IsSame(input, 64)) {
+                    if (x == aic.CONTROL_BACKSPACE()) {
                         BackSpace();
                     }
-                    if (aic.IsSame(input, 128)) {
+                    if (x == aic.CONTROL_FOCUS_CHANGER()) {
                         ChangeFocus();
                     }
                     /*<Send Cancel>*/
-                    if (aic.getDecimal(input) == DEFAULT_SEND_VAL || aic.getDecimal(input) == DEFAULT_CANCEL_VAL) {
+                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
                         DetermineControl(aic.getDecimal(input));
                     }
                     /*</Send Cancel>*/
@@ -439,14 +447,14 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     if (aic.IsForMessaging(input)) {
                         AppendStrings(aic.getChar(input).toLowerCase());
                     }
-                    if (aic.IsSame(input, 64)) {
+                    if (x == aic.CONTROL_BACKSPACE()) {
                         BackSpace();
                     }
-                    if (aic.IsSame(input, 128)) {
+                    if (aic.getDecimal(input) == aic.CONTROL_FOCUS_CHANGER()) {
                         ChangeFocus();
                     }
                     /*<Send Cancel>*/
-                    if (aic.getDecimal(input) == DEFAULT_SEND_VAL || aic.getDecimal(input) == DEFAULT_CANCEL_VAL) {
+                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
                         DetermineControl(aic.getDecimal(input));
                     }
                     /*</Send Cancel>*/
@@ -472,14 +480,20 @@ public class ComposeMessageActivity extends AppCompatActivity {
     }
 
     private void DetermineControl(int input) {
-        switch (input) {
+        if (input == aic.CONTROL_OK()){
+            SendMessage();
+        }
+        if (input == aic.CONTROL_CANCEL()){
+            cancelComposeButton();
+        }
+        /*switch (input) {
             case DEFAULT_SEND_VAL:
                 SendMessage();
                 break;
             case DEFAULT_CANCEL_VAL:
                 cancelComposeButton();
                 break;
-        }
+        }*/
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
