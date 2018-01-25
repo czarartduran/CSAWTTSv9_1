@@ -172,6 +172,21 @@ public class ArduinoInputConverter {
         }else {
             return -1;
         }
-
     }
+
+    /*
+    * <string name="CONTROL_CANCEL"></string>
+    <string name="CONTROL_OK"></string>
+    <string name="CONTROL_PREVIOUS"></string>
+    <string name="CONTROL_NEXT"></string>
+    <string name="CONTROL_COMPOSE"></string>
+    <string name="CONTROL_REPLY"></string>
+    <string name="CONTROL_SEARCH"></string>
+    <string name="CONTROL_SPACE"></string>
+    <string name="CONTROL_BACKSPACE">64</string>
+    <string name="CONTROL_FOCUS_CHANGER"></string>
+    */
+
+    //public final int CONTROL_CANCEL = Integer.parseInt(this.ge.toString(R.string.CONTROL_CANCEL));
+
 }
