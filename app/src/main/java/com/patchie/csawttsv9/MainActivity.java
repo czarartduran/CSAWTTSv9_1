@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
-    //EditText editText;
 
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
@@ -162,11 +161,14 @@ public class MainActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 final String input = data;
+                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
-                if (aic.getDecimal(input) == aic.CONTROL_CALL_ACTIVITY()) {
+                int m = aic.getDecimal(input);
+
+                if (m == aic.CONTROL_CALL_ACTIVITY()) {
                     CallActivity();
                 }
-                if (aic.getDecimal(input) == aic.CONTROL_SMS_ACTIVITY()) {
+                if (m == aic.CONTROL_SMS_ACTIVITY()) {
                     SmsActivity();
                 }
             } catch (UnsupportedEncodingException e) {
@@ -196,13 +198,18 @@ public class MainActivity extends AppCompatActivity {
                             serialPort.read(mCallback);
                             Log.e("Czar", "SerialPort Opened!");
 
-                        } else {
+                        }
+                        else {
                             Log.e("Czar SERIAL", "PORT NOT OPEN");
                         }
-                    } else {
+
+                    }
+                    else {
                         Log.e("Czar SERIAL", "PORT IS NULL");
                     }
-                } else {
+
+                }
+                else {
                     Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
                 }
             }
@@ -348,17 +355,13 @@ public class MainActivity extends AppCompatActivity {
         callActivity();
     }
 
-    Intent CallIntent;
+
 
     private void callActivity() {
-        if (CallIntent == null) {
-            //initialized
-            CallIntent = new Intent(getApplicationContext(), CallActivityV2.class);
-        }
-        /*put extras*/
 
+           Intent callIntent = new Intent(getApplicationContext(), CallActivityV2.class);
+            startActivity(callIntent);
 
-        startActivity(CallIntent);
     }
 
     Intent SmsIntent;

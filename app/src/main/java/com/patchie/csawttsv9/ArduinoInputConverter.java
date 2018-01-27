@@ -33,7 +33,7 @@ public class ArduinoInputConverter {
     //0-9
     private static int MIN_NUMBERS = 48;
     private static int MAX_NUMBERS = 57;
-    private static int[] Customs = {46, 32, 40, 57, 32, 63};
+    private static int[] Customs = {46, 32, 40, 57, 32, 63, 40, 41, 39};
 
     public boolean IsNotEmpty(String input) {
         boolean ans = false;
@@ -213,6 +213,14 @@ public class ArduinoInputConverter {
     private int _CONTROL_FOCUS_CHANGER;
     private int _CONTROL_CALL_ACTIVITY;
     private int _CONTROL_SMS_ACTIVITY;
+    private int _CONTROL_ADD_CONTACT;
+    private int _CONTROL_DIALER;
+    private int _CONTROL_PREV_CALL;
+    private int _CONTROL_NEXT_CALL;
+    private int _CONTROL_ADD_ADDCONTACT;
+    private int _CONTROL_CALL_DIALER;
+    private int _CONTROL_CANCELV2;
+    private int _CONTROL_SELECT_CALL;
 
     private void FillVariable() {
         _CONTROL_CANCEL = Integer.parseInt(context.getString(R.string.CONTROL_CANCEL));
@@ -227,6 +235,16 @@ public class ArduinoInputConverter {
         _CONTROL_FOCUS_CHANGER = Integer.parseInt(context.getString(R.string.CONTROL_FOCUS_CHANGER));
         _CONTROL_CALL_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_CALL_ACTIVITY));
         _CONTROL_SMS_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_SMS_ACTIVITY));
+        _CONTROL_ADD_CONTACT = Integer.parseInt(context.getString(R.string.CONTROL_ADD_CONTACT));
+
+        _CONTROL_DIALER = Integer.parseInt(context.getString(R.string.CONTROL_DIALER));
+        _CONTROL_PREV_CALL = Integer.parseInt(context.getString(R.string.CONTROL_PREV_CALL));
+        _CONTROL_NEXT_CALL = Integer.parseInt(context.getString(R.string.CONTROL_NEXT_CALL));
+        _CONTROL_CALL_DIALER = Integer.parseInt(context.getString(R.string.CONTROL_CALL_DIALER));
+        _CONTROL_ADD_ADDCONTACT = Integer.parseInt(context.getString(R.string.CONTROL_ADD_ADDCONTACT));
+        _CONTROL_CANCELV2 = Integer.parseInt(context.getString(R.string.CONTROL_CANCELV2));
+        _CONTROL_SELECT_CALL = Integer.parseInt(context.getString(R.string.CONTROL_SELECT_CALL));
+
     }
 
     public int CONTROL_CANCEL() {
@@ -275,6 +293,38 @@ public class ArduinoInputConverter {
 
     public int CONTROL_SMS_ACTIVITY() {
         return _CONTROL_SMS_ACTIVITY;
+    }
+    public int CONTROL_ADD_CONTACT(){
+        return _CONTROL_ADD_CONTACT;
+
+    }
+    public int CONTROL_DIALER(){
+        return _CONTROL_DIALER;
+
+    }
+    public int CONTROL_PREV_CALL(){
+        return _CONTROL_PREV_CALL;
+
+    }
+    public int CONTROL_NEXT_CALL(){
+        return _CONTROL_NEXT_CALL;
+
+    }
+    public int CONTROL_CALL_DIALER(){
+        return _CONTROL_CALL_DIALER;
+
+    }
+    public int CONTROL_ADD_ADDCONTACT(){
+        return _CONTROL_ADD_ADDCONTACT;
+
+    }
+    public int CONTROL_CANCELV2(){
+        return _CONTROL_CANCELV2;
+
+    }
+    public int CONTROL_SELECT_CALL(){
+        return _CONTROL_SELECT_CALL;
+
     }
 
 }

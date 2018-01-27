@@ -10,6 +10,8 @@
     <string name="ContactsListing">Contacts</string>
     <string name="SmsRecipientActivity">Select Recipient</string>
     <string name="CallerActivity">Caller</string>
+    <string name="DialerActivity">Dialer</string>
+    <string name="AddContactActivity">Add Contact</string>
     <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
     <string name="SMSWelcomeMessage">Welcome to SMS Module pleaase press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
     <string name="callWelcomeMessage">Welcome to Call Module</string>
@@ -43,6 +45,21 @@
     <string name="CONTROL_FOCUS_CHANGER">36</string><!--32 + 4-->
     <string name="CONTROL_CALL_ACTIVITY">65</string><!--A-->
     <string name="CONTROL_SMS_ACTIVITY">66</string><!--B-->
+<!--==========================CallActivity===============================================-->
+    <string name="CONTROL_ADD_CONTACT">68</string><!--B-->
+    <string name="CONTROL_DIALER">160</string><!--B-->
+    <string name="CONTROL_PREV_CALL">66</string>
+    <string name="CONTROL_NEXT_CALL">65</string>
+    <string name="CONTROL_SELECT_CALL">64</string>
+    <!--  Add_contact module    -->
+    <string name="CONTROL_ADD_ADDCONTACT">68</string>
+    <!--  Dialer                -->
+    <string name="CONTROL_CALL_DIALER">88</string>
+    <string name="CONTROL_CANCELV2">160</string>
+
+
+
+
 
     <string name="AddressIntro">Message From:</string>
     <string name="BodyIntro">Say\'s:</string>

@@ -44,6 +44,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="48dp"
         android:background="@android:color/holo_blue_light"
+        android:onClick="onClick_back_btn"
         android:text="@string/cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_mobile_phone" />
@@ -55,6 +56,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="48dp"
         android:background="@android:color/holo_blue_light"
+        android:onClick="OnClick_add"
         android:text="@string/str_btn_add"
         app:layout_constraintEnd_toStartOf="@+id/backbtn"
         app:layout_constraintHorizontal_bias="0.333"

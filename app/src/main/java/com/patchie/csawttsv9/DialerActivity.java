@@ -23,6 +23,7 @@ public class DialerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
+        setTitle(getString(R.string.DialerActivity));
         speaker = new Speaker(getApplicationContext(), "Welcome to Dial Module, you can now input your desire number to call. Press C " +
                 "to call inputted number, press X to delete last inputted number and press B to back to previous module");
 t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -47,40 +48,65 @@ t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener()
     protected void NumPad(View v){
         switch (v.getId()){
             case R.id.btn1:
-                AppendNumber("1");t1.speak("1",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("1");t1.speak("one, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak = editNum.getText().toString();
+                t1.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn2:
-                AppendNumber("2");t1.speak("2",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("2");t1.speak("two, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak2 = editNum.getText().toString();
+                t1.speak(toSpeak2, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn3:
-                AppendNumber("3");t1.speak("3",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("3");t1.speak("three, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak3 = editNum.getText().toString();
+                t1.speak(toSpeak3, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn4:
-                AppendNumber("4");t1.speak("4",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("4");t1.speak("four, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak4 = editNum.getText().toString();
+                t1.speak(toSpeak4, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn5:
-                AppendNumber("5");t1.speak("5",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("5");t1.speak("five, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak5 = editNum.getText().toString();
+                t1.speak(toSpeak5, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn6:
-                AppendNumber("6");t1.speak("6",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("6");t1.speak("six, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak6 = editNum.getText().toString();
+                t1.speak(toSpeak6, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn7:
-                AppendNumber("7");t1.speak("7",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("7");t1.speak("seven, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak7 = editNum.getText().toString();
+                t1.speak(toSpeak7, TextToSpeech.QUEUE_ADD, null);
+
             break;
             case R.id.btn8:
-                AppendNumber("8");t1.speak("8",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("8");t1.speak("eight, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak8 = editNum.getText().toString();
+                t1.speak(toSpeak8, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn9:
-                AppendNumber("9");t1.speak("9",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("9");t1.speak("nine, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak9 = editNum.getText().toString();
+                t1.speak(toSpeak9, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn10:
-                AppendNumber("0");t1.speak("0",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("0");t1.speak("zero, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeak0 = editNum.getText().toString();
+                t1.speak(toSpeak0, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn11:
-                AppendNumber("*");t1.speak("*",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("*");t1.speak("Asterisk, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeakast = editNum.getText().toString();
+                t1.speak(toSpeakast, TextToSpeech.QUEUE_ADD, null);
             break;
             case R.id.btn12:
-                AppendNumber("#");t1.speak("#",TextToSpeech.QUEUE_FLUSH, null);
+                AppendNumber("#");t1.speak("Hash, ",TextToSpeech.QUEUE_FLUSH, null);
+                String toSpeakhash = editNum.getText().toString();
+                t1.speak(toSpeakhash, TextToSpeech.QUEUE_ADD, null);
             break;
             default:
                 break;
@@ -97,19 +123,15 @@ t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener()
     public void backspace_OnClickEvent(View view) {
         t1.speak("Delete",TextToSpeech.QUEUE_FLUSH, null);
         BackSpace();
+        String toSpeakdel = editNum.getText().toString();
+        t1.speak(toSpeakdel, TextToSpeech.QUEUE_ADD, null);
     }
 
     private void BackSpace(){
-        String old = editNum.getText().toString();
-        String newStr ="";
-        //tb
-        editNum.setText("");
-        if (old.length() > 0){
-            newStr = old.substring(0, old.length() -1);
-            PhoneNumber = newStr;
-            editNum.append(newStr);
-        }else {
-            editNum.setText("");
+        if(editNum.getText().toString().length()>=1){
+            String newScreen = editNum.getText().toString().substring(0, editNum.getText().toString().length() - 1);
+            editNum.setText(newScreen);
+
         }
     }
 
@@ -118,6 +140,7 @@ t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener()
     }
 
     private void CancelBtn(){
+        speaker.speak("Canceled");
         finish();
     }
 
