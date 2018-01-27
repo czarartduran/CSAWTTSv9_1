@@ -103,7 +103,7 @@ public class Add_contact extends AppCompatActivity {
         StopScanner();
         UnRegisterArduinoIntent();
 
-        if (speaker.isSpeaking()){
+        if (speaker.isSpeaking()) {
             Log.e("MainActivity: onPause", "Stopping speaker");
             speaker.stop();
         }
@@ -117,7 +117,7 @@ public class Add_contact extends AppCompatActivity {
         RegisterArduinoIntent();
         StartScanner();
 
-        if (speaker == null){
+        if (speaker == null) {
             Log.e("MainActivity: onResume", "Initializing Speaker");
             speaker = new Speaker(getApplicationContext());
         }
@@ -267,6 +267,7 @@ public class Add_contact extends AppCompatActivity {
          * Codes here
          * Don't forget to null aic
          * */
+        Log.e("AddContact", "x: " + x + " : " + aic.CONTROL_FOCUS_CHANGER());
         if (IsNameOnFocus) {
             if (x == aic.CONTROL_FOCUS_CHANGER()) {
                 ChangeFocus();
@@ -277,11 +278,10 @@ public class Add_contact extends AppCompatActivity {
             if (aic.IsForMessaging(String.valueOf(x))) {
                 AppendString(aic.getChar(String.valueOf(x)));
             }
-            if (x == aic.CONTROL_OK()){
+            if (x == aic.CONTROL_OK()) {
                 addContact();
             }
-        }
-        if (IsNumberOnFocus) {
+        } else if (IsNumberOnFocus) {
             if (x == aic.CONTROL_FOCUS_CHANGER()) {
                 ChangeFocus();
             }
@@ -291,14 +291,15 @@ public class Add_contact extends AppCompatActivity {
             if (aic.IsNumber(String.valueOf(x))) {
                 AppendString(String.valueOf(aic.GetNumber(String.valueOf(x))));
             }
-            if (x == aic.CONTROL_OK()){
+            if (x == aic.CONTROL_OK()) {
                 addContact();
             }
         }
     }
 
     private void ChangeFocus() {
-        if (IsNameOnFocus) {
+        Log.e("AddContact", "ChangeFocus");
+        if (IsNameOnFocus == true) {
             IsNameOnFocus = false;
             IsNumberOnFocus = true;
         } else {

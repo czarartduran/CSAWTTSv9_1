@@ -34,7 +34,7 @@
 
     <!--KeyMAP Control-->
     <string name="CONTROL_CANCEL">128</string><!--ALT--><!--Cancel for All-->
-    <string name="CONTROL_OK">68</string><!--64 + 4--><!--SelectContact--><!--RegisteringNewContact-->
+    <string name="CONTROL_OK">68</string><!--64 + 4--><!--SelectContact--><!--RegisteringNewContact--><!--Call-->
     <string name="CONTROL_PREVIOUS">69</string><!--E--><!--PrevContact-->
     <string name="CONTROL_NEXT">73</string><!--I--><!--NextContact-->
     <string name="CONTROL_COMPOSE">65</string><!--A--><!--AddContact-->
