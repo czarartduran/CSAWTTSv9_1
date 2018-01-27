@@ -273,27 +273,27 @@ public class CallActivityV2 extends AppCompatActivity {
     private void CallBack(int x){
         ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
         if (x == aic.CONTROL_PREVIOUS()){
-            aic = null;
+            //aic = null;
             sra_prev_btn();
         }
         if (x == aic.CONTROL_OK()){
-            aic = null;
+            //aic = null;
             sra_sel_btn();
         }
         if (x == aic.CONTROL_NEXT()){
-            aic = null;
+            //aic = null;
             sra_next_btn();
         }
         if (x == aic.CONTROL_COMPOSE()){
-            aic = null;
+            //aic = null;
             add_contacts_btn();
         }
         if (x == aic.CONTROL_CANCEL()){
-            aic = null;
+            //aic = null;
             sra_can_btn();
         }
         if (x == aic.CONTROL_REPLY()){
-            aic = null;
+            //aic = null;
             Call_Dial_btn();
         }
     }

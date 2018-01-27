@@ -275,7 +275,7 @@ public class Add_contact extends AppCompatActivity {
                 BackSpace();
             }
             if (aic.IsForMessaging(String.valueOf(x))) {
-                AppendString(String.valueOf(x));
+                AppendString(aic.getChar(String.valueOf(x)));
             }
             if (x == aic.CONTROL_OK()){
                 addContact();
@@ -289,7 +289,7 @@ public class Add_contact extends AppCompatActivity {
                 BackSpace();
             }
             if (aic.IsNumber(String.valueOf(x))) {
-                AppendString(String.valueOf(x));
+                AppendString(String.valueOf(aic.GetNumber(String.valueOf(x))));
             }
             if (x == aic.CONTROL_OK()){
                 addContact();
