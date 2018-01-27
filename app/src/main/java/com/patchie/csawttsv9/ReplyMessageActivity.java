@@ -41,8 +41,6 @@ public class ReplyMessageActivity extends AppCompatActivity {
     UsbDeviceConnection connection;
 
 
-
-
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     SmsManager smsManager = SmsManager.getDefault();
 
@@ -103,6 +101,10 @@ public class ReplyMessageActivity extends AppCompatActivity {
         Log.e("ReplySmsActivity", "onStart");
         super.onStart();
 
+        RegisterSmsIntent();
+    }
+
+    private void RegisterSmsIntent() {
         smsSentReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -179,6 +181,13 @@ public class ReplyMessageActivity extends AppCompatActivity {
         //if they "hear" that broadcast, it will activate their onReceive() method
         registerReceiver(smsSentReceiver, new IntentFilter(SENT));
         registerReceiver(smsDeliveredReceiver, new IntentFilter(DELIVERED));
+
+        Log.e("ReplyActivity", "SmsIntent Registered");
+    }
+
+    private void UnRegisterSmsIntent() {
+        unregisterReceiver(smsSentReceiver);
+        unregisterReceiver(smsDeliveredReceiver);
     }
 
     @Override
@@ -186,13 +195,15 @@ public class ReplyMessageActivity extends AppCompatActivity {
         Log.e("Czar", "onPause");
         super.onPause();
 
-        speaker.destroy();
+        if (speaker != null){
+            speaker.stop();
+            speaker.destroy();
+        }
 
         StopScanner();
         UnRegisterIntent();
 
-        unregisterReceiver(smsSentReceiver);
-        unregisterReceiver(smsDeliveredReceiver);
+        UnRegisterSmsIntent();
     }
 
     @Override
@@ -218,6 +229,11 @@ public class ReplyMessageActivity extends AppCompatActivity {
         super.onDestroy();
 
         smsManager = null;
+
+        if (speaker != null){
+            speaker.stop();
+            speaker.destroy();
+        }
     }
 
     public void ReplySMS_Back_btn_OnClick_Event(View view) {
@@ -240,7 +256,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                 smsManager.sendTextMessage(_contactNumber, null, ReplySmsBody.getText().toString(), sentPI, deliveredPI);
                 //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext(),"SMS failed, please try again later!",
+                Toast.makeText(getApplicationContext(), "SMS failed, please try again later!",
                         Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
@@ -275,15 +291,15 @@ public class ReplyMessageActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
                 ArduinoInputConverter aic = new ArduinoInputConverter();
 
-                if(aic.IsForMessaging(input)){
+                if (aic.IsForMessaging(input)) {
                     speaker.speak(input);
                     AppendBody(aic.getChar(input));
-                }else if (aic.IsSame(input, 64)){
+                } else if (aic.IsSame(input, 64)) {
                     Log.e("ReplyMessageActivity", "Calling BackSpace");
                     BackSpaceBody();
-                } else if (aic.IsSame(input, 71)){
+                } else if (aic.IsSame(input, 71)) {
                     finish();
-                }else if (aic.IsSame(input, 184)){
+                } else if (aic.IsSame(input, 184)) {
                     ReplySMS();
                 }
 
@@ -302,7 +318,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         }
     };
 
-    private void AppendBody(String text){
+    private void AppendBody(String text) {
         final String input = text;
         speaker.speak(text);
         runOnUiThread(new Runnable() {
@@ -314,18 +330,18 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
     }
 
-    private void BackSpaceBody(){
-        runOnUiThread(new Runnable(){
+    private void BackSpaceBody() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 String old = ReplySmsBody.getText().toString();
-                String newStr ="";
+                String newStr = "";
                 //tb
                 ReplySmsBody.setText("");
-                if (old.length() > 0){
-                    newStr = old.substring(0, old.length() -1);
+                if (old.length() > 0) {
+                    newStr = old.substring(0, old.length() - 1);
                     ReplySmsBody.append(newStr);
-                }else {
+                } else {
                     ReplySmsBody.setText("");
                 }
             }
@@ -384,27 +400,27 @@ public class ReplyMessageActivity extends AppCompatActivity {
                     device = null;
                 }
 
-                if (!keep){
+                if (!keep) {
                     break;
                 }
             }
-        }else {
+        } else {
             Log.e("Czar", "No Usb Devices!");
         }
     }
 
     private void StopScanner() {
-        try{
+        try {
             if (serialPort.open() == true) {
                 serialPort.close();
                 Log.e("Czar", "SerialPort is Closed!");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e("Czar", "No serial port to close");
         }
     }
 
-    private void RegisterUsbIntent(){
+    private void RegisterUsbIntent() {
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -414,7 +430,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    private void UnRegisterIntent(){
+    private void UnRegisterIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
     }

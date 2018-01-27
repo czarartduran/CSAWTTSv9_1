@@ -60,13 +60,18 @@ public class Speaker {
         });
     }
 
-    private void SpeakWelcomeMessage(String WelcomeMessage){
+    private void SpeakWelcomeMessage(String WelcomeMessage) {
         Log.e("Czar", "MessageLength: " + WelcomeMessage.length());
-        if (WelcomeMessage.length() > 0){
+        Log.e("Speaker", "Is Speaking: " + isSpeaking());
+        if (WelcomeMessage.length() > 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Log.e("Speaker", "New: Speaking: " + WelcomeMessage);
                 _tts.speak(WelcomeMessage, TextToSpeech.QUEUE_FLUSH, null, null);
-            }else {
-                _tts.speak(WelcomeMessage, TextToSpeech.QUEUE_FLUSH, null);
+            } else {
+                Log.e("Speaker", "OLD: Speaking: " + WelcomeMessage);
+                HashMap<String, String> hash = new HashMap<String, String>();
+                hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_NOTIFICATION));
+                _tts.speak(WelcomeMessage, TextToSpeech.QUEUE_FLUSH, hash);
             }
 
         }
@@ -103,18 +108,25 @@ public class Speaker {
     }
 
     public void speak(String text) {
-        Log.e("Czar", "Speaking: " + isSpeaking());
+        _tts.stop();
+        Log.e("Speaker", "Is Speaking: " + isSpeaking());
+        if (_tts.isSpeaking()) {
+            _tts.stop();
+        }
+
+        Log.e("Speaker", "Is Speaking: " + isSpeaking());
         if (_ready && _allowed) {
             HashMap<String, String> hash = new HashMap<String, String>();
             hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_NOTIFICATION));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 _tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-                Log.e("Czar", "Speaking: " + text);
+                Log.e("Speaker", "New: Speaking: " + text);
             } else {
                 int tts = _tts.speak(text, TextToSpeech.QUEUE_FLUSH, hash);
-                Log.e("Czar", "Speaking: " + text + " : " + tts);
+                Log.e("Speaker", "OLD Speaking: " + text + " : " + tts);
             }
         }
+
     }
 
     public void speakAdd(String text) {
@@ -124,10 +136,10 @@ public class Speaker {
             hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_NOTIFICATION));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 _tts.speak(text, TextToSpeech.QUEUE_ADD, null, null);
-                Log.e("Czar", "Speaking: " + text);
+                Log.e("Speaker", "New SpeakAdd: " + text);
             } else {
-                int tts = _tts.speak(text, TextToSpeech.QUEUE_ADD, hash);
-                Log.e("Czar", "Speaking: " + text + " : " + tts);
+                _tts.speak(text, TextToSpeech.QUEUE_ADD, hash);
+                Log.e("Speaker", "OLD SpeakAdd: " + text + " : " + text);
             }
         }
     }
@@ -146,10 +158,10 @@ public class Speaker {
     }
 
     public void destroy() {
-        if (_tts != null){
+        if (_tts != null) {
             _tts.stop();
             _tts.shutdown();
+            Log.e("Speaker", "Speaker destroyed");
         }
-
     }
 }

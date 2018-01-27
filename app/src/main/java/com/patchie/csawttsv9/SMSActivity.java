@@ -136,7 +136,7 @@ public class SMSActivity extends AppCompatActivity {
             selectedIndex = -1;
         }
 
-        if (speaker == null) {
+        if (speaker != null) {
             Log.e("SmsActivity: onResume", "Initializing speaker");
             speaker = new Speaker(this);
             speaker.speakAdd(getString(R.string.SMSWelcomeMessage));
@@ -176,6 +176,8 @@ public class SMSActivity extends AppCompatActivity {
     public void onStop() {
         Log.e("Czar", "SmsActivity: onStop");
         active = false;
+
+        speaker.destroy();
 
         super.onStop();
     }
@@ -303,6 +305,7 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void CallComposeActivity() {
+        speaker.stop();
         ResetSelectedIndex = true;
         startActivity(new Intent(SMSActivity.this, ComposeMessageActivity.class));
     }

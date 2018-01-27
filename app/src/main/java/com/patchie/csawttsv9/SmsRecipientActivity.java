@@ -27,7 +27,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     ArduinoInputConverter aic;
     CSB csb;
-    Speaker _speak;
+    Speaker speaker;
     private int selectedIndex = -1;
     private String SELECTED_NAME, SELECTED_NUMBER;
 
@@ -37,12 +37,13 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("SmsRecipient", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms_recipient);
         setTitle(getString(R.string.SmsRecipientActivity));
 
         aic = new ArduinoInputConverter(getApplicationContext());
-        _speak = new Speaker(getApplicationContext());
+        speaker = new Speaker(getApplicationContext(), getString(R.string.SmsRecipientWelcomeMessage));
 
         contact_lv = findViewById(R.id.call_contact_lv);
         if (contactlist == null){
@@ -55,17 +56,18 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.e("SmsRecipient", "onStart");
         super.onStart();
-
-        _speak = new Speaker(getApplicationContext());
-        Speak("Please select contact");
-
     }
 
     @Override
     protected void onPause() {
-
+        Log.e("SmsRecipient", "onPause");
         super.onPause();
+
+        if (speaker != null){
+            speaker.destroy();
+        }
 
         StopScanner();
         UnRegisterIntent();
@@ -73,8 +75,12 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-
+        Log.e("SmsRecipient", "onResume");
         super.onResume();
+
+        if (speaker != null){
+            speaker = new Speaker(this);
+        }
 
         RegisterIntent();
         StartScanner();
@@ -82,20 +88,20 @@ public class SmsRecipientActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-
+        Log.e("SmsRecipient", "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-
+        Log.e("SmsRecipient", "onDestroy");
         super.onDestroy();
 
         aic = null;
     }
 
     private void Speak(String string){
-        _speak.speak(string);
+        speaker.speak(string);
     }
 
     public void sra_prev_btn_OnClickEvent(View view) {
