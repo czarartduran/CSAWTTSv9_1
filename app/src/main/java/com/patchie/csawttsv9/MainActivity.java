@@ -79,14 +79,9 @@ public class MainActivity extends AppCompatActivity {
         //Initializing CSB class
         csb = new CSB(this);
 
-        //assigning editText2
-        //editText = (EditText) findViewById(R.id.editText2);
-        Log.e("Czar", "editText has been initialized");
-
         //initializing speaker
         speaker = new Speaker(getApplicationContext(), getString(R.string.WelcomeMessage));
     }
-
 
     @Override
     protected void onStart() {
@@ -99,7 +94,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.e("Czar", "MainActivity: onResume");
 
-        speaker = new Speaker(getApplicationContext());
+        if (speaker == null){
+            Log.e("MainActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
+        }
         RegisterIntent();
         StartScanner();
     }
@@ -109,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "MainActivity: onPause");
 
         aic = null;
-        speaker.stop();
+        if (speaker.isSpeaking()){
+            Log.e("MainActivity: onPause", "Stopping speaker");
+            speaker.stop();
+        }
         StopScanner();
         unregisterReceiver(broadcastReceiver);
 
@@ -122,14 +123,15 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         active = false;
-        speaker.destroy();
+
     }
 
     @Override
     protected void onDestroy() {
         Log.e("Czar", "MainActivity: onDestroy");
-
         super.onDestroy();
+
+        speaker.destroy();
     }
 
     private void RegisterIntent() {
@@ -167,15 +169,6 @@ public class MainActivity extends AppCompatActivity {
                 if (aic.getDecimal(input) == aic.CONTROL_SMS_ACTIVITY()) {
                     SmsActivity();
                 }
-
-
-                /*runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //checker
-                        editText.setText(input);
-                    }
-                });*/
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 //editText.setText(e.toString());

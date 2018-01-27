@@ -50,7 +50,7 @@ public class SMSActivity extends AppCompatActivity {
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
     public static boolean active = false;
     private static SMSActivity inst;
-    private Speaker _speak;
+    private Speaker speaker;
 
     //private ArrayList<String> smsMessagesList;
     private ArrayList<String> smsMessagesList = new ArrayList<>();
@@ -89,7 +89,7 @@ public class SMSActivity extends AppCompatActivity {
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         //Initializing Speaker
-        _speak = new Speaker(this, getString(R.string.SMSWelcomeMessage));
+        speaker = new Speaker(this, getString(R.string.SMSWelcomeMessage));
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -125,7 +125,7 @@ public class SMSActivity extends AppCompatActivity {
         inst = this;
 
 
-        //_speak = new Speaker(this);
+        //speaker = new Speaker(this);
     }
 
     @Override
@@ -136,8 +136,10 @@ public class SMSActivity extends AppCompatActivity {
             selectedIndex = -1;
         }
 
-        if (_speak != null) {
-            _speak = new Speaker(this);
+        if (speaker == null) {
+            Log.e("SmsActivity: onResume", "Initializing speaker");
+            speaker = new Speaker(this);
+            speaker.speakAdd(getString(R.string.SMSWelcomeMessage));
         }
 
         RegisterIntent();
@@ -158,7 +160,11 @@ public class SMSActivity extends AppCompatActivity {
     protected void onPause() {
         Log.e("Czar", "SmsActivity: onPause");
 
-        _speak.destroy();
+        if (speaker != null){
+            Log.e("SmsActivity: onPause", "Stoping speaker");
+            speaker.stop();
+            speaker.destroy();
+        }
 
         StopScanner();
         unregisterReceiver(broadcastReceiver);
@@ -307,7 +313,7 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void PreviousMessage() {
-        _speak.stop();
+        speaker.stop();
         int listviewcount = this.messages.getAdapter().getCount();
 
         if (selectedIndex >= 0 && selectedIndex < listviewcount) {
@@ -372,8 +378,8 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void Speak(String TextToRead) {
-        _speak.stop();
-        _speak.speak(TextToRead);
+        speaker.stop();
+        speaker.speak(TextToRead);
     }
 
     public void ReplyButtonOnClickEvent(View view) {

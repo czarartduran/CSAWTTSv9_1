@@ -200,7 +200,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         Log.e("ReplySmsActivity", "onResume");
         super.onResume();
 
-        RegisterIntent();
+        RegisterUsbIntent();
         StartScanner();
 
         speaker = new Speaker(getApplicationContext());
@@ -404,7 +404,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         }
     }
 
-    private void RegisterIntent(){
+    private void RegisterUsbIntent(){
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
