@@ -38,47 +38,9 @@ import java.util.Map;
 
 public class Add_contact extends AppCompatActivity {
     Speaker speaker;
-    TextToSpeech t1;
+    //TextToSpeech t1;
     EditText etName;
     EditText etPhone;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-
-    @Override
-    protected void onPause() {
-        Log.e("Add_contact", "onPause");
-
-        StopScanner();
-        unregisterReceiver(broadcastReceiver);
-        super.onPause();
-        speaker.destroy();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.e("Add_contact", "onResume");
-        super.onResume();
-        RegisterIntent();
-        StartScanner();
-        speaker = new Speaker(getApplicationContext());
-        speaker.speakAdd("Please Input number");
-    }
-
-    @Override
-    protected void onStop() {
-        Log.e("Add_contact", "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.e("Add_contact", "onDestroy");
-        super.onDestroy();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,22 +48,8 @@ public class Add_contact extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
         setTitle(getString(R.string.AddContactActivity));
 
-
-
-
         speaker = new Speaker(getApplicationContext(), "Welcome to ADD CONTACT MODULE, In this module you can add a new contact");
 
-
-
-        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    t1.setLanguage(Locale.ENGLISH);
-                }
-
-            }
-        });
         etName = (EditText) findViewById(R.id.et_name);
         etName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -138,8 +86,44 @@ public class Add_contact extends AppCompatActivity {
         });
     }
 
-    public void onClick_back_btn(View view) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
+    @Override
+    protected void onPause() {
+        Log.e("Add_contact", "onPause");
+
+        StopScanner();
+        unregisterReceiver(broadcastReceiver);
+        super.onPause();
+        speaker.destroy();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Add_contact", "onResume");
+        super.onResume();
+        RegisterIntent();
+        StartScanner();
+        speaker = new Speaker(getApplicationContext());
+        speaker.speakAdd("Please Input number");
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e("Add_contact", "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("Add_contact", "onDestroy");
+        super.onDestroy();
+    }
+
+    public void onClick_back_btn(View view) {
         CANCELV2();
 
     }
@@ -148,7 +132,6 @@ public class Add_contact extends AppCompatActivity {
         speaker.speak("Canceled");
         finish();
     }
-
 
     private void ADD_CONTACT() {
         addContact();
@@ -175,7 +158,7 @@ public class Add_contact extends AppCompatActivity {
                 .withValue(StructuredName.DISPLAY_NAME, etName.getText().toString())
                 .build());
         String toSpeak = etName.getText().toString();
-        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+        //t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactID)
@@ -184,7 +167,7 @@ public class Add_contact extends AppCompatActivity {
                 .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
                 .build());
         String toSpeak1 = etName.getText().toString();
-        t1.speak(toSpeak1, TextToSpeech.QUEUE_ADD, null);
+        //t1.speak(toSpeak1, TextToSpeech.QUEUE_ADD, null);
 
         try {
             getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
@@ -197,10 +180,10 @@ public class Add_contact extends AppCompatActivity {
 
     }
 
-
     public void OnClick_add(View view) {
         ADD_CONTACT();
     }
+
     private void RegisterIntent() {
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -209,6 +192,7 @@ public class Add_contact extends AppCompatActivity {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);
     }
+
     public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
     UsbManager usbManager;
     UsbDevice device;
@@ -226,10 +210,10 @@ public class Add_contact extends AppCompatActivity {
                 ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
                 int c = aic.getDecimal(input);
-                if (c == aic.CONTROL_ADD_ADDCONTACT()) {
+                if (c == aic.CONTROL_OK()) {
                     addContact();
                 }
-                if (c == aic.CONTROL_CANCELV2()) {
+                if (c == aic.CONTROL_CANCEL()) {
                     CANCELV2();
                 }
 
@@ -260,23 +244,16 @@ public class Add_contact extends AppCompatActivity {
                             serialPort.read(mCallback);
                             Log.e("jibeh", "SerialPort Opened!");
 
-                        }
-
-                        else {
+                        } else {
                             Log.e("jibeh SERIAL", "PORT NOT OPEN");
                         }
-                    }
-                    else {
+                    } else {
                         Log.e("jibeh SERIAL", "PORT IS NULL");
                     }
-                }
-                else {
+                } else {
                     Log.e("jibeh SERIAL", "PERMISSION NOT GRANTED");
                 }
-
-
             }
-
         }
 
 

@@ -33,16 +33,16 @@
     <string name="CreatingTextInstruction">You may now create your message, press all right buttons to send the composed message, press all left buttons to cancel and go back to Inbox</string>
 
     <!--KeyMAP Control-->
-    <string name="CONTROL_CANCEL">128</string><!--ALT-->
-    <string name="CONTROL_OK">68</string><!--64 + 4-->
-    <string name="CONTROL_PREVIOUS">69</string><!--E-->
-    <string name="CONTROL_NEXT">73</string><!--I-->
-    <string name="CONTROL_COMPOSE">65</string><!--A-->
-    <string name="CONTROL_REPLY">66</string><!--B-->
+    <string name="CONTROL_CANCEL">128</string><!--ALT--><!--Cancel for All-->
+    <string name="CONTROL_OK">68</string><!--64 + 4--><!--SelectContact--><!--RegisteringNewContact-->
+    <string name="CONTROL_PREVIOUS">69</string><!--E--><!--PrevContact-->
+    <string name="CONTROL_NEXT">73</string><!--I--><!--NextContact-->
+    <string name="CONTROL_COMPOSE">65</string><!--A--><!--AddContact-->
+    <string name="CONTROL_REPLY">66</string><!--B--><!--Dialer-->
     <string name="CONTROL_SEARCH">83</string><!--S-->
     <string name="CONTROL_SPACE">192</string><!--ALT + 32-->
-    <string name="CONTROL_BACKSPACE">64</string><!--SHIFT-->
-    <string name="CONTROL_FOCUS_CHANGER">36</string><!--32 + 4-->
+    <string name="CONTROL_BACKSPACE">64</string><!--SHIFT--><!--Backspace for all-->
+    <string name="CONTROL_FOCUS_CHANGER">36</string><!--32 + 4--><!--Focus changer for(Note only applicable if have 2 or more text fields)-->
     <string name="CONTROL_CALL_ACTIVITY">65</string><!--A-->
     <string name="CONTROL_SMS_ACTIVITY">66</string><!--B-->
 <!--==========================CallActivity===============================================-->

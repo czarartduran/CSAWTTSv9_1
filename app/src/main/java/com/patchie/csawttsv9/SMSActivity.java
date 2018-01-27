@@ -89,7 +89,7 @@ public class SMSActivity extends AppCompatActivity {
         smsInboxCursor = this.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         //Initializing Speaker
-        speaker = new Speaker(this, getString(R.string.SMSWelcomeMessage));
+        speaker = new Speaker(getApplicationContext(), getString(R.string.SMSWelcomeMessage));
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -125,7 +125,6 @@ public class SMSActivity extends AppCompatActivity {
         inst = this;
 
 
-        //speaker = new Speaker(this);
     }
 
     @Override
@@ -136,10 +135,9 @@ public class SMSActivity extends AppCompatActivity {
             selectedIndex = -1;
         }
 
-        if (speaker != null) {
+        if (speaker == null) {
             Log.e("SmsActivity: onResume", "Initializing speaker");
-            speaker = new Speaker(this);
-            speaker.speakAdd(getString(R.string.SMSWelcomeMessage));
+            speaker = new Speaker(getApplicationContext());
         }
 
         RegisterIntent();
@@ -160,14 +158,13 @@ public class SMSActivity extends AppCompatActivity {
     protected void onPause() {
         Log.e("Czar", "SmsActivity: onPause");
 
-        if (speaker != null){
-            Log.e("SmsActivity: onPause", "Stoping speaker");
+        if (speaker.isSpeaking()) {
+            Log.e("SmsActivity: onPause", "Stopping speaker");
             speaker.stop();
-            speaker.destroy();
         }
 
         StopScanner();
-        unregisterReceiver(broadcastReceiver);
+        UnRegisterIntent();
 
         super.onPause();
     }
@@ -186,6 +183,8 @@ public class SMSActivity extends AppCompatActivity {
     public void onDestroy() {
         Log.e("SmsActivity", "onDestroy");
         super.onDestroy();
+
+
     }
 
     private boolean HaveReadContactsPermission() {
@@ -424,16 +423,16 @@ public class SMSActivity extends AppCompatActivity {
                 ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
                 int x = aic.getDecimal(input);
-                if (x == aic.CONTROL_PREVIOUS()){
+                if (x == aic.CONTROL_PREVIOUS()) {
                     PreviousMessage();
                 }
-                if (x == aic.CONTROL_NEXT()){
+                if (x == aic.CONTROL_NEXT()) {
                     NextMessage();
                 }
-                if (x == aic.CONTROL_COMPOSE()){
+                if (x == aic.CONTROL_COMPOSE()) {
                     CallComposeActivity();
                 }
-                if (x == aic.CONTROL_REPLY()){
+                if (x == aic.CONTROL_REPLY()) {
                     replyButtonOnClickEvent();
                 }
             } catch (UnsupportedEncodingException e) {
@@ -477,7 +476,7 @@ public class SMSActivity extends AppCompatActivity {
     };
 
     private void StartScanner() {
-        Log.e("Czar", "onClickerStart");
+        Log.e("Czar", "StartScanner");
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
             boolean keep = true;
