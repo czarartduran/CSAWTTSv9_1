@@ -33,6 +33,7 @@ public class ArduinoInputConverter {
     //0-9
     private static int MIN_NUMBERS = 48;
     private static int MAX_NUMBERS = 57;
+
     private static int[] Customs = {46, 32, 40, 57, 32, 63, 40, 41, 39};
 
     public boolean IsNotEmpty(String input) {

@@ -37,13 +37,16 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Add_contact extends AppCompatActivity {
+
     Speaker speaker;
-    //TextToSpeech t1;
     EditText etName;
     EditText etPhone;
+    boolean IsNameOnFocus = true;
+    boolean IsNumberOnFocus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("AddContactActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
         setTitle(getString(R.string.AddContactActivity));
@@ -88,39 +91,50 @@ public class Add_contact extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.e("AddContactActivity", "onStart");
         super.onStart();
     }
 
     @Override
     protected void onPause() {
-        Log.e("Add_contact", "onPause");
+        Log.e("AddContactActivity", "onPause");
+        super.onPause();
 
         StopScanner();
-        unregisterReceiver(broadcastReceiver);
-        super.onPause();
-        speaker.destroy();
+        UnRegisterArduinoIntent();
+
+        if (speaker.isSpeaking()){
+            Log.e("MainActivity: onPause", "Stopping speaker");
+            speaker.stop();
+        }
     }
 
     @Override
     protected void onResume() {
-        Log.e("Add_contact", "onResume");
+        Log.e("AddContactActivity", "onResume");
         super.onResume();
-        RegisterIntent();
+
+        RegisterArduinoIntent();
         StartScanner();
-        speaker = new Speaker(getApplicationContext());
-        speaker.speakAdd("Please Input number");
+
+        if (speaker == null){
+            Log.e("MainActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
+        }
     }
 
     @Override
     protected void onStop() {
-        Log.e("Add_contact", "onStop");
+        Log.e("AddContactActivity", "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.e("Add_contact", "onDestroy");
+        Log.e("AddContactActivity", "onDestroy");
         super.onDestroy();
+
+        speaker.destroy();
     }
 
     public void onClick_back_btn(View view) {
@@ -184,7 +198,56 @@ public class Add_contact extends AppCompatActivity {
         ADD_CONTACT();
     }
 
-    private void RegisterIntent() {
+    /*
+    * ARDUINO GLOBAL VARIABLE
+    * */
+    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
+    UsbManager usbManager;
+    UsbDevice device;
+    UsbSerialDevice serialPort;
+    UsbDeviceConnection connection;
+
+    private void StartScanner() {
+        Log.e("Czar", "StartScanner");
+        HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
+        if (!usbDevices.isEmpty()) {
+            boolean keep = true;
+            for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
+                device = entry.getValue();
+                int deviceVID = device.getVendorId();
+                //if (deviceVID == 0x2341)//Arduino Vendor ID
+                if (deviceVID == Integer.valueOf(getString(R.string.VendorID)))//Arduino Vendor ID
+                {
+                    PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                    usbManager.requestPermission(device, pi);
+                    keep = false;
+                } else {
+                    connection = null;
+                    device = null;
+                }
+
+                if (!keep) {
+                    break;
+                }
+            }
+        } else {
+            Log.e("Czar", "No Usb Devices!");
+        }
+    }
+
+    private void StopScanner() {
+        try {
+            if (serialPort.open() == true) {
+                serialPort.close();
+                Log.e("Czar", "SerialPort is Closed!");
+            }
+        } catch (Exception e) {
+            Log.e("Czar", "No serial port to close");
+        }
+    }
+
+    private void RegisterArduinoIntent() {
+        Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
@@ -193,41 +256,160 @@ public class Add_contact extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
-    UsbManager usbManager;
-    UsbDevice device;
-    UsbSerialDevice serialPort;
-    UsbDeviceConnection connection;
+    private void UnRegisterArduinoIntent() {
+        Log.e("SmsActivity", "UnRegistering Intent");
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    private void CallBack(int x) {
+        ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
+        /**
+         * Codes here
+         * Don't forget to null aic
+         * */
+        if (IsNameOnFocus) {
+            if (x == aic.CONTROL_FOCUS_CHANGER()) {
+                ChangeFocus();
+            }
+            if (x == aic.CONTROL_BACKSPACE()) {
+                BackSpace();
+            }
+            if (aic.IsForMessaging(String.valueOf(x))) {
+                AppendString(String.valueOf(x));
+            }
+            if (x == aic.CONTROL_OK()){
+                addContact();
+            }
+        }
+        if (IsNumberOnFocus) {
+            if (x == aic.CONTROL_FOCUS_CHANGER()) {
+                ChangeFocus();
+            }
+            if (x == aic.CONTROL_BACKSPACE()) {
+                BackSpace();
+            }
+            if (aic.IsNumber(String.valueOf(x))) {
+                AppendString(String.valueOf(x));
+            }
+            if (x == aic.CONTROL_OK()){
+                addContact();
+            }
+        }
+    }
+
+    private void ChangeFocus() {
+        if (IsNameOnFocus) {
+            IsNameOnFocus = false;
+            IsNumberOnFocus = true;
+        } else {
+            IsNameOnFocus = true;
+            IsNumberOnFocus = false;
+        }
+    }
+
+    private void AppendString(String input) {
+        if (IsNameOnFocus) {
+            final String conName = input;
+            //Speak here
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etName.append(conName);
+                }
+            });
+        }
+        if (IsNumberOnFocus) {
+            final String conNum = input;
+            //Speak here
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etPhone.append(conNum);
+                }
+            });
+        }
+    }
+
+    private void BackSpace() {
+        if (IsNameOnFocus) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String textToDelete = "";
+                    String old = etName.getText().toString();
+                    String newStr = "";
+                    etName.setText("");
+                    if (old.length() > 0) {
+                        textToDelete = old.substring(old.length() - 1);
+                        speaker.speak(textToDelete);
+                        newStr = old.substring(0, old.length() - 1);
+                        etName.append(newStr);
+                    } else {
+                        etName.setText("");
+                    }
+                }
+            });
+        }
+        if (IsNumberOnFocus) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String textToDelete = "";
+                    String old = etPhone.getText().toString();
+                    String newStr = "";
+                    etPhone.setText("");
+                    if (old.length() > 0) {
+                        textToDelete = old.substring(old.length() - 1);
+                        speaker.speak(textToDelete);
+                        newStr = old.substring(0, old.length() - 1);
+                        etPhone.append(newStr);
+                    } else {
+                        etPhone.setText("");
+                    }
+                }
+            });
+        }
+    }
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        //Defining a Callback which triggers whenever data is read.
+
         @Override
-        public void onReceivedData(byte[] bytes) {
-            Log.e("jibeh", "Called: onReceivedData");
+        public void onReceivedData(byte[] arg0) {
+            Log.e("Czar", "Called: onReceivedData");
             String data = null;
             try {
-                data = new String(bytes, "UTF-8");
+                data = new String(arg0, "UTF-8");
                 final String input = data;
                 ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
 
-                int c = aic.getDecimal(input);
-                if (c == aic.CONTROL_OK()) {
-                    addContact();
-                }
-                if (c == aic.CONTROL_CANCEL()) {
-                    CANCELV2();
-                }
+                int x = aic.getDecimal(input);
+                aic = null;
+                CallBack(x);
 
+                /*if (x == aic.CONTROL_PREVIOUS()) {
+                    PreviousMessage();
+                }
+                if (x == aic.CONTROL_NEXT()) {
+                    NextMessage();
+                }
+                if (x == aic.CONTROL_COMPOSE()) {
+                    CallComposeActivity();
+                }
+                if (x == aic.CONTROL_REPLY()) {
+                    replyButtonOnClickEvent();
+                }*/
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                Log.e("Czar", e.getLocalizedMessage());
             }
         }
     };
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("jibeh", "Called: BroadcastReceiver");
-
+            Log.e("Czar", "Called: BroadcastReceiver");
             if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
                 boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                 if (granted) {
@@ -242,63 +424,20 @@ public class Add_contact extends AppCompatActivity {
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(mCallback);
-                            Log.e("jibeh", "SerialPort Opened!");
+                            Log.e("Czar", "SerialPort Opened!");
 
                         } else {
-                            Log.e("jibeh SERIAL", "PORT NOT OPEN");
+                            Log.e("Czar SERIAL", "PORT NOT OPEN");
                         }
                     } else {
-                        Log.e("jibeh SERIAL", "PORT IS NULL");
+                        Log.e("Czar SERIAL", "PORT IS NULL");
                     }
                 } else {
-                    Log.e("jibeh SERIAL", "PERMISSION NOT GRANTED");
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
                 }
             }
         }
-
-
     };
-
-    private void StartScanner() {
-        Log.e("MainActivity", "Starting SerialPort");
-        HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
-        if (!usbDevices.isEmpty()) {
-            boolean keep = true;
-            for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
-                device = entry.getValue();
-                int deviceVID = device.getVendorId();
-                //if (deviceVID == 0x2341)//Arduino Vendor ID
-                if (deviceVID == Integer.valueOf(getString(R.string.VendorID)))//Arduino Vendor ID
-                {
-                    PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                    usbManager.requestPermission(device, pi);
-                    keep = false;
-                    Log.e("MainActivity", "Successfully set device serial port");
-                } else {
-                    connection = null;
-                    device = null;
-                }
-
-                if (!keep) {
-                    break;
-                }
-            }
-        } else {
-            Log.e("MainActivity", "No Usb Devices!");
-        }
-    }
-
-    private void StopScanner() {
-        Log.e("MainActivity", "Stopping SerialPort");
-        try {
-            if (serialPort.open() == true) {
-                serialPort.close();
-                Log.e("MainActivity", "SerialPort is Closed!");
-            }
-        } catch (Exception e) {
-            Log.e("MainActivity", "No serial port to close");
-        }
-    }
 
 
 }
