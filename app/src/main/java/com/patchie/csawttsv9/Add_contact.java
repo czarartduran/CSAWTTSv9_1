@@ -54,6 +54,7 @@ public class Add_contact extends AppCompatActivity {
         speaker = new Speaker(getApplicationContext(), "Welcome to ADD CONTACT MODULE, In this module you can add a new contact");
 
         etName = (EditText) findViewById(R.id.et_name);
+        etName.setShowSoftInputOnFocus(false);
         etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -66,11 +67,12 @@ public class Add_contact extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                speaker.speak(etName.getText().toString());
+                speaker.speakAdd(etName.getText().toString());
 
             }
         });
         etPhone = (EditText) findViewById(R.id.et_mobile_phone);
+        etPhone.setShowSoftInputOnFocus(false);
         etPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -84,7 +86,7 @@ public class Add_contact extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                speaker.speak(etPhone.getText().toString());
+                speaker.speakAdd(etPhone.getText().toString());
             }
         });
     }
@@ -139,7 +141,6 @@ public class Add_contact extends AppCompatActivity {
 
     public void onClick_back_btn(View view) {
         CANCELV2();
-
     }
 
     private void CANCELV2() {
@@ -302,16 +303,18 @@ public class Add_contact extends AppCompatActivity {
         if (IsNameOnFocus == true) {
             IsNameOnFocus = false;
             IsNumberOnFocus = true;
+            speaker.speak("Please enter number");
         } else {
             IsNameOnFocus = true;
             IsNumberOnFocus = false;
+            speaker.speak("Please enter name");
         }
     }
 
     private void AppendString(String input) {
         if (IsNameOnFocus) {
             final String conName = input;
-            //Speak here
+            speaker.speak(input);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -321,7 +324,7 @@ public class Add_contact extends AppCompatActivity {
         }
         if (IsNumberOnFocus) {
             final String conNum = input;
-            //Speak here
+            speaker.speak(input);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -342,7 +345,7 @@ public class Add_contact extends AppCompatActivity {
                     etName.setText("");
                     if (old.length() > 0) {
                         textToDelete = old.substring(old.length() - 1);
-                        speaker.speak(textToDelete);
+                        speaker.speak("Deleting " + textToDelete);
                         newStr = old.substring(0, old.length() - 1);
                         etName.append(newStr);
                     } else {
@@ -361,7 +364,7 @@ public class Add_contact extends AppCompatActivity {
                     etPhone.setText("");
                     if (old.length() > 0) {
                         textToDelete = old.substring(old.length() - 1);
-                        speaker.speak(textToDelete);
+                        speaker.speak("Deleting" + textToDelete);
                         newStr = old.substring(0, old.length() - 1);
                         etPhone.append(newStr);
                     } else {

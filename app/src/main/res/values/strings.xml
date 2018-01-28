@@ -13,12 +13,12 @@
     <string name="DialerActivity">Dialer</string>
     <string name="AddContactActivity">Add Contact</string>
     <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
-    <string name="SMSWelcomeMessage">Welcome to SMS Module pleaase press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
+    <string name="SMSWelcomeMessage">Welcome to SMS Module please press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
     <string name="callWelcomeMessage">Welcome to Call Module</string>
     <string name="SmsRecipientWelcomeMessage">Please select your SMS recipient, press the combination of I to go to next contact and E to go back to previous contact</string>
 
     <!--Reply-->
-    <string name="ReplyWelcomeMessage">Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace</string>
+    <string name="ReplyWelcomeMessage">Welcome to Reply, Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace</string>
     <string name="SentOnReceived_RESULT_OK">Sms successfully sent!</string>
     <string name="SentOnReceived_RESULT_ERROR_GENERICFAILURE">Sms not sent! Sms Generic Failure</string>
     <string name="SentOnReceived_RESULT_ERROR_NO_SERVICE">Sms not sent! No Service</string>
@@ -34,7 +34,7 @@
 
     <!--KeyMAP Control-->
     <string name="CONTROL_CANCEL">128</string><!--ALT--><!--Cancel for All-->
-    <string name="CONTROL_OK">68</string><!--64 + 4--><!--SelectContact--><!--RegisteringNewContact--><!--Call-->
+    <string name="CONTROL_OK">129</string><!--ALT + A--><!--SelectContact--><!--RegisteringNewContact--><!--Call-->
     <string name="CONTROL_PREVIOUS">69</string><!--E--><!--PrevContact-->
     <string name="CONTROL_NEXT">73</string><!--I--><!--NextContact-->
     <string name="CONTROL_COMPOSE">65</string><!--A--><!--AddContact-->
@@ -45,6 +45,17 @@
     <string name="CONTROL_FOCUS_CHANGER">36</string><!--32 + 4--><!--Focus changer for(Note only applicable if have 2 or more text fields)-->
     <string name="CONTROL_CALL_ACTIVITY">65</string><!--A-->
     <string name="CONTROL_SMS_ACTIVITY">66</string><!--B-->
+
+    /*
+    *CANCEL - 128(ALT) + C COMBINATION
+    SEND/OK/SELECT/CALL - 128 + A COMBINATION === APPLIED
+    SELECT CONTACT - S COMBINATION
+    FOCUS CHANGER EDITTEXT - 4 + 32
+    SPACE - 128(ALT) + 32
+    BACKSPACE - 128(ALT) + 64 (SHIFT)
+    PHONE NUMBER - 0 to 9 COMBI + 128(ALT)
+    */
+
 <!--==========================CallActivity===============================================-->
     <string name="CONTROL_ADD_CONTACT">68</string><!--B-->
     <string name="CONTROL_DIALER">160</string><!--B-->

@@ -11,6 +11,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,8 +35,8 @@ public class ComposeMessageActivity extends AppCompatActivity {
     ArduinoInputConverter aic;
     Speaker speaker;
 
-    Button buttonSend;
-    Button buttonCancel;
+    /*Button buttonSend;
+    Button buttonCancel;*/
     EditText textPhoneNo;
     private boolean textPhoneOnFocus = true;
     EditText textSMS;
@@ -48,8 +49,8 @@ public class ComposeMessageActivity extends AppCompatActivity {
     private final String DELIVERED = "SMS_DELIVERED";
 
 
-    private static final int DEFAULT_SEND_VAL = 63;
-    private static final int DEFAULT_CANCEL_VAL = 184;
+    /*private static final int DEFAULT_SEND_VAL = 63;
+    private static final int DEFAULT_CANCEL_VAL = 184;*/
 
     //private int DEFAULT_CANCEL_VAL = 184;
 
@@ -75,6 +76,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
 
         textPhoneNo = (EditText) findViewById(R.id.contactnumber);
+        textPhoneNo.setShowSoftInputOnFocus(false);
         textPhoneNo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -94,6 +96,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         });
 
         textSMS = (EditText) findViewById(R.id.compose);
+        textSMS.setShowSoftInputOnFocus(false);
         textSMS.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -119,7 +122,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-
+        Log.e("ComposeMessageActivity", "onStart");
         super.onStart();
 
         //Must instruct base on the current onFoccus object
@@ -131,7 +134,6 @@ public class ComposeMessageActivity extends AppCompatActivity {
             Log.e("Czar", "TextOnFocus");
             speaker.speakAdd(getString(R.string.CreatingTextInstruction));
         }
-        Log.e("ComposeMessageActivity", "onStart");
     }
 
     @Override
@@ -140,12 +142,16 @@ public class ComposeMessageActivity extends AppCompatActivity {
         super.onPause();
 
 
-        speaker.destroy();
-        UnRegisterIntents();
+        if (speaker.isSpeaking()) {
+            Log.e("MainActivity: onPause", "Stopping speaker");
+            speaker.stop();
+        }
+
+        UnRegisterSmsIntents();
 
         //Arduino
         StopScanner();
-        UnRegisterIntent();
+        UnRegisterArduinoIntent();
 
     }
 
@@ -156,31 +162,30 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
         aic = new ArduinoInputConverter(getApplicationContext());
         if (speaker == null) {
-            speaker = new Speaker(this);
+            Log.e("MainActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
         }
 
-        RegisterIntents();
+        RegisterSmsIntents();
 
         //Arduino
-        RegisterIntent();
+        RegisterArduinoIntent();
         StartScanner();
 
         //checking which object to focus
-        if (textPhoneOnFocus) {
+        /*if (textPhoneOnFocus) {
             textPhoneNo.setFocusable(true);
             textSMS.setFocusable(false);
         } else {
             textPhoneNo.setFocusable(false);
             textSMS.setFocusable(true);
-        }
+        }*/
     }
 
     @Override
     protected void onStop() {
         Log.e("ComposeMessageActivity", "onStop");
         super.onStop();
-
-
     }
 
     @Override
@@ -189,7 +194,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         super.onDestroy();
 
         aic = null;
-        //UnRegisterIntents();
+        //UnRegisterSmsIntents();
         //finish();
     }
 
@@ -337,7 +342,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
     }
 
-    private void RegisterIntents() {
+    private void RegisterSmsIntents() {
         smsSentReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -395,76 +400,10 @@ public class ComposeMessageActivity extends AppCompatActivity {
         registerReceiver(smsDeliveredReceiver, new IntentFilter(DELIVERED));
     }
 
-    private void UnRegisterIntents() {
+    private void UnRegisterSmsIntents() {
         unregisterReceiver(smsSentReceiver);
         unregisterReceiver(smsDeliveredReceiver);
     }
-
-    /*
-    * ARDUINO GLOBAL VARIABLE
-    * */
-    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
-    UsbManager usbManager;
-    UsbDevice device;
-    UsbSerialDevice serialPort;
-    UsbDeviceConnection connection;
-
-    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
-        //Defining a Callback which triggers whenever data is read.
-
-        @Override
-        public void onReceivedData(byte[] arg0) {
-            Log.e("Czar", "Called: onReceivedData");
-            String data = null;
-            try {
-                data = new String(arg0, "UTF-8");
-                final String input = data;
-                Log.e("Received", input);
-                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
-                int x = aic.getDecimal(input);
-
-
-                if (textPhoneOnFocus) {
-                    if (x == aic.CONTROL_SEARCH()) {
-                        speaker.speak("Opening contact list");
-                        SearchRecipient_btn_OnClickEvent();
-                    }
-                    if (aic.IsNumber(input)) {
-                        AppendStrings(String.valueOf(aic.GetNumber(input)));
-                    }
-                    if (x == aic.CONTROL_BACKSPACE()) {
-                        BackSpace();
-                    }
-                    if (x == aic.CONTROL_FOCUS_CHANGER()) {
-                        ChangeFocus();
-                    }
-                    /*<Send Cancel>*/
-                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
-                        DetermineControl(aic.getDecimal(input));
-                    }
-                    /*</Send Cancel>*/
-                } else {
-                    if (aic.IsForMessaging(input)) {
-                        AppendStrings(aic.getChar(input).toLowerCase());
-                    }
-                    if (x == aic.CONTROL_BACKSPACE()) {
-                        BackSpace();
-                    }
-                    if (aic.getDecimal(input) == aic.CONTROL_FOCUS_CHANGER()) {
-                        ChangeFocus();
-                    }
-                    /*<Send Cancel>*/
-                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
-                        DetermineControl(aic.getDecimal(input));
-                    }
-                    /*</Send Cancel>*/
-                }
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-                Log.e("Czar", e.getLocalizedMessage());
-            }
-        }
-    };
 
     /*This will change focus if the certain combination is received*/
     private void ChangeFocus() {
@@ -480,54 +419,63 @@ public class ComposeMessageActivity extends AppCompatActivity {
     }
 
     private void DetermineControl(int input) {
-        if (input == aic.CONTROL_OK()){
+        if (input == aic.CONTROL_OK()) {
             SendMessage();
         }
-        if (input == aic.CONTROL_CANCEL()){
+        if (input == aic.CONTROL_CANCEL()) {
             cancelComposeButton();
         }
-        /*switch (input) {
-            case DEFAULT_SEND_VAL:
-                SendMessage();
-                break;
-            case DEFAULT_CANCEL_VAL:
-                cancelComposeButton();
-                break;
-        }*/
     }
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e("Czar", "Called: BroadcastReceiver");
-            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
-                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                if (granted) {
-                    connection = usbManager.openDevice(device);
-                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
-                    if (serialPort != null) {
-                        if (serialPort.open()) {
-                            //Set Serial Connection Parameters.
-                            serialPort.setBaudRate(9600);
-                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
-                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
-                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
-                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
-                            serialPort.read(mCallback);
-                            Log.e("Czar", "SerialPort Opened!");
+    /*
+    * ARDUINO GLOBAL VARIABLE
+    * */
+    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
+    UsbManager usbManager;
+    UsbDevice device;
+    UsbSerialDevice serialPort;
+    UsbDeviceConnection connection;
 
-                        } else {
-                            Log.e("Czar SERIAL", "PORT NOT OPEN");
-                        }
-                    } else {
-                        Log.e("Czar SERIAL", "PORT IS NULL");
-                    }
-                } else {
-                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
-                }
+    private void CallBack(int x) {
+        ArduinoInputConverter aic = new ArduinoInputConverter(this);
+
+        if (textPhoneOnFocus) {
+            if (x == aic.CONTROL_SEARCH()) {
+                speaker.speak("Opening contact list");
+                SearchRecipient_btn_OnClickEvent();
             }
+            if (aic.IsNumber(String.valueOf(x))) {
+                AppendStrings(String.valueOf(aic.GetNumber(String.valueOf(x))));
+            }
+            if (x == aic.CONTROL_BACKSPACE()) {
+                BackSpace();
+            }
+            if (x == aic.CONTROL_FOCUS_CHANGER()) {
+                ChangeFocus();
+            }
+                    /*<Send Cancel>*/
+            if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
+                DetermineControl(aic.getDecimal(String.valueOf(x)));
+            }
+                    /*</Send Cancel>*/
+        } else {
+            if (aic.IsForMessaging(String.valueOf(x))) {
+                AppendStrings(aic.getChar(String.valueOf(x)).toLowerCase());
+            }
+            if (x == aic.CONTROL_BACKSPACE()) {
+                BackSpace();
+            }
+            if (aic.getDecimal(String.valueOf(x)) == aic.CONTROL_FOCUS_CHANGER()) {
+                ChangeFocus();
+            }
+                    /*<Send Cancel>*/
+            if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
+                DetermineControl(aic.getDecimal(String.valueOf(x)));
+            }
+                    /*</Send Cancel>*/
         }
-    };
+
+    }
 
     private void StartScanner() {
         Log.e("Czar", "StartScanner");
@@ -568,7 +516,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         }
     }
 
-    private void RegisterIntent() {
+    private void RegisterArduinoIntent() {
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -578,8 +526,101 @@ public class ComposeMessageActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    private void UnRegisterIntent() {
+    private void UnRegisterArduinoIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
     }
+
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        //Defining a Callback which triggers whenever data is read.
+
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            Log.e("Czar", "Called: onReceivedData");
+            String data = null;
+            try {
+                data = new String(arg0, "UTF-8");
+                final String input = data;
+                Log.e("Received", input);
+                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+                int x = aic.getDecimal(input);
+                CallBack(x);
+
+                /*if (textPhoneOnFocus) {
+                    if (x == aic.CONTROL_SEARCH()) {
+                        speaker.speak("Opening contact list");
+                        SearchRecipient_btn_OnClickEvent();
+                    }
+                    if (aic.IsNumber(input)) {
+                        AppendStrings(String.valueOf(aic.GetNumber(input)));
+                    }
+                    if (x == aic.CONTROL_BACKSPACE()) {
+                        BackSpace();
+                    }
+                    if (x == aic.CONTROL_FOCUS_CHANGER()) {
+                        ChangeFocus();
+                    }
+                    *//*<Send Cancel>*//*
+                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
+                        DetermineControl(aic.getDecimal(input));
+                    }
+                    *//*</Send Cancel>*//*
+                } else {
+                    if (aic.IsForMessaging(input)) {
+                        AppendStrings(aic.getChar(input).toLowerCase());
+                    }
+                    if (x == aic.CONTROL_BACKSPACE()) {
+                        BackSpace();
+                    }
+                    if (aic.getDecimal(input) == aic.CONTROL_FOCUS_CHANGER()) {
+                        ChangeFocus();
+                    }
+                    *//*<Send Cancel>*//*
+                    if (x == aic.CONTROL_OK() || x == aic.CONTROL_CANCEL()) {
+                        DetermineControl(aic.getDecimal(input));
+                    }
+                    *//*</Send Cancel>*//*
+                }*/
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+                Log.e("Czar", e.getLocalizedMessage());
+            }
+        }
+    };
+
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("Czar", "Called: BroadcastReceiver");
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    connection = usbManager.openDevice(device);
+                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+                    if (serialPort != null) {
+                        if (serialPort.open()) {
+                            //Set Serial Connection Parameters.
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            serialPort.read(mCallback);
+                            Log.e("Czar", "SerialPort Opened!");
+
+                        } else {
+                            Log.e("Czar SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        Log.e("Czar SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
+                }
+            }
+        }
+    };
+
+
 }

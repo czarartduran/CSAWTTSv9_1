@@ -31,15 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReplyMessageActivity extends AppCompatActivity {
-    /*
-    * ARDUINO GLOBAL VARIABLE
-    * */
-    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
-    UsbManager usbManager;
-    UsbDevice device;
-    UsbSerialDevice serialPort;
-    UsbDeviceConnection connection;
-
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     SmsManager smsManager = SmsManager.getDefault();
@@ -58,6 +49,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("ReplySmsActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply_message);
         setTitle(getString(R.string.ReplyActivity));
@@ -73,7 +65,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         receiver_tv.setText(_contactName);
 
         ReplySmsBody = (EditText) findViewById(R.id.editText);
-        ReplySmsBody.setShowSoftInputOnFocus(true);
+        ReplySmsBody.setShowSoftInputOnFocus(false);
         ReplySmsBody.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -82,12 +74,12 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                speaker.speak(ReplySmsBody.getText().toString());
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                speaker.speakAdd(ReplySmsBody.getText().toString());
             }
         });
 
@@ -114,7 +106,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Log.e("ReplySmsActivity", "Sms Sent successfully");
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.SentOnReceived_RESULT_OK));
-                        finish();
+                        //finish();
                         break;
 
                     //Something went wrong and there's no way to tell what, why or how.
@@ -122,7 +114,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Log.e("ReplySmsActivity", "Generic failure");
                         Toast.makeText(context, "Generic failure!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_GENERICFAILURE));
-                        finish();
+                        //finish();
                         break;
 
                     //Your device simply has no cell reception. You're probably in the middle of
@@ -132,7 +124,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Log.e("ReplySmsActivity", "No Service");
                         Toast.makeText(context, "No service!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_NO_SERVICE));
-                        finish();
+                        //finish();
                         break;
 
                     //Something went wrong in the SMS stack, while doing something with a protocol
@@ -141,7 +133,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Log.e("ReplySmsActivity", "Null PDU");
                         Toast.makeText(context, "Null PDU!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.SentOnReceived_RESULT_NULL_PDU));
-                        finish();
+                        //finish();
                         break;
 
                     //You switched your device into airplane mode, which tells your device exactly
@@ -150,7 +142,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Log.e("ReplySmsActivity", "Radio OFF");
                         Toast.makeText(context, "Radio off!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.SentOnReceived_RESULT_RADIO_OFF));
-                        finish();
+                        //finish();
                         break;
                 }
             }
@@ -164,14 +156,14 @@ public class ReplyMessageActivity extends AppCompatActivity {
                         Toast.makeText(context, "SMS delivered!", Toast.LENGTH_SHORT).show();
                         Log.e("ReplySmsActivity", "Sms Delivered");
                         speaker.speak(getString(R.string.DeliverOnReceived_ResultOK));
-                        finish();
+                        //finish();
                         break;
 
                     case Activity.RESULT_CANCELED:
                         Log.e("ReplySmsActivity", "Sms Not Delivered");
                         Toast.makeText(context, "SMS not delivered!", Toast.LENGTH_SHORT).show();
                         speaker.speak(getString(R.string.DeliverOnReceived_ResultCancel));
-                        finish();
+                        //finish();
                         break;
                 }
             }
@@ -192,16 +184,16 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        Log.e("Czar", "onPause");
+        Log.e("ReplySmsActivity", "onPause");
         super.onPause();
 
-        if (speaker != null){
+        if (speaker.isSpeaking()) {
+            Log.e("MainActivity: onPause", "Stopping speaker");
             speaker.stop();
-            speaker.destroy();
         }
 
         StopScanner();
-        UnRegisterIntent();
+        UnRegisterArduinoIntent();
 
         UnRegisterSmsIntent();
     }
@@ -211,10 +203,13 @@ public class ReplyMessageActivity extends AppCompatActivity {
         Log.e("ReplySmsActivity", "onResume");
         super.onResume();
 
-        RegisterUsbIntent();
+        RegisterArduinoIntent();
         StartScanner();
 
-        speaker = new Speaker(getApplicationContext());
+        if (speaker == null) {
+            Log.e("MainActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
+        }
     }
 
     @Override
@@ -230,10 +225,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
 
         smsManager = null;
 
-        if (speaker != null){
-            speaker.stop();
-            speaker.destroy();
-        }
+        speaker.destroy();
     }
 
     public void ReplySMS_Back_btn_OnClick_Event(View view) {
@@ -277,47 +269,6 @@ public class ReplyMessageActivity extends AppCompatActivity {
         }
     }
 
-    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
-        //Defining a Callback which triggers whenever data is read.
-
-        @Override
-        public void onReceivedData(byte[] arg0) {
-            Log.e("Czar", "Called: onReceivedData");
-            String data = null;
-            try {
-                data = new String(arg0, "UTF-8");
-                final String input = data;
-                Log.e("Received", input);
-                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
-                ArduinoInputConverter aic = new ArduinoInputConverter();
-
-                if (aic.IsForMessaging(input)) {
-                    speaker.speak(input);
-                    AppendBody(aic.getChar(input));
-                } else if (aic.IsSame(input, 64)) {
-                    Log.e("ReplyMessageActivity", "Calling BackSpace");
-                    BackSpaceBody();
-                } else if (aic.IsSame(input, 71)) {
-                    finish();
-                } else if (aic.IsSame(input, 184)) {
-                    ReplySMS();
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //checker
-
-
-                    }
-                });
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-                Log.e("Czar", e.getLocalizedMessage());
-            }
-        }
-    };
-
     private void AppendBody(String text) {
         final String input = text;
         speaker.speak(text);
@@ -336,10 +287,13 @@ public class ReplyMessageActivity extends AppCompatActivity {
             public void run() {
                 String old = ReplySmsBody.getText().toString();
                 String newStr = "";
+                String del = "";
                 //tb
                 ReplySmsBody.setText("");
                 if (old.length() > 0) {
                     newStr = old.substring(0, old.length() - 1);
+                    del = old.substring(old.length() - 1);
+                    speaker.speak("Deleting " + del);
                     ReplySmsBody.append(newStr);
                 } else {
                     ReplySmsBody.setText("");
@@ -348,38 +302,36 @@ public class ReplyMessageActivity extends AppCompatActivity {
         });
     }
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e("Czar", "Called: BroadcastReceiver");
-            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
-                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                if (granted) {
-                    connection = usbManager.openDevice(device);
-                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
-                    if (serialPort != null) {
-                        if (serialPort.open()) {
-                            //Set Serial Connection Parameters.
-                            serialPort.setBaudRate(9600);
-                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
-                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
-                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
-                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
-                            serialPort.read(mCallback);
-                            Log.e("Czar", "SerialPort Opened!");
+    /*
+    * ARDUINO GLOBAL VARIABLE
+    * */
+    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
+    UsbManager usbManager;
+    UsbDevice device;
+    UsbSerialDevice serialPort;
+    UsbDeviceConnection connection;
 
-                        } else {
-                            Log.e("Czar SERIAL", "PORT NOT OPEN");
-                        }
-                    } else {
-                        Log.e("Czar SERIAL", "PORT IS NULL");
-                    }
-                } else {
-                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
-                }
-            }
+    private void CallBack(int x) {
+        ArduinoInputConverter aic = new ArduinoInputConverter(this);
+
+        if (aic.IsForMessaging(String.valueOf(x))) {
+            speaker.speak(String.valueOf(x));
+            AppendBody(aic.getChar(String.valueOf(x)).toLowerCase());
+            return;
         }
-    };
+        if (x == aic.CONTROL_BACKSPACE()) {
+            Log.e("ReplyMessageActivity", "Calling BackSpace");
+            BackSpaceBody();
+            return;
+        }
+        if (x == aic.CONTROL_CANCEL()) {
+            finish();
+        }
+        if (x == aic.CONTROL_OK()) {
+            ReplySMS();
+            return;
+        }
+    }
 
     private void StartScanner() {
         Log.e("Czar", "onClickerStart");
@@ -420,7 +372,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         }
     }
 
-    private void RegisterUsbIntent() {
+    private void RegisterArduinoIntent() {
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -430,10 +382,77 @@ public class ReplyMessageActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    private void UnRegisterIntent() {
+    private void UnRegisterArduinoIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
     }
 
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        //Defining a Callback which triggers whenever data is read.
 
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            Log.e("Czar", "Called: onReceivedData");
+            String data = null;
+            try {
+                data = new String(arg0, "UTF-8");
+                final String input = data;
+                Log.e("Received", input);
+                //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
+                ArduinoInputConverter aic = new ArduinoInputConverter();
+
+                int x = aic.getDecimal(input);
+                //aic = null;
+                CallBack(x);
+
+                /*if (aic.IsForMessaging(input)) {
+                    speaker.speak(input);
+                    AppendBody(aic.getChar(input));
+                } else if (aic.IsSame(input, 64)) {
+                    Log.e("ReplyMessageActivity", "Calling BackSpace");
+                    BackSpaceBody();
+                } else if (aic.IsSame(input, 71)) {
+                    finish();
+                } else if (aic.IsSame(input, 184)) {
+                    ReplySMS();
+                }*/
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+                Log.e("Czar", e.getLocalizedMessage());
+            }
+        }
+    };
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("Czar", "Called: BroadcastReceiver");
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    connection = usbManager.openDevice(device);
+                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+                    if (serialPort != null) {
+                        if (serialPort.open()) {
+                            //Set Serial Connection Parameters.
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            serialPort.read(mCallback);
+                            Log.e("Czar", "SerialPort Opened!");
+
+                        } else {
+                            Log.e("Czar SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        Log.e("Czar SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
+                }
+            }
+        }
+    };
 }

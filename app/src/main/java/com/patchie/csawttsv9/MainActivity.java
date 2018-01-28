@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //Turning OFF DoNotDisturbMode
         //turnOffDoNotDisturbMode();
         //Maxing out all volume module component
-        //SetVolumes();
+        SetVolumes();
 
         //Initializing CSB class
         csb = new CSB(this);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.e("Czar", "MainActivity: onResume");
 
-        if (speaker == null){
+        if (speaker == null) {
             Log.e("MainActivity: onResume", "Initializing Speaker");
             speaker = new Speaker(getApplicationContext());
         }
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Czar", "MainActivity: onPause");
 
         aic = null;
-        if (speaker.isSpeaking()){
+        if (speaker.isSpeaking()) {
             Log.e("MainActivity: onPause", "Stopping speaker");
             speaker.stop();
         }
@@ -198,18 +198,15 @@ public class MainActivity extends AppCompatActivity {
                             serialPort.read(mCallback);
                             Log.e("Czar", "SerialPort Opened!");
 
-                        }
-                        else {
+                        } else {
                             Log.e("Czar SERIAL", "PORT NOT OPEN");
                         }
 
-                    }
-                    else {
+                    } else {
                         Log.e("Czar SERIAL", "PORT IS NULL");
                     }
 
-                }
-                else {
+                } else {
                     Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
                 }
             }
@@ -356,11 +353,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void callActivity() {
 
-           Intent callIntent = new Intent(getApplicationContext(), CallActivityV2.class);
-            startActivity(callIntent);
+        Intent callIntent = new Intent(getApplicationContext(), CallActivityV2.class);
+        startActivity(callIntent);
 
     }
 
@@ -409,21 +405,21 @@ public class MainActivity extends AppCompatActivity {
     //This is function to max volumes
     private void SetVolumes() {
         Log.e("Czar", "IS_DONOTDISTURBDISABLE: " + String.valueOf(IS_DONOTDISTURBDISABLE));
-        if (IS_DONOTDISTURBDISABLE == true) {
-            AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
-            am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-            am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
-            am.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0);
-            am.setStreamVolume(AudioManager.STREAM_ALARM, 100, 0);
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
-            am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
-            am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
-        } else {
+        /*if (IS_DONOTDISTURBDISABLE != true) {
             //vibrate if codes fail to enable sound function of the device
             Log.e("Czar", "MainActivity: SOMETHING WENT WRONG SetVolumes");
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(5000);
-        }
+            return;
+        }*/
+        AudioManager am = (AudioManager) getSystemService(getApplicationContext().AUDIO_SERVICE);
+        am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM, 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_ALARM, 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 100, 0);
+        am.setStreamVolume(AudioManager.STREAM_RING, 100, 0);
     }
 
     public void sms_btn_OnClickEvent(View view) {

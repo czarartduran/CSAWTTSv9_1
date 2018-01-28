@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -53,7 +55,23 @@ public class DialerActivity extends AppCompatActivity {
         });*/
         //assigning number_tb
         editNum = (EditText) findViewById(R.id.number_tb);
+        editNum.setShowSoftInputOnFocus(false);
+        editNum.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                speaker.speakAdd(editNum.getText().toString());
+            }
+        });
 
     }
 
@@ -71,7 +89,7 @@ public class DialerActivity extends AppCompatActivity {
         StopScanner();
         UnRegisterArduinoIntent();
 
-        if (speaker.isSpeaking()){
+        if (speaker.isSpeaking()) {
             Log.e("MainActivity: onPause", "Stopping speaker");
             speaker.stop();
         }
@@ -187,22 +205,24 @@ public class DialerActivity extends AppCompatActivity {
 
     private void AppendNumber(String num) {
         Log.e("Czar", num);
-        //PhoneNumber = PhoneNumber + num;
+        speaker.speak(num);
         editNum.append(num);
         PhoneNumber = editNum.getText().toString();
     }
 
     public void backspace_OnClickEvent(View view) {
-        //t1.speak("Delete", TextToSpeech.QUEUE_FLUSH, null);
+
         BackSpace();
-        String toSpeakdel = editNum.getText().toString();
-        //t1.speak(toSpeakdel, TextToSpeech.QUEUE_ADD, null);
     }
 
     private void BackSpace() {
         if (editNum.getText().toString().length() >= 1) {
+            String old = editNum.getText().toString().substring(editNum.getText().length() - 1);
+            speaker.speak("Deleting " + old);
             String newScreen = editNum.getText().toString().substring(0, editNum.getText().toString().length() - 1);
-            editNum.setText(newScreen);
+            //editNum.setText(newScreen);
+            editNum.setText("");
+            editNum.append(newScreen);
         }
     }
 
@@ -313,16 +333,16 @@ public class DialerActivity extends AppCompatActivity {
 
     private void CallBack(int x) {
         ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
-        if (aic.IsNumber(String.valueOf(x))){
+        if (aic.IsNumber(String.valueOf(x))) {
             AppendNumber(String.valueOf(aic.GetNumber(String.valueOf(x))));
         }
-        if (x == aic.CONTROL_BACKSPACE()){
+        if (x == aic.CONTROL_BACKSPACE()) {
             BackSpace();
         }
-        if (x == aic.CONTROL_OK()){
+        if (x == aic.CONTROL_OK()) {
             Call();
         }
-        if (x == aic.CONTROL_CANCEL()){
+        if (x == aic.CONTROL_CANCEL()) {
             CancelBtn();
         }
     }

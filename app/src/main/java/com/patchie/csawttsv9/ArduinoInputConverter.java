@@ -83,9 +83,9 @@ public class ArduinoInputConverter {
             int x = Integer.parseInt(input);
             if (x >= MIN_CAPS && x <= MAX_CAPS) {
                 ans = true;
-            } else if (x >= MIN_NCAPS && x <= MAX_NCAPS) {
+            } /*else if (x >= MIN_NCAPS && x <= MAX_NCAPS) {
                 ans = true;
-            } else if (x >= MIN_NUMBERS && x <= MAX_NUMBERS) {
+            }*/ else if (x >= MIN_NUMBERS && x <= MAX_NUMBERS) {
                 ans = true;
             } else if (InCustom(input)) {
                 //must have another function before returning null;

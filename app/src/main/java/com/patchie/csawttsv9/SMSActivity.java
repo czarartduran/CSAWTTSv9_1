@@ -37,14 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SMSActivity extends AppCompatActivity {
-    /*
-    * ARDUINO GLOBAL VARIABLE
-    * */
-    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
-    UsbManager usbManager;
-    UsbDevice device;
-    UsbSerialDevice serialPort;
-    UsbDeviceConnection connection;
+
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
@@ -76,7 +69,7 @@ public class SMSActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
         setTitle(getString(R.string.SMSActivity));
-        Log.e("Czar", "SmsActivity: onCreate");
+        Log.e("SmsActivity", "onCreate");
 
         if (smsMessagesList.isEmpty()) {
             //Getting Passed ArrayList
@@ -118,8 +111,8 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     public void onStart() {
+        Log.e("SmsActivity", "onStart");
         super.onStart();
-        Log.e("Czar", "SmsActivity: onStart");
 
         active = true;
         inst = this;
@@ -129,7 +122,8 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Log.e("Czar", "SmsActivity: onResume");
+        Log.e("SmsActivity", "onResume");
+        super.onResume();
 
         if (ResetSelectedIndex) {
             selectedIndex = -1;
@@ -140,15 +134,15 @@ public class SMSActivity extends AppCompatActivity {
             speaker = new Speaker(getApplicationContext());
         }
 
-        RegisterIntent();
+        RegisterArduinoIntent();
         StartScanner();
 
-        super.onResume();
+
     }
 
     @Override
     protected void onRestart() {
-        Log.e("Czar", "SmsActivity: onRestart");
+        Log.e("SmsActivity", "onRestart");
         super.onRestart();
     }
 
@@ -156,7 +150,8 @@ public class SMSActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        Log.e("Czar", "SmsActivity: onPause");
+        Log.e("SmsActivity", "onPause");
+        super.onPause();
 
         if (speaker.isSpeaking()) {
             Log.e("SmsActivity: onPause", "Stopping speaker");
@@ -164,19 +159,17 @@ public class SMSActivity extends AppCompatActivity {
         }
 
         StopScanner();
-        UnRegisterIntent();
-
-        super.onPause();
+        UnRegisterArduinoIntent();
     }
 
     @Override
     public void onStop() {
-        Log.e("Czar", "SmsActivity: onStop");
+        Log.e("SmsActivity", "onStop");
+        super.onStop();
+
         active = false;
 
-        speaker.destroy();
-
-        super.onStop();
+        //speaker.destroy();
     }
 
     @Override
@@ -184,7 +177,7 @@ public class SMSActivity extends AppCompatActivity {
         Log.e("SmsActivity", "onDestroy");
         super.onDestroy();
 
-
+        speaker.destroy();
     }
 
     private boolean HaveReadContactsPermission() {
@@ -410,70 +403,33 @@ public class SMSActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
-        //Defining a Callback which triggers whenever data is read.
+    /*
+    * ARDUINO GLOBAL VARIABLE
+    * */
+    public final String ACTION_USB_PERMISSION = "com.patchie.csawttsv9.USB_PERMISSION";
+    UsbManager usbManager;
+    UsbDevice device;
+    UsbSerialDevice serialPort;
+    UsbDeviceConnection connection;
 
-        @Override
-        public void onReceivedData(byte[] arg0) {
-            Log.e("Czar", "Called: onReceivedData");
-            String data = null;
-            try {
-                data = new String(arg0, "UTF-8");
-                final String input = data;
-                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
-
-                int x = aic.getDecimal(input);
-                if (x == aic.CONTROL_PREVIOUS()) {
-                    PreviousMessage();
-                }
-                if (x == aic.CONTROL_NEXT()) {
-                    NextMessage();
-                }
-                if (x == aic.CONTROL_COMPOSE()) {
-                    CallComposeActivity();
-                }
-                if (x == aic.CONTROL_REPLY()) {
-                    replyButtonOnClickEvent();
-                }
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-                Log.e("Czar", e.getLocalizedMessage());
-            }
+    private void CallBack(int x) {
+        ArduinoInputConverter aic = new ArduinoInputConverter(this);
+        if (x == aic.CONTROL_PREVIOUS()) {
+            PreviousMessage();
         }
-    };
-
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.e("Czar", "Called: BroadcastReceiver");
-            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
-                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                if (granted) {
-                    connection = usbManager.openDevice(device);
-                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
-                    if (serialPort != null) {
-                        if (serialPort.open()) {
-                            //Set Serial Connection Parameters.
-                            serialPort.setBaudRate(9600);
-                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
-                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
-                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
-                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
-                            serialPort.read(mCallback);
-                            Log.e("Czar", "SerialPort Opened!");
-
-                        } else {
-                            Log.e("Czar SERIAL", "PORT NOT OPEN");
-                        }
-                    } else {
-                        Log.e("Czar SERIAL", "PORT IS NULL");
-                    }
-                } else {
-                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
-                }
-            }
+        if (x == aic.CONTROL_NEXT()) {
+            NextMessage();
         }
-    };
+        if (x == aic.CONTROL_COMPOSE()) {
+            CallComposeActivity();
+        }
+        if (x == aic.CONTROL_REPLY()) {
+            replyButtonOnClickEvent();
+        }
+        if (x == aic.CONTROL_CANCEL()) {
+            finish();
+        }
+    }
 
     private void StartScanner() {
         Log.e("Czar", "StartScanner");
@@ -514,7 +470,7 @@ public class SMSActivity extends AppCompatActivity {
         }
     }
 
-    private void RegisterIntent() {
+    private void RegisterArduinoIntent() {
         Log.e("SmsActivity", "Registering instent");
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -524,8 +480,75 @@ public class SMSActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, filter);
     }
 
-    private void UnRegisterIntent() {
+    private void UnRegisterArduinoIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
     }
+
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+        //Defining a Callback which triggers whenever data is read.
+
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            Log.e("Czar", "Called: onReceivedData");
+            String data = null;
+            try {
+                data = new String(arg0, "UTF-8");
+                final String input = data;
+                ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
+
+                int x = aic.getDecimal(input);
+                CallBack(x);
+
+                /*if (x == aic.CONTROL_PREVIOUS()) {
+                    PreviousMessage();
+                }
+                if (x == aic.CONTROL_NEXT()) {
+                    NextMessage();
+                }
+                if (x == aic.CONTROL_COMPOSE()) {
+                    CallComposeActivity();
+                }
+                if (x == aic.CONTROL_REPLY()) {
+                    replyButtonOnClickEvent();
+                }*/
+            } catch (UnsupportedEncodingException e) {
+                //e.printStackTrace();
+                Log.e("Czar", e.getLocalizedMessage());
+            }
+        }
+    };
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("Czar", "Called: BroadcastReceiver");
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    connection = usbManager.openDevice(device);
+                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+                    if (serialPort != null) {
+                        if (serialPort.open()) {
+                            //Set Serial Connection Parameters.
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            serialPort.read(mCallback);
+                            Log.e("Czar", "SerialPort Opened!");
+
+                        } else {
+                            Log.e("Czar SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        Log.e("Czar SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    Log.e("Czar SERIAL", "PERMISSION NOT GRANTED");
+                }
+            }
+        }
+    };
 }
