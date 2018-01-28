@@ -65,7 +65,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
         setTitle(getString(R.string.ComposeActivity));
 
 
-        speaker = new Speaker(this, getString(R.string.ComposedWelcome));
+        speaker = new Speaker(this, getString(R.string.ComposedWelcomeMessage));
 
         //To disable clickable
         /*EditText compose = (EditText)findViewById(R.id.compose);

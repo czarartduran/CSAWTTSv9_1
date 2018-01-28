@@ -135,7 +135,7 @@ public class SMSActivity extends AppCompatActivity {
             Log.e("SmsActivity: onResume", "Initializing speaker");
             speaker = new Speaker(getApplicationContext());
         }
-        if (!isFirstLoad){
+        if (!isFirstLoad) {
             speaker.speak(getString(R.string.SMSWelcomeMessage));
         }
 
@@ -324,7 +324,7 @@ public class SMSActivity extends AppCompatActivity {
                 selectedIndex = 0;
                 Speak("you are at the beginning of the List");
                 Speak(this.messages.getItemAtPosition(0).toString());
-                Toast.makeText(getApplicationContext(), "Beginning List", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Beginning List", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -338,16 +338,31 @@ public class SMSActivity extends AppCompatActivity {
 
     private void NextMessage() {
         if (LoadMoreSms) {
-            Toast.makeText(getApplicationContext(), "Loading more SMS", Toast.LENGTH_SHORT).show();
-            Speak("Loading more SMS");
-            CSB csb = new CSB(this, 5 + smsMessagesList.size());
-            smsMessagesList = csb.SMSLIST();
-            arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
-            messages.setAdapter(arrayAdapter);
-            arrayAdapter.notifyDataSetChanged();
-            csb = null;
-            LoadMoreSms = false;
-            return;
+            try{
+                final CSB csb = new CSB(this, 5 + smsMessagesList.size());
+                smsMessagesList = csb.SMSLIST();
+                arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
+                //Toast.makeText(getApplicationContext(), "Loading more SMS", Toast.LENGTH_SHORT).show();
+                Speak("Loading more SMS");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        messages.setAdapter(arrayAdapter);
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                /*messages.setAdapter(arrayAdapter);
+                arrayAdapter.notifyDataSetChanged();*/
+
+                //csb = null;
+                LoadMoreSms = false;
+                return;
+            }catch (Exception e){
+                Log.e("AAAAAAAAAAAAAAAAAAA", e.getStackTrace().toString());
+            }
+
         }
 
         int listviewcount = this.messages.getAdapter().getCount();
@@ -358,7 +373,7 @@ public class SMSActivity extends AppCompatActivity {
             } else {
                 Speak("you are at the end of the list");
                 Speak(this.messages.getItemAtPosition(selectedIndex).toString());
-                Toast.makeText(getApplicationContext(), "End List", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "End List", Toast.LENGTH_SHORT).show();
                 LoadMoreSms = true;
             }
         }
@@ -378,7 +393,7 @@ public class SMSActivity extends AppCompatActivity {
     }
 
     private void Speak(String TextToRead) {
-        speaker.stop();
+        //speaker.stop();
         speaker.speak(TextToRead);
     }
 

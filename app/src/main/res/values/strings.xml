@@ -15,15 +15,17 @@
     <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
     <string name="SMSWelcomeMessage">Welcome to SMS module,
     press the following combination, I to go to next message, E to go to Previous message, A to compose message, B to reply to the current selected message</string>
+
     <string name="callWelcomeMessage">Welcome to Call Module,
     press the following combination, I to go to next contact, E to go to previous contact, button 8 to call the selected contact,
         A to add new contact, B to go to dialer, alt button to go back to main menu</string>
+
     <string name="SmsRecipientWelcomeMessage">Please select your SMS recipient, press the combination of I to go to next contact and E to go back to previous contact</string>
     <string name="AddContactWelcomeMessage">"Welcome to add contact module, press button 32 and 4 to switch between name and number textbox, press button 8 to save and alt button to cancel and go back to Call Module</string>
     <string name="DialerWelcomeMessage">Welcome to dialer, press the corresponding number combination, press button 8 to dial the entered number, press shit to backspace, alt to cancel</string>
 
     <!--Reply-->
-    <string name="ReplyWelcomeMessage">Welcome to Reply, Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace</string>
+    <string name="ReplyWelcomeMessage">Welcome to Reply Message, press the following keys, button 8 to send message, shift to backspace, alt to cancel and go back to sms module</string>
     <string name="SentOnReceived_RESULT_OK">Sms successfully sent!</string>
     <string name="SentOnReceived_RESULT_ERROR_GENERICFAILURE">Sms not sent! Sms Generic Failure</string>
     <string name="SentOnReceived_RESULT_ERROR_NO_SERVICE">Sms not sent! No Service</string>
@@ -33,7 +35,8 @@
     <string name="DeliverOnReceived_ResultCancel">Sms not Delivered</string>
 
     <!--Compose-->
-    <string name="ComposedWelcome">Welcome to Compose Message</string>
+    <string name="ComposedWelcomeMessage">Welcome to Compose Message,
+    press button 32 and 4 to switch between recipient input box and message input box, press button 8 to send message, alt button to go back to SMS Module</string>
     <string name="SelectedPhoneInstruction">Please enter mobile phone number you want send message, or press ALT + SHIFT buttons to select contacts from the List</string>
     <string name="CreatingTextInstruction">You may now create your message, press all right buttons to send the composed message, press all left buttons to cancel and go back to Inbox</string>
 
