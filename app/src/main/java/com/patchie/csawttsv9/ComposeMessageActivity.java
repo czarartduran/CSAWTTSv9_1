@@ -76,7 +76,7 @@ public class ComposeMessageActivity extends AppCompatActivity {
 
 
         textPhoneNo = (EditText) findViewById(R.id.contactnumber);
-        textPhoneNo.setShowSoftInputOnFocus(false);
+        textPhoneNo.setShowSoftInputOnFocus(true);
         textPhoneNo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -91,12 +91,12 @@ public class ComposeMessageActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.e("ComposeMessage", "ReceiverEditText afterTextChanged");
-                speaker.speak(textPhoneNo.getText().toString());
+                speaker.speakAdd(textPhoneNo.getText().toString());
             }
         });
 
         textSMS = (EditText) findViewById(R.id.compose);
-        textSMS.setShowSoftInputOnFocus(false);
+        textSMS.setShowSoftInputOnFocus(true);
         textSMS.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -350,11 +350,13 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     //Everything is fine
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
+                        speaker.speak("Message sent");
                         break;
 
                     //Something went wrong and there's no way to tell what, why or how.
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         Toast.makeText(context, "Generic failure!", Toast.LENGTH_SHORT).show();
+                        speaker.speak("Sending Fail");
                         break;
 
                     //Your device simply has no cell reception. You're probably in the middle of
@@ -362,12 +364,14 @@ public class ComposeMessageActivity extends AppCompatActivity {
                     //Certainly away from any cell phone tower.
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         Toast.makeText(context, "No service!", Toast.LENGTH_SHORT).show();
+                        speaker.speak("No Network service, cant send text message");
                         break;
 
                     //Something went wrong in the SMS stack, while doing something with a protocol
                     //description unit (PDU) (most likely putting it together for transmission).
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         Toast.makeText(context, "Null PDU!", Toast.LENGTH_SHORT).show();
+                        speaker.speak("System error");
                         break;
 
                     //You switched your device into airplane mode, which tells your device exactly

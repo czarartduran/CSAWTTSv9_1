@@ -38,6 +38,7 @@ import java.util.Map;
 
 public class SMSActivity extends AppCompatActivity {
 
+    private boolean isFirstLoad = true;
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
@@ -83,6 +84,7 @@ public class SMSActivity extends AppCompatActivity {
 
         //Initializing Speaker
         speaker = new Speaker(getApplicationContext(), getString(R.string.SMSWelcomeMessage));
+        isFirstLoad = false;
 
         this.startService(new Intent(this, QuickResponseService.class));
         messages = findViewById(R.id.messages);
@@ -132,6 +134,9 @@ public class SMSActivity extends AppCompatActivity {
         if (speaker == null) {
             Log.e("SmsActivity: onResume", "Initializing speaker");
             speaker = new Speaker(getApplicationContext());
+        }
+        if (!isFirstLoad){
+            speaker.speak(getString(R.string.SMSWelcomeMessage));
         }
 
         RegisterArduinoIntent();

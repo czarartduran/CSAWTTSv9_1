@@ -51,7 +51,7 @@ public class Add_contact extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
         setTitle(getString(R.string.AddContactActivity));
 
-        speaker = new Speaker(getApplicationContext(), "Welcome to ADD CONTACT MODULE, In this module you can add a new contact");
+        speaker = new Speaker(getApplicationContext(), getString(R.string.AddContactWelcomeMessage));
 
         etName = (EditText) findViewById(R.id.et_name);
         etName.setShowSoftInputOnFocus(false);
@@ -144,7 +144,7 @@ public class Add_contact extends AppCompatActivity {
     }
 
     private void CANCELV2() {
-        speaker.speak("Canceled");
+        //speaker.speak("Canceled");
         finish();
     }
 
@@ -279,6 +279,9 @@ public class Add_contact extends AppCompatActivity {
             if (aic.IsForMessaging(String.valueOf(x))) {
                 AppendString(aic.getChar(String.valueOf(x)));
             }
+            if (x == aic.CONTROL_CANCEL()){
+                finish();
+            }
             if (x == aic.CONTROL_OK()) {
                 addContact();
             }
@@ -291,6 +294,9 @@ public class Add_contact extends AppCompatActivity {
             }
             if (aic.IsNumber(String.valueOf(x))) {
                 AppendString(String.valueOf(aic.GetNumber(String.valueOf(x))));
+            }
+            if (x == aic.CONTROL_CANCEL()){
+                finish();
             }
             if (x == aic.CONTROL_OK()) {
                 addContact();
@@ -318,7 +324,7 @@ public class Add_contact extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    etName.append(conName);
+                    etName.append(conName.toLowerCase());
                 }
             });
         }

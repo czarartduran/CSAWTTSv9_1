@@ -30,6 +30,8 @@ import java.util.Map;
 
 public class CallActivityV2 extends AppCompatActivity {
 
+    private boolean isFirstLoad = true;
+
     private static CallActivityV2 inst;
     public static boolean active = false;
 
@@ -49,7 +51,8 @@ public class CallActivityV2 extends AppCompatActivity {
         setContentView(R.layout.activity_call_v2);
         setTitle(getString(R.string.CallerActivity));
 
-        speaker = new Speaker(getApplicationContext(), "Welcome to Call Module, On this module you can browse your list of contacts. Press A to go to the next contact, Press B to go to the previous contact, Press @ to select your desire contact, Press D to Dial an unknown number, Press A to add a new contact and Press C to cancel and go to the previous module");
+        speaker = new Speaker(getApplicationContext(), getString(R.string.callWelcomeMessage));
+        isFirstLoad = false;
 
         contact_lv = findViewById(R.id.call_contact_lv);
         if (contactlist == null) {
@@ -71,12 +74,12 @@ public class CallActivityV2 extends AppCompatActivity {
         Log.e("CallActivityV2", "onPause");
         super.onPause();
 
-        speaker.destroy();
-        
+
+
         StopScanner();
         UnRegisterArduinoIntent();
 
-        if (speaker.isSpeaking()){
+        if (speaker.isSpeaking()) {
             Log.e("MainActivity: onPause", "Stopping speaker");
             speaker.stop();
         }
@@ -87,12 +90,16 @@ public class CallActivityV2 extends AppCompatActivity {
         Log.e("CallActivityV2", "onResume");
         super.onResume();
 
+        if (speaker == null) {
+            Log.e("CallActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
+        }
+
         RegisterArduinoIntent();
         StartScanner();
 
-        if (speaker == null) {
-            Log.e("MainActivity: onResume", "Initializing Speaker");
-            speaker = new Speaker(getApplicationContext());
+        if (!isFirstLoad) {
+            speaker.speak(getString(R.string.callWelcomeMessage));
         }
     }
 
@@ -182,9 +189,9 @@ public class CallActivityV2 extends AppCompatActivity {
         Call_Dial_btn();
     }
 
-    Intent DialIntent;
 
     public void Call_Dial_btn() {
+        Intent DialIntent =null;
         if (DialIntent == null) {
             //DialIntent = new Intent(CallActivityV2.this, Dial_activity.class);
             DialIntent = new Intent(CallActivityV2.this, DialerActivity.class);
@@ -197,9 +204,9 @@ public class CallActivityV2 extends AppCompatActivity {
         add_contacts_btn();
     }
 
-    Intent AddContactIntent;
 
     public void add_contacts_btn() {
+        Intent AddContactIntent = null;
         if (AddContactIntent == null) {
             //AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
             AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
@@ -270,29 +277,29 @@ public class CallActivityV2 extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    private void CallBack(int x){
+    private void CallBack(int x) {
         ArduinoInputConverter aic = new ArduinoInputConverter(getApplicationContext());
-        if (x == aic.CONTROL_PREVIOUS()){
+        if (x == aic.CONTROL_PREVIOUS()) {
             //aic = null;
             sra_prev_btn();
         }
-        if (x == aic.CONTROL_OK()){
+        if (x == aic.CONTROL_OK()) {
             //aic = null;
             sra_sel_btn();
         }
-        if (x == aic.CONTROL_NEXT()){
+        if (x == aic.CONTROL_NEXT()) {
             //aic = null;
             sra_next_btn();
         }
-        if (x == aic.CONTROL_COMPOSE()){
+        if (x == aic.CONTROL_COMPOSE()) {
             //aic = null;
             add_contacts_btn();
         }
-        if (x == aic.CONTROL_CANCEL()){
+        if (x == aic.CONTROL_CANCEL()) {
             //aic = null;
             sra_can_btn();
         }
-        if (x == aic.CONTROL_REPLY()){
+        if (x == aic.CONTROL_REPLY()) {
             //aic = null;
             Call_Dial_btn();
         }

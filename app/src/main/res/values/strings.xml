@@ -13,9 +13,14 @@
     <string name="DialerActivity">Dialer</string>
     <string name="AddContactActivity">Add Contact</string>
     <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
-    <string name="SMSWelcomeMessage">Welcome to SMS Module please press the combination of w to go to previous message, r to go to next message, c to compose message, s to reply to current select message</string>
-    <string name="callWelcomeMessage">Welcome to Call Module</string>
+    <string name="SMSWelcomeMessage">Welcome to SMS module,
+    press the following combination, I to go to next message, E to go to Previous message, A to compose message, B to reply to the current selected message</string>
+    <string name="callWelcomeMessage">Welcome to Call Module,
+    press the following combination, I to go to next contact, E to go to previous contact, button 8 to call the selected contact,
+        A to add new contact, B to go to dialer, alt button to go back to main menu</string>
     <string name="SmsRecipientWelcomeMessage">Please select your SMS recipient, press the combination of I to go to next contact and E to go back to previous contact</string>
+    <string name="AddContactWelcomeMessage">"Welcome to add contact module, press button 32 and 4 to switch between name and number textbox, press button 8 to save and alt button to cancel and go back to Call Module</string>
+    <string name="DialerWelcomeMessage">Welcome to dialer, press the corresponding number combination, press button 8 to dial the entered number, press shit to backspace, alt to cancel</string>
 
     <!--Reply-->
     <string name="ReplyWelcomeMessage">Welcome to Reply, Press all left keys to abort and press all right keys to send reply, SHIFT button to backspace</string>
@@ -34,7 +39,7 @@
 
     <!--KeyMAP Control-->
     <string name="CONTROL_CANCEL">128</string><!--ALT--><!--Cancel for All-->
-    <string name="CONTROL_OK">129</string><!--ALT + A--><!--SelectContact--><!--RegisteringNewContact--><!--Call-->
+    <string name="CONTROL_OK">8</string><!--Button 8--><!--SelectContact--><!--RegisteringNewContact--><!--Call-->
     <string name="CONTROL_PREVIOUS">69</string><!--E--><!--PrevContact-->
     <string name="CONTROL_NEXT">73</string><!--I--><!--NextContact-->
     <string name="CONTROL_COMPOSE">65</string><!--A--><!--AddContact-->
@@ -48,7 +53,7 @@
 
     /*
     *CANCEL - 128(ALT) + C COMBINATION
-    SEND/OK/SELECT/CALL - 128 + A COMBINATION === APPLIED
+    SEND/OK/SELECT/CALL - 128 + A COMBINATION
     SELECT CONTACT - S COMBINATION
     FOCUS CHANGER EDITTEXT - 4 + 32
     SPACE - 128(ALT) + 32
@@ -56,7 +61,7 @@
     PHONE NUMBER - 0 to 9 COMBI + 128(ALT)
     */
 
-<!--==========================CallActivity===============================================-->
+    <!--==========================CallActivity===============================================-->
     <string name="CONTROL_ADD_CONTACT">68</string><!--B-->
     <string name="CONTROL_DIALER">160</string><!--B-->
     <string name="CONTROL_PREV_CALL">66</string>
@@ -67,9 +72,6 @@
     <!--  Dialer                -->
     <string name="CONTROL_CALL_DIALER">88</string>
     <string name="CONTROL_CANCELV2">160</string>
-
-
-
 
 
     <string name="AddressIntro">Message From:</string>

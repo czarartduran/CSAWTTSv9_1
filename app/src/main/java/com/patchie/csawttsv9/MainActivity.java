@@ -43,12 +43,18 @@ public class MainActivity extends AppCompatActivity {
     //MainActivity
     ArduinoInputConverter aic;
     private Speaker speaker;
+    private boolean isFirstLoad = true;
 
     private ArrayList<String> _SMSlist;
     private CSB csb;
     private boolean IS_DONOTDISTURBDISABLE = false;
     private NotificationManager mNotificationManager;
     public static boolean active = false;
+    private static MainActivity inst;
+
+    public static MainActivity instance() {
+        return inst;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +87,15 @@ public class MainActivity extends AppCompatActivity {
 
         //initializing speaker
         speaker = new Speaker(getApplicationContext(), getString(R.string.WelcomeMessage));
+        isFirstLoad = false;
     }
 
     @Override
     protected void onStart() {
         Log.e("Czar", "MainActivity: onStart");
         super.onStart();
+
+        //inst = this;
     }
 
     @Override
@@ -100,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         }
         RegisterIntent();
         StartScanner();
+
+        if (!isFirstLoad){
+            speaker.speak(getString(R.string.WelcomeMessage));
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
+
+    Speaker speaker;
 
     public static final String SMS_BUNDLE = "pdus";
 
