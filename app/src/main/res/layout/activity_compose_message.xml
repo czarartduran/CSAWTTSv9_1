@@ -9,7 +9,7 @@
 
     <EditText
         android:id="@+id/contactnumber"
-        android:hint="09179876543"
+        android:hint="Contact Number Here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
