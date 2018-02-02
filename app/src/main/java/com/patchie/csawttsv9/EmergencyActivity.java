@@ -38,12 +38,17 @@ public class EmergencyActivity extends AppCompatActivity {
 
     EditText ContactNumber;
 
+    Speaker speaker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e("EmergencyActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
         setTitle(getString(R.string.EmergencyActivity));
+
+        //Speaker
+        speaker = new Speaker(getApplicationContext());
 
         //Assigning edittextbox
         ContactNumber = (EditText) findViewById(R.id.ContactNo_et);
@@ -67,6 +72,11 @@ public class EmergencyActivity extends AppCompatActivity {
         Log.e("EmergencyActivity", "onPause");
         super.onPause();
 
+        if (speaker.isSpeaking()) {
+            Log.e("MainActivity: onPause", "Stopping speaker");
+            speaker.stop();
+        }
+
         UnRegisterSmsIntent();
     }
 
@@ -74,6 +84,11 @@ public class EmergencyActivity extends AppCompatActivity {
     protected void onResume() {
         Log.e("EmergencyActivity", "onResume");
         super.onResume();
+
+        if (speaker == null) {
+            Log.e("MainActivity: onResume", "Initializing Speaker");
+            speaker = new Speaker(getApplicationContext());
+        }
 
         RegisterSmsIntent();
 
@@ -92,6 +107,8 @@ public class EmergencyActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.e("EmergencyActivity", "onDestroy");
         super.onDestroy();
+
+        speaker.destroy();
     }
 
     public void SelectContact_OnClickEvent(View view) {
@@ -148,6 +165,7 @@ public class EmergencyActivity extends AppCompatActivity {
         edit.putString("Dnumber", ContactNumber.getText().toString());
         edit.apply();
         edit.commit();
+        speaker.speak("Contact Saved!");
         Log.e("EmergencyActivity", "Saved");
         ContactNumber.setText("");
     }
@@ -162,6 +180,7 @@ public class EmergencyActivity extends AppCompatActivity {
             getPermissionToReadSMS();
         } else {
             try {
+                speaker.speak("Sending to " + emergency_number);
                 smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
                 //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
@@ -216,7 +235,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case Activity.RESULT_OK:
                         Log.e("ReplySmsActivity", "Sms Sent successfully");
                         Toast.makeText(context, "SMS sent successfully!", Toast.LENGTH_SHORT).show();
-                        //speaker.speak(getString(R.string.SentOnReceived_RESULT_OK));
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_OK));
                         //finish();
                         break;
 
@@ -224,7 +243,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         Log.e("ReplySmsActivity", "Generic failure");
                         Toast.makeText(context, "Generic failure!", Toast.LENGTH_SHORT).show();
-                        //speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_GENERICFAILURE));
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_GENERICFAILURE));
                         //finish();
                         break;
 
@@ -234,7 +253,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         Log.e("ReplySmsActivity", "No Service");
                         Toast.makeText(context, "No service!", Toast.LENGTH_SHORT).show();
-                        //speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_NO_SERVICE));
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_ERROR_NO_SERVICE));
                         //finish();
                         break;
 
@@ -243,7 +262,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         Log.e("ReplySmsActivity", "Null PDU");
                         Toast.makeText(context, "Null PDU!", Toast.LENGTH_SHORT).show();
-                        //speaker.speak(getString(R.string.SentOnReceived_RESULT_NULL_PDU));
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_NULL_PDU));
                         //finish();
                         break;
 
@@ -252,7 +271,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         Log.e("ReplySmsActivity", "Radio OFF");
                         Toast.makeText(context, "Radio off!", Toast.LENGTH_SHORT).show();
-                        //speaker.speak(getString(R.string.SentOnReceived_RESULT_RADIO_OFF));
+                        speaker.speak(getString(R.string.SentOnReceived_RESULT_RADIO_OFF));
                         //finish();
                         break;
                 }
@@ -266,7 +285,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS delivered!", Toast.LENGTH_SHORT).show();
                         Log.e("ReplySmsActivity", "Sms Delivered");
-                        //speaker.speak(getString(R.string.DeliverOnReceived_ResultOK));
+                        speaker.speak(getString(R.string.DeliverOnReceived_ResultOK));
                         //finish();
                         break;
 
@@ -298,7 +317,7 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void EmergencyCall(){
-        //speaker.speak("Calling " + PhoneNumber);
+        speaker.speak("Calling " + emergency_number);
         //t1.speak("Call", TextToSpeech.QUEUE_FLUSH, null);
         Intent callIntent;
         callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + emergency_number));
