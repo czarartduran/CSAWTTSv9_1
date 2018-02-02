@@ -10,29 +10,48 @@
 
     <Button
         android:id="@+id/call_btn"
-        android:layout_width="122dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="240dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="148dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="call_btn_OnClick_Event"
         android:text="@string/call_main"
         android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/sms_btn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sms_btn"
-        android:layout_width="122dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="240dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="sms_btn_OnClickEvent"
         android:text="@string/sms"
         android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/emergency_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/call_btn"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/emergency_btn"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="176dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_blue_light"
+        android:text="@string/MainEmergency"
+        android:onClick="Emergency_OnClickEvent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sms_btn" />
 
     <!--<EditText
         android:id="@+id/editText2"

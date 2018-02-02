@@ -12,7 +12,7 @@
     <string name="CallerActivity">Caller</string>
     <string name="DialerActivity">Dialer</string>
     <string name="AddContactActivity">Add Contact</string>
-    <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message</string>
+    <string name="WelcomeMessage">Welcome to Communication Interface App for the Blind, please press the combination of A to make call or B to send text message or C to Change Emergency Default Contact number</string>
     <string name="SMSWelcomeMessage">Welcome to SMS module,
     press the following combination, I to go to next message, E to go to Previous message, A to compose message, B to reply to the current selected message</string>
 
@@ -121,4 +121,14 @@
     <string name="to">To:</string>
     <string name="send">SEND</string>
     <string name="back_1">BACK</string>
+
+    <!--Emergency-->
+    <string name="EmergencyActivity">Emergency</string>
+    <string name="MainEmergency">Emergency Settings</string>
+    <string name="EmergencySave">Save</string>
+    <string name="EmergencyChoose">Choose from Contacts</string>
+    <string name="ECallBtn">EMERGENCY Call</string>
+    <string name="ETextBtn">EMERGENCY Text</string>
+    <string name="EdcBtn">Change Emergency Contact</string>
+    <string name="EmergencyCancel">Cancel</string>
 </resources>

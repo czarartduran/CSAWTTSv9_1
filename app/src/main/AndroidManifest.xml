@@ -24,10 +24,10 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!--Notification permission-->
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
-    <!--Permission to vibrate-->
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- Notification permission -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Permission to vibrate -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Call Module Permission -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -68,10 +68,10 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter">
-            </meta-data>
+                android:resource="@xml/device_filter"></meta-data>
         </activity>
 
         <receiver
@@ -127,7 +127,8 @@
         <activity android:name=".View_contactsv2" />
         <activity android:name=".SmsRecipientActivity" />
         <activity android:name=".CallActivityV2" />
-        <activity android:name=".DialerActivity"></activity>
+        <activity android:name=".DialerActivity" />
+        <activity android:name=".EmergencyActivity"></activity>
     </application>
 
 </manifest>

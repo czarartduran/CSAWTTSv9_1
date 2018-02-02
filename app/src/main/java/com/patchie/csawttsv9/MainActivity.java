@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         RegisterIntent();
         StartScanner();
 
-        if (!isFirstLoad){
+        if (!isFirstLoad) {
             speaker.speak(getString(R.string.WelcomeMessage));
         }
     }
@@ -441,5 +441,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void call_btn_OnClick_Event(View view) {
         CallActivity();
+    }
+
+    public void Emergency_OnClickEvent(View view) {
+        EmergencyActivity();
+    }
+
+    private void EmergencyActivity() {
+        /*
+        * Intent callIntent = new Intent(getApplicationContext(), CallActivityV2.class);
+        startActivity(callIntent);
+        * */
+        Log.e("MainActivity", "Calling Emergency Intent Activity");
+        Intent emergencyIntent = new Intent(getApplicationContext(), EmergencyActivity.class);
+        startActivity(emergencyIntent);
     }
 }
