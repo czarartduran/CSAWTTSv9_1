@@ -54,7 +54,7 @@ public class Add_contact extends AppCompatActivity {
         speaker = new Speaker(getApplicationContext(), getString(R.string.AddContactWelcomeMessage));
 
         etName = (EditText) findViewById(R.id.et_name);
-        etName.setShowSoftInputOnFocus(false);
+        //etName.setShowSoftInputOnFocus(false);
         etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -72,7 +72,7 @@ public class Add_contact extends AppCompatActivity {
             }
         });
         etPhone = (EditText) findViewById(R.id.et_mobile_phone);
-        etPhone.setShowSoftInputOnFocus(false);
+        //etPhone.setShowSoftInputOnFocus(false);
         etPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -65,7 +65,7 @@ public class ReplyMessageActivity extends AppCompatActivity {
         receiver_tv.setText(_contactName);
 
         ReplySmsBody = (EditText) findViewById(R.id.editText);
-        ReplySmsBody.setShowSoftInputOnFocus(false);
+        //ReplySmsBody.setShowSoftInputOnFocus(false);
         ReplySmsBody.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
