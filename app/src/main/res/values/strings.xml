@@ -131,4 +131,5 @@
     <string name="ETextBtn">EMERGENCY Text</string>
     <string name="EdcBtn">Change Emergency Contact</string>
     <string name="EmergencyCancel">Cancel</string>
+    <string name="EmergencyMessage">Help!!!</string>
 </resources>
