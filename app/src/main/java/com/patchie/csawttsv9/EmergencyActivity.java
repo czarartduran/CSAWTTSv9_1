@@ -15,6 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -52,6 +54,22 @@ public class EmergencyActivity extends AppCompatActivity {
 
         //Assigning edittextbox
         ContactNumber = (EditText) findViewById(R.id.ContactNo_et);
+        ContactNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                speaker.speak(ContactNumber.getText().toString());
+            }
+        });
 
     }
 
@@ -92,6 +110,7 @@ public class EmergencyActivity extends AppCompatActivity {
 
         RegisterSmsIntent();
 
+        //checking if there is saved number
         if (haveSavedNumber()) {
             getSavedNumber();
         }
@@ -175,20 +194,27 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void SendSOS() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            getPermissionToReadSMS();
-        } else {
-            try {
-                speaker.speak("Sending to " + emergency_number);
-                smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
-                //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "SMS failed, please try again later!",
-                        Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
+        //checking if there is saved number
+        if (haveSavedNumber()) {
+            getSavedNumber();
 
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                getPermissionToReadSMS();
+            } else {
+                try {
+                    speaker.speak("Sending to " + emergency_number);
+                    smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
+                    //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            speaker.speak("There is no Saved emergency contact nu,ber, please saved first emergency contact number");
+            return;
         }
     }
 
@@ -316,23 +342,31 @@ public class EmergencyActivity extends AppCompatActivity {
         EmergencyCall();
     }
 
-    private void EmergencyCall(){
-        speaker.speak("Calling " + emergency_number);
-        //t1.speak("Call", TextToSpeech.QUEUE_FLUSH, null);
-        Intent callIntent;
-        callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + emergency_number));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+    private void EmergencyCall() {
+        if (haveSavedNumber()) {
+            getSavedNumber();
+
+            speaker.speak("Calling " + emergency_number);
+            //t1.speak("Call", TextToSpeech.QUEUE_FLUSH, null);
+            Intent callIntent;
+            callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + emergency_number));
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            startActivity(callIntent);
+            //String toSpeak = editNum.getText().toString();
+            //t1.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+        } else {
+            speaker.speak("There is no Saved emergency contact nu,ber, please saved first emergency contact number");
             return;
         }
-        startActivity(callIntent);
-        //String toSpeak = editNum.getText().toString();
-        //t1.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+
     }
 }
