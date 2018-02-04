@@ -38,6 +38,10 @@ public class EmergencyActivity extends AppCompatActivity {
     private static String EMERGENCY_NAME = "Dname";
     private String emergency_name = "";
 
+    public String EMERGENCY_TYPE = "Emergency_Type";
+    private boolean IsoutSideCall = true;
+    private int Etype = -1;
+
     EditText ContactNumber;
 
     Speaker speaker;
@@ -48,6 +52,19 @@ public class EmergencyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
         setTitle(getString(R.string.EmergencyActivity));
+
+        Etype = this.getIntent().getIntExtra(EMERGENCY_TYPE, 0);
+        /*if (this.getIntent().getIntExtra(EMERGENCY_TYPE, 0) == 0) {
+            SendSOS();
+            //finish();
+        }
+        if (this.getIntent().getIntExtra(EMERGENCY_TYPE, 0) == 1) {
+            EmergencyCall();
+            //finish();
+        }*/
+
+        //called inside
+        IsoutSideCall = false;
 
         //Speaker
         speaker = new Speaker(getApplicationContext());
@@ -113,6 +130,17 @@ public class EmergencyActivity extends AppCompatActivity {
         //checking if there is saved number
         if (haveSavedNumber()) {
             getSavedNumber();
+        }
+
+        if (Etype == 0) {
+            Etype = -1;
+            SendSOS();
+            //finish();
+        }
+        if (Etype == 1) {
+            Etype = -1;
+            EmergencyCall();
+            //finish();
         }
     }
 
@@ -194,6 +222,9 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void SendSOS() {
+
+        UnRegisterSmsIntent();
+        RegisterSmsIntent();
         //checking if there is saved number
         if (haveSavedNumber()) {
             getSavedNumber();
@@ -249,7 +280,10 @@ public class EmergencyActivity extends AppCompatActivity {
         SharedPreferences EmergencyContact = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String pulledString = EmergencyContact.getString(EMERGENCY_NUMBER, "");
         emergency_number = pulledString;
-        ContactNumber.setText(pulledString);
+        if (!IsoutSideCall) {
+            ContactNumber.setText(pulledString);
+        }
+
     }
 
     private void RegisterSmsIntent() {
@@ -334,8 +368,13 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void UnRegisterSmsIntent() {
-        unregisterReceiver(smsSentReceiver);
-        unregisterReceiver(smsDeliveredReceiver);
+        try {
+            unregisterReceiver(smsSentReceiver);
+            unregisterReceiver(smsDeliveredReceiver);
+        } catch (Exception e) {
+            Log.e("EmergencyActivity", "UnRegisterSmsIntent: nothing to do");
+        }
+
     }
 
     public void EmergencyCallBtn_OnClickEvent(View view) {

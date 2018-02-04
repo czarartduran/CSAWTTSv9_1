@@ -11,6 +11,7 @@ import android.hardware.usb.UsbManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -46,7 +47,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         speaker = new Speaker(getApplicationContext(), getString(R.string.SmsRecipientWelcomeMessage));
 
         contact_lv = findViewById(R.id.call_contact_lv);
-        if (contactlist == null){
+        if (contactlist == null) {
             Log.e("Czar", "Initialized contact list");
             csb = new CSB(this);
             arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, csb.CONTACTLIST());
@@ -65,7 +66,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         Log.e("SmsRecipient", "onPause");
         super.onPause();
 
-        if (speaker != null){
+        if (speaker != null) {
             speaker.destroy();
         }
 
@@ -78,7 +79,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         Log.e("SmsRecipient", "onResume");
         super.onResume();
 
-        if (speaker != null){
+        if (speaker != null) {
             speaker = new Speaker(this);
         }
 
@@ -100,7 +101,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         aic = null;
     }
 
-    private void Speak(String string){
+    private void Speak(String string) {
         speaker.speak(string);
     }
 
@@ -108,13 +109,13 @@ public class SmsRecipientActivity extends AppCompatActivity {
         sra_prev_btn();
     }
 
-    private void sra_prev_btn(){
+    private void sra_prev_btn() {
         int lv_count = this.contact_lv.getCount();
-        if (selectedIndex >= 0 && selectedIndex < lv_count){
-            if (selectedIndex >=0 && selectedIndex -1 >= 0){
+        if (selectedIndex >= 0 && selectedIndex < lv_count) {
+            if (selectedIndex >= 0 && selectedIndex - 1 >= 0) {
                 selectedIndex--;
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
-            }else {
+            } else {
                 selectedIndex = 0;
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }
@@ -125,7 +126,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         sra_sel_btn();
     }
 
-    private void sra_sel_btn(){
+    private void sra_sel_btn() {
         //Log.e("Czar", "RecipientName: " + csb.RecipientName(selectedIndex));
         SELECTED_NAME = csb.RecipientName(selectedIndex);
         SELECTED_NUMBER = csb.RecipientNumber(selectedIndex);
@@ -140,13 +141,13 @@ public class SmsRecipientActivity extends AppCompatActivity {
         sra_next_btn();
     }
 
-    private void sra_next_btn(){
+    private void sra_next_btn() {
         int lv_count = this.contact_lv.getCount();
-        if (selectedIndex >= -1 && selectedIndex < lv_count){
-            if (selectedIndex < lv_count && selectedIndex +1 < lv_count){
+        if (selectedIndex >= -1 && selectedIndex < lv_count) {
+            if (selectedIndex < lv_count && selectedIndex + 1 < lv_count) {
                 selectedIndex++;
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
-            }else {
+            } else {
                 Speak(this.contact_lv.getItemAtPosition(selectedIndex).toString());
             }
         }
@@ -156,7 +157,7 @@ public class SmsRecipientActivity extends AppCompatActivity {
         sra_can_btn();
     }
 
-    private void sra_can_btn(){
+    private void sra_can_btn() {
         finish();
     }
 
@@ -183,16 +184,16 @@ public class SmsRecipientActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), input, Toast.LENGTH_SHORT);
                 int x = aic.getDecimal(input);
 
-                if (x == aic.CONTROL_OK()){
+                if (x == aic.CONTROL_OK()) {
                     sra_sel_btn();
                 }
-                if(x == aic.CONTROL_PREVIOUS()){
+                if (x == aic.CONTROL_PREVIOUS()) {
                     sra_prev_btn();
                 }
-                if (x == aic.CONTROL_NEXT()){
+                if (x == aic.CONTROL_NEXT()) {
                     sra_next_btn();
                 }
-                if (x == aic.CONTROL_CANCEL()){
+                if (x == aic.CONTROL_CANCEL()) {
                     sra_can_btn();
                 }
 
@@ -289,5 +290,65 @@ public class SmsRecipientActivity extends AppCompatActivity {
     private void UnRegisterIntent() {
         Log.e("SmsActivity", "UnRegistering Intent");
         unregisterReceiver(broadcastReceiver);
+    }
+
+    /*
+    Emergency Triggers(Volume Buttons)
+    SMS (down + up  + down)
+    call (down + up + up + down)
+    * */
+    boolean isVolDownAllowed = true;
+    boolean isVolUpAllowed = false;
+    int UpCounter = -1;
+    final static int EmergencySms = 0;
+    final static int EmergencyCall = 1;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isVolDownAllowed == true) {
+            Log.e("Czar", "standby");
+            isVolDownAllowed = false;
+            isVolUpAllowed = true;
+            return true;
+        }
+        //for increment
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP) && isVolUpAllowed == true) {
+            UpCounter++;
+            Log.e("Czar", "increment: " + UpCounter);
+            //checking if counter exceeds 1 then it must reset
+            if (UpCounter > 1) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "reset");
+                return true;
+            }
+            return true;
+        }
+        //checking for emergency type
+        String EMERGENCY_TYPE = "Emergency_Type";
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isVolUpAllowed == true) {
+            if (UpCounter == EmergencySms) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "SMS");
+                Intent intent = new Intent(this, EmergencyActivity.class);
+                intent.putExtra(EMERGENCY_TYPE, 0);
+                startActivity(intent);
+                return true;
+            }
+            if (UpCounter == EmergencyCall) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "CALL");
+                Intent intent = new Intent(this, EmergencyActivity.class);
+                intent.putExtra(EMERGENCY_TYPE, 1);
+                startActivity(intent);
+                return true;
+            }
+        }
+        return false;
     }
 }

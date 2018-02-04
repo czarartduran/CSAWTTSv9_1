@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.speech.tts.TextToSpeech;
@@ -201,7 +202,7 @@ public class DialerActivity extends AppCompatActivity {
         PhoneNumber = editNum.getText().toString();
     }
 
-    private void Append(String num){
+    private void Append(String num) {
         final String x = num;
         runOnUiThread(new Runnable() {
             @Override
@@ -230,7 +231,7 @@ public class DialerActivity extends AppCompatActivity {
         }
     }
 
-    private void backspace(){
+    private void backspace() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -435,4 +436,64 @@ public class DialerActivity extends AppCompatActivity {
             }
         }
     };
+
+    /*
+    Emergency Triggers(Volume Buttons)
+    SMS (down + up  + down)
+    call (down + up + up + down)
+    * */
+    boolean isVolDownAllowed = true;
+    boolean isVolUpAllowed = false;
+    int UpCounter = -1;
+    final static int EmergencySms = 0;
+    final static int EmergencyCall = 1;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isVolDownAllowed == true) {
+            Log.e("Czar", "standby");
+            isVolDownAllowed = false;
+            isVolUpAllowed = true;
+            return true;
+        }
+        //for increment
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP) && isVolUpAllowed == true) {
+            UpCounter++;
+            Log.e("Czar", "increment: " + UpCounter);
+            //checking if counter exceeds 1 then it must reset
+            if (UpCounter > 1) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "reset");
+                return true;
+            }
+            return true;
+        }
+        //checking for emergency type
+        String EMERGENCY_TYPE = "Emergency_Type";
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) && isVolUpAllowed == true) {
+            if (UpCounter == EmergencySms) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "SMS");
+                Intent intent = new Intent(this, EmergencyActivity.class);
+                intent.putExtra(EMERGENCY_TYPE, 0);
+                startActivity(intent);
+                return true;
+            }
+            if (UpCounter == EmergencyCall) {
+                isVolDownAllowed = true;
+                isVolUpAllowed = false;
+                UpCounter = -1;
+                Log.e("Czar", "CALL");
+                Intent intent = new Intent(this, EmergencyActivity.class);
+                intent.putExtra(EMERGENCY_TYPE, 1);
+                startActivity(intent);
+                return true;
+            }
+        }
+        return false;
+    }
 }
