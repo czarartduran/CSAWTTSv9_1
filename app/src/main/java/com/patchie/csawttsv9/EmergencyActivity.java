@@ -53,21 +53,19 @@ public class EmergencyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_emergency);
         setTitle(getString(R.string.EmergencyActivity));
 
-        Etype = this.getIntent().getIntExtra(EMERGENCY_TYPE, 0);
-        /*if (this.getIntent().getIntExtra(EMERGENCY_TYPE, 0) == 0) {
-            SendSOS();
-            //finish();
+        Etype = this.getIntent().getIntExtra(EMERGENCY_TYPE, -1);
+        if (Etype == -1) {
+            Log.e("EmergencyActivity", "Initializing with welcome");
+            speaker = new Speaker(getApplicationContext(), getString(R.string.EmergencyWelcome));
+        } else {
+            //Speaker
+            Log.e("EmergencyActivity", "Initializing without welcome" + Etype);
+            //speaker = new Speaker(getApplicationContext());
         }
-        if (this.getIntent().getIntExtra(EMERGENCY_TYPE, 0) == 1) {
-            EmergencyCall();
-            //finish();
-        }*/
 
         //called inside
         IsoutSideCall = false;
 
-        //Speaker
-        speaker = new Speaker(getApplicationContext());
 
         //Assigning edittextbox
         ContactNumber = (EditText) findViewById(R.id.ContactNo_et);
@@ -84,7 +82,10 @@ public class EmergencyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                speaker.speak(ContactNumber.getText().toString());
+                if (Etype != -1) {
+                    speaker.speak(ContactNumber.getText().toString());
+                }
+
             }
         });
 
@@ -120,7 +121,7 @@ public class EmergencyActivity extends AppCompatActivity {
         Log.e("EmergencyActivity", "onResume");
         super.onResume();
 
-        if (speaker == null) {
+        if (speaker == null && Etype == -1) {
             Log.e("MainActivity: onResume", "Initializing Speaker");
             speaker = new Speaker(getApplicationContext());
         }
@@ -128,7 +129,7 @@ public class EmergencyActivity extends AppCompatActivity {
         RegisterSmsIntent();
 
         //checking if there is saved number
-        if (haveSavedNumber()) {
+        if (haveSavedNumber() && Etype == -1) {
             getSavedNumber();
         }
 
@@ -136,11 +137,13 @@ public class EmergencyActivity extends AppCompatActivity {
             Etype = -1;
             SendSOS();
             //finish();
-        }
-        if (Etype == 1) {
+        } else if (Etype == 1) {
             Etype = -1;
             EmergencyCall();
             //finish();
+        } else {
+            //Initialize here welcome message
+            //speaker.speakAdd(getString(R.string.EmergencyWelcome));
         }
     }
 
@@ -214,7 +217,7 @@ public class EmergencyActivity extends AppCompatActivity {
         edit.commit();
         speaker.speak("Contact Saved!");
         Log.e("EmergencyActivity", "Saved");
-        ContactNumber.setText("");
+        //ContactNumber.setText("");
     }
 
     public void EmergencySmsBtn_OnClickEvent(View view) {
@@ -234,9 +237,16 @@ public class EmergencyActivity extends AppCompatActivity {
                 getPermissionToReadSMS();
             } else {
                 try {
-                    speaker.speak("Sending to " + emergency_number);
-                    smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
-                    //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
+                    if (speaker == null) {
+                        speaker = new Speaker(getApplicationContext(), "Sending to " + emergency_number);
+                        //smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
+                        smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage), sentPI, deliveredPI);
+                    } else {
+                        speaker.speak("Sending to " + emergency_number);
+                        //smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage) + "\n" + "SOS", sentPI, deliveredPI);
+                        smsManager.sendTextMessage(emergency_number, null, getString(R.string.EmergencyMessage), sentPI, deliveredPI);
+                        //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "SMS failed, please try again later!",
                             Toast.LENGTH_LONG).show();
@@ -280,7 +290,7 @@ public class EmergencyActivity extends AppCompatActivity {
         SharedPreferences EmergencyContact = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String pulledString = EmergencyContact.getString(EMERGENCY_NUMBER, "");
         emergency_number = pulledString;
-        if (!IsoutSideCall) {
+        if (!IsoutSideCall && Etype == -1) {
             ContactNumber.setText(pulledString);
         }
 
@@ -385,7 +395,15 @@ public class EmergencyActivity extends AppCompatActivity {
         if (haveSavedNumber()) {
             getSavedNumber();
 
-            speaker.speak("Calling " + emergency_number);
+            //speaker.speak("Calling " + emergency_number);
+
+            if (speaker == null) {
+                speaker = new Speaker(getApplicationContext(), "Calling " + emergency_number);
+            } else {
+                speaker.speak("Calling " + emergency_number);
+                //Toast.makeText(this, "SMS Sent!", Toast.LENGTH_SHORT).show();
+            }
+
             //t1.speak("Call", TextToSpeech.QUEUE_FLUSH, null);
             Intent callIntent;
             callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + emergency_number));

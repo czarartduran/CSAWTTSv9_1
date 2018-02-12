@@ -67,6 +67,7 @@ public class SMSActivity extends AppCompatActivity {
         return inst;
     }
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
@@ -631,5 +632,9 @@ public class SMSActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void SmsActivityCancel_btn_OnClickEvent(View view) {
+        finish();
     }
 }

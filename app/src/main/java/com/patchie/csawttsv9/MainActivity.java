@@ -452,9 +452,13 @@ public class MainActivity extends AppCompatActivity {
         /*
         * Intent callIntent = new Intent(getApplicationContext(), CallActivityV2.class);
         startActivity(callIntent);
+        Intent intent = new Intent(this, EmergencyActivity.class);
+                intent.putExtra(EMERGENCY_TYPE, 0);
+                startActivity(intent);
         * */
         Log.e("MainActivity", "Calling Emergency Intent Activity");
         Intent emergencyIntent = new Intent(getApplicationContext(), EmergencyActivity.class);
+        emergencyIntent.putExtra("Emergency_Type", -1);
         startActivity(emergencyIntent);
     }
 

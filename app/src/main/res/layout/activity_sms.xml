@@ -25,10 +25,11 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="ComposeOnClickEvent"
         android:text="@string/ComposeButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/SmsActCancel_btn"
         app:layout_constraintEnd_toStartOf="@+id/UpButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,30 +40,30 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_below="@+id/messages"
+        android:layout_marginBottom="8dp"
         android:layout_toEndOf="@+id/ComposeButton"
         android:background="@android:color/holo_blue_light"
         android:onClick="PreviousButtonOnClickEvent"
         android:text="@string/PreviousButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/SmsActCancel_btn"
         app:layout_constraintEnd_toStartOf="@+id/DownButton"
         app:layout_constraintStart_toEndOf="@+id/ComposeButton"
-        app:layout_constraintTop_toBottomOf="@+id/messages"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/messages" />
 
     <Button
         android:id="@+id/DownButton"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_below="@+id/messages"
+        android:layout_marginBottom="8dp"
         android:layout_toEndOf="@+id/UpButton"
         android:background="@android:color/holo_blue_light"
         android:onClick="NextButtonOnClickEvent"
         android:text="@string/NextButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/SmsActCancel_btn"
         app:layout_constraintEnd_toStartOf="@+id/ReplyButton"
         app:layout_constraintStart_toEndOf="@+id/UpButton"
-        app:layout_constraintTop_toBottomOf="@+id/messages"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/messages" />
 
     <Button
         android:id="@+id/ReplyButton"
@@ -70,12 +71,24 @@
         android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/messages"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/holo_blue_light"
         android:onClick="ReplyButtonOnClickEvent"
         android:text="@string/ReplyButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/SmsActCancel_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/DownButton"
-        app:layout_constraintTop_toBottomOf="@+id/messages"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/messages" />
+
+    <Button
+        android:id="@+id/SmsActCancel_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light"
+        android:text="Cancel"
+        android:onClick="SmsActivityCancel_btn_OnClickEvent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ComposeButton" />
 </android.support.constraint.ConstraintLayout>
