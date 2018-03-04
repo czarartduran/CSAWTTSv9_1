@@ -53,6 +53,7 @@
     <string name="CONTROL_FOCUS_CHANGER">36</string><!--32 + 4--><!--Focus changer for(Note only applicable if have 2 or more text fields)-->
     <string name="CONTROL_CALL_ACTIVITY">65</string><!--A-->
     <string name="CONTROL_SMS_ACTIVITY">66</string><!--B-->
+    <string name="CONTROL_EMERGENCY_ACTIVITY">67</string><!--C-->
 
     /*
     *CANCEL - 128(ALT) + C COMBINATION

@@ -185,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 if (m == aic.CONTROL_SMS_ACTIVITY()) {
                     SmsActivity();
                 }
+                if (m == aic.CONTROL_EMERGENCY_ACTIVITY()){
+                    EmergencyActivity();
+                }
             } catch (UnsupportedEncodingException e) {
                 //e.printStackTrace();
                 //editText.setText(e.toString());

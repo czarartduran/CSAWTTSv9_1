@@ -225,6 +225,7 @@ public class ArduinoInputConverter {
     private int _CONTROL_FOCUS_CHANGER;
     private int _CONTROL_CALL_ACTIVITY;
     private int _CONTROL_SMS_ACTIVITY;
+    private int _CONTROL_EMERGENCY_ACTIVITY;
 
     /*private int _CONTROL_ADD_CONTACT;
     private int _CONTROL_DIALER;
@@ -248,6 +249,7 @@ public class ArduinoInputConverter {
         _CONTROL_FOCUS_CHANGER = Integer.parseInt(context.getString(R.string.CONTROL_FOCUS_CHANGER));
         _CONTROL_CALL_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_CALL_ACTIVITY));
         _CONTROL_SMS_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_SMS_ACTIVITY));
+        _CONTROL_EMERGENCY_ACTIVITY = Integer.parseInt(context.getString(R.string.CONTROL_EMERGENCY_ACTIVITY));
 
         /*_CONTROL_ADD_CONTACT = Integer.parseInt(context.getString(R.string.CONTROL_ADD_CONTACT));
         _CONTROL_DIALER = Integer.parseInt(context.getString(R.string.CONTROL_DIALER));
@@ -306,6 +308,10 @@ public class ArduinoInputConverter {
 
     public int CONTROL_SMS_ACTIVITY() {
         return _CONTROL_SMS_ACTIVITY;
+    }
+
+    public int CONTROL_EMERGENCY_ACTIVITY(){
+        return _CONTROL_EMERGENCY_ACTIVITY;
     }
 
     /*public int CONTROL_ADD_CONTACT(){
