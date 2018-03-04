@@ -133,5 +133,5 @@
     <string name="EdcBtn">Change Emergency Contact</string>
     <string name="EmergencyCancel">Cancel</string>
     <string name="EmergencyMessage">SOS Contact me ASAP</string>
-    <string name="EmergencyWelcome">Welcome to Emergency Module</string>
+    <string name="EmergencyWelcome">Welcome to Emergency Module, press the combination of alt shift to search for contact, press S to save, Cancel to go back to main menu</string>
 </resources>
