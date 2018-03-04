@@ -95,7 +95,7 @@ public class EmergencyActivity extends AppCompatActivity {
                 if (Etype != -1) {
                     speaker.speak(ContactNumber.getText().toString());
                 }else {
-                    speaker.speakAdd(ContactNumber.getText().toString());
+                    //speaker.speakAdd(ContactNumber.getText().toString());
                 }
 
             }
@@ -453,6 +453,7 @@ public class EmergencyActivity extends AppCompatActivity {
                 Log.e("Czar", x);
                 speaker.speak(x);
                 ContactNumber.append(x);
+                speaker.speakAdd(ContactNumber.getText().toString());
                 //PhoneNumber = editNum.getText().toString();
             }
         });
@@ -469,6 +470,8 @@ public class EmergencyActivity extends AppCompatActivity {
                     //editNum.setText(newScreen);
                     ContactNumber.setText("");
                     ContactNumber.append(newScreen);
+
+                    speaker.speakAdd(ContactNumber.getText().toString());
                 }
             }
         });
