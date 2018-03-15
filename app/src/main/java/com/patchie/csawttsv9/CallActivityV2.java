@@ -45,6 +45,8 @@ public class CallActivityV2 extends AppCompatActivity {
     ArrayList<String> contactlist;
     ArrayAdapter arrayAdapter;
 
+    private boolean needUpdate = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e("CallActivityV2", "onCreate");
@@ -89,6 +91,17 @@ public class CallActivityV2 extends AppCompatActivity {
     protected void onResume() {
         Log.e("CallActivityV2", "onResume");
         super.onResume();
+
+        if (needUpdate == true){
+            if (contactlist == null) {
+                Log.e("Czar", "Initialized contact list");
+                csb = new CSB(getApplicationContext());
+                arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, csb.CONTACTLIST());
+            }
+            contact_lv.setAdapter(arrayAdapter);
+        }else {
+            needUpdate = false;
+        }
 
         if (speaker == null) {
             Log.e("CallActivity: onResume", "Initializing Speaker");
@@ -208,6 +221,9 @@ public class CallActivityV2 extends AppCompatActivity {
     public void add_contacts_btn() {
         Intent AddContactIntent = null;
         if (AddContactIntent == null) {
+            //set boolean
+            needUpdate = true;
+
             //AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
             AddContactIntent = new Intent(CallActivityV2.this, Add_contact.class);
         }
